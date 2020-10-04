@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/models/tetris.dart';
-import 'package:tetris/models/tetromino.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 
-class TetrisScreen extends StatelessWidget {
-  final tetris = Tetris();
+class TetrisScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _TetrisScreenState();
+}
+
+class _TetrisScreenState extends State<TetrisScreen> {
+  Tetris tetris;
+
+  @override
+  void initState() {
+    super.initState();
+    tetris = Tetris();
+
+    tetris.startGame();
+  }
+
+  @override
+  void dispose() {
+    tetris.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    tetris.spawn(TetrominoName.iMino);
-    
     return Container(
       color: antiqueWhite,
       child: Column(
@@ -22,7 +38,7 @@ class TetrisScreen extends StatelessWidget {
           ),
           Expanded(
             flex: 1000,
-            child: Controller(),
+            child: Controller(tetris: tetris,),
           )
         ],
       ),

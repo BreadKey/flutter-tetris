@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tetris/models/rules.dart';
 import 'package:tetris/models/tetris.dart';
 
@@ -9,20 +10,24 @@ class PlayfieldRenderer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: playfieldWidth / visibleHeight,
-      child: Container(
-        color: Colors.black,
-        child: GridView.count(
-            crossAxisCount: playfieldWidth,
-            reverse: true,
-            children: tetris.playfield
-                .expand((row) => row)
-                .map((block) => Container(
-                      key: block == null ? null : ValueKey(block),
-                      color: block?.color,
-                    ))
-                .toList()),
-      ),
-    );
+        aspectRatio: playfieldWidth / visibleHeight,
+        child: Container(
+          color: Colors.black,
+          child: ChangeNotifierProvider<Tetris>.value(
+            value: tetris,
+            child: Consumer<Tetris>(
+              builder: (context, value, child) => GridView.count(
+                  crossAxisCount: playfieldWidth,
+                  reverse: true,
+                  children: tetris.playfield
+                      .expand((row) => row)
+                      .map((block) => Container(
+                            key: block == null ? null : ValueKey(block),
+                            color: block?.color,
+                          ))
+                      .toList()),
+            ),
+          ),
+        ));
   }
 }
