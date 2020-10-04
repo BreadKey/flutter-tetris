@@ -10,25 +10,27 @@ class PlayfieldRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-        aspectRatio: playfieldWidth / visibleHeight,
-        child: Container(
-          color: Colors.black,
-          child: ChangeNotifierProvider<Tetris>.value(
-            value: tetris,
-            child: Consumer<Tetris>(
-              builder: (context, value, child) => GridView.count(
-                  crossAxisCount: playfieldWidth,
-                  reverse: true,
-                  children: tetris.playfield
-                      .expand((row) => row)
-                      .map((block) => Container(
-                          key: block == null ? null : ValueKey(block),
-                          decoration: getBlockDecoration(block)))
-                      .toList()),
+    return Center(
+      child: AspectRatio(
+          aspectRatio: playfieldWidth / visibleHeight,
+          child: Container(
+            color: Colors.black,
+            child: ChangeNotifierProvider<Tetris>.value(
+              value: tetris,
+              child: Consumer<Tetris>(
+                builder: (context, value, child) => GridView.count(
+                    crossAxisCount: playfieldWidth,
+                    reverse: true,
+                    children: tetris.playfield
+                        .expand((row) => row)
+                        .map((block) => Container(
+                            key: block == null ? null : ValueKey(block),
+                            decoration: getBlockDecoration(block)))
+                        .toList()),
+              ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 
   Decoration getBlockDecoration(Block block) {
@@ -37,18 +39,7 @@ class PlayfieldRenderer extends StatelessWidget {
     else if (block.isGhost) {
       return BoxDecoration(color: block.color.withOpacity(0.25));
     } else {
-      return BoxDecoration(
-          borderRadius: BorderRadius.circular(2),
-          gradient: LinearGradient(
-            colors: [
-              block.color[200],
-              block.color[500],
-              block.color[600],
-              block.color[900],
-            ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-          ));
+      return BoxDecoration(color: block.color);
     }
   }
 

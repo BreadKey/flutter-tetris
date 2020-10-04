@@ -43,6 +43,13 @@ class Tetris extends ChangeNotifier {
 
   final Tetromino _ghostPiece = Tetromino.ghost();
 
+  final Queue<TetrominoName> _nextMinoQueue = Queue<TetrominoName>();
+
+  final StreamController<TetrominoName> _nextMinoStreamController =
+      StreamController();
+  Stream<TetrominoName> get nextMinoStream =>
+      _nextMinoStreamController.stream;
+
   void startGame() {
     _playfield = _generatePlayField();
 
@@ -53,7 +60,12 @@ class Tetris extends ChangeNotifier {
 
     _randomMinoGenerator = RandomMinoGenerator();
 
-    spawn(_randomMinoGenerator.getNext());
+    _nextMinoQueue.clear();
+
+    _nextMinoQueue.addAll(
+        [_randomMinoGenerator.getNext(), _randomMinoGenerator.getNext()]);
+
+    spawn(_nextMinoQueue.removeFirst());
   }
 
   List<List<Block>> _generatePlayField() => List.generate(
@@ -61,11 +73,14 @@ class Tetris extends ChangeNotifier {
 
   void dispose() {
     _frameGenerator?.cancel();
+    _nextMinoStreamController.close();
     super.dispose();
   }
 
   void spawn(TetrominoName tetrominoName) {
     final tetromino = Tetromino.from(tetrominoName, spawnPoint);
+    _nextMinoQueue.add(_randomMinoGenerator.getNext());
+    _nextMinoStreamController.sink.add(_nextMinoQueue.first);
 
     if (canMove(tetromino, Direction.down)) {
       tetromino.move(Direction.down);
@@ -124,7 +139,7 @@ class Tetris extends ChangeNotifier {
           _accumulatedPower = 0;
           if (_isStuckedBefore) {
             checkLines();
-            spawn(_randomMinoGenerator.getNext());
+            spawn(_nextMinoQueue.removeFirst());
             return;
           }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
+import 'package:tetris/screens/next_mino_renderder.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 
 class TetrisScreen extends StatefulWidget {
@@ -35,7 +36,21 @@ class _TetrisScreenState extends State<TetrisScreen> {
         children: [
           Expanded(
             flex: 2618,
-            child: PlayfieldRenderer(tetris),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2618,
+                  child: PlayfieldRenderer(tetris),
+                ),
+                Expanded(
+                  flex: 1000,
+                  child: NextMinoRenderer(
+                    tetris,
+                  ),
+                )
+              ],
+            ),
           ),
           Expanded(
             flex: 1000,
