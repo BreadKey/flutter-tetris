@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tetris/models/block.dart';
 import 'package:tetris/models/direction.dart';
@@ -9,7 +10,19 @@ import 'package:tetris/models/random_mino_generator.dart';
 import 'package:tetris/models/rules.dart';
 import 'package:tetris/models/tetromino.dart';
 
+part 'super_rotation_system.dart';
+
+extension on List<List<Block>> {
+  Block getBlockAt(Point<int> point) => this[point.y][point.x];
+  void setBlockAt(Point<int> point, Block block) {
+    this[point.y][point.x] = block;
+  }
+}
+
+enum DropMode { gravity, soft, hard }
+
 class Tetris extends ChangeNotifier {
+  static const fps = 64;
   List<List<Block>> _playfield;
 
   Iterable<Iterable<Block>> get playfield => _playfield;
@@ -17,7 +30,7 @@ class Tetris extends ChangeNotifier {
   Tetromino _currentTetromino;
   Tetromino get currentTetromino => _currentTetromino;
 
-  double _gravity = 0.1;
+  double _gravity = 1 / fps;
   double _accumulatedPower = 0;
 
   Timer _frameGenerator;
@@ -26,11 +39,13 @@ class Tetris extends ChangeNotifier {
 
   bool _isStuckedBefore = false;
 
+  DropMode _currentDropMode = DropMode.gravity;
+
   void startGame() {
     _playfield = _generatePlayField();
 
     _frameGenerator =
-        Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
       _update();
     });
 
@@ -48,16 +63,14 @@ class Tetris extends ChangeNotifier {
   }
 
   void spawn(TetrominoName tetrominoName) {
-    final tetromino = Tetromino.from(tetrominoName);
-
-    tetromino.spawn(spawnPoint);
+    final tetromino = Tetromino.from(tetrominoName, spawnPoint);
 
     if (canMove(tetromino, Direction.down)) {
       tetromino.move(Direction.down);
 
       _currentTetromino = tetromino;
       tetromino.blocks.forEach((block) {
-        setBlockAt(block.point, block);
+        _playfield.setBlockAt(block.point, block);
       });
     } else {
       _gameOver();
@@ -74,7 +87,7 @@ class Tetris extends ChangeNotifier {
         return false;
       }
 
-      final blockAtNextpoint = getBlockAt(nextPoint);
+      final blockAtNextpoint = _playfield.getBlockAt(nextPoint);
 
       if (blockAtNextpoint != null &&
           !tetromino.blocks.contains(blockAtNextpoint)) return false;
@@ -89,17 +102,12 @@ class Tetris extends ChangeNotifier {
       point.y < 0 ||
       point.y >= playfieldHeight;
 
-  Block getBlockAt(Point<int> point) => _playfield[point.y][point.x];
-  void setBlockAt(Point<int> point, Block block) {
-    _playfield[point.y][point.x] = block;
-  }
-
   void _update() {
-    _handleGravity(_gravity);
+    _handleGravity(_currentDropMode == DropMode.hard ? 20 : _gravity);
   }
 
   void _handleGravity(double gravity) {
-    _accumulatedPower += _gravity;
+    _accumulatedPower += gravity;
 
     if (_accumulatedPower >= 1) {
       final step = _accumulatedPower ~/ 1;
@@ -113,12 +121,28 @@ class Tetris extends ChangeNotifier {
             spawn(_randomMinoGenerator.getNext());
           }
 
+          if (_currentDropMode == DropMode.hard) {
+            _currentDropMode = DropMode.gravity;
+            _accumulatedPower = step.toDouble();
+          }
           _isStuckedBefore = true;
           break;
         }
       }
 
-      _accumulatedPower = 0;
+      _accumulatedPower -= step;
+    }
+  }
+
+  void commandMove(Direction direction) {
+    if (_currentDropMode != DropMode.hard) {
+      move(direction);
+    }
+  }
+
+  void commandRotate({bool clockwise: true}) {
+    if (_currentDropMode != DropMode.hard) {
+      rotate(clockwise: clockwise);
     }
   }
 
@@ -129,12 +153,12 @@ class Tetris extends ChangeNotifier {
 
     if (canMove(_currentTetromino, direction)) {
       _currentTetromino.blocks.forEach((block) {
-        setBlockAt(block.point, null);
+        _playfield.setBlockAt(block.point, null);
       });
 
       _currentTetromino.move(direction);
       _currentTetromino.blocks.forEach((block) {
-        setBlockAt(block.point, block);
+        _playfield.setBlockAt(block.point, block);
       });
 
       notifyListeners();
@@ -143,6 +167,16 @@ class Tetris extends ChangeNotifier {
     }
 
     return false;
+  }
+
+  void rotate({bool clockwise: true}) {
+    if (rotateBySrs(_currentTetromino, _playfield, clockwise: clockwise)) {
+      notifyListeners();
+    }
+  }
+
+  void dropHard() {
+    _currentDropMode = DropMode.hard;
   }
 
   void _gameOver() {
