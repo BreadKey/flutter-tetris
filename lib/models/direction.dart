@@ -28,4 +28,6 @@ extension DirectionVector on Direction {
         return Direction.left;
     }
   }
+
+  bool get isHorizontal => this == Direction.left || this == Direction.right;
 }

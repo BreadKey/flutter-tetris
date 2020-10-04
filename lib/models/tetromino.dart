@@ -11,13 +11,15 @@ abstract class Tetromino {
   final List<Point<int>> downwardOffsets;
   Direction heading = Direction.down;
   final List<Block> blocks;
-  Tetromino(this.name, this.downwardOffsets, Point<int> spawnPoint)
+  Tetromino(this.name, this.downwardOffsets, Point<int> spawnPoint,
+      {bool isGhost: false})
       : assert(downwardOffsets.length == 4),
         blocks = List.unmodifiable(List.generate(
             4,
             (index) => Block(
                 color: tetriminoColors[name],
-                point: spawnPoint + downwardOffsets[index])));
+                point: spawnPoint + downwardOffsets[index],
+                isGhost: isGhost)));
 
   factory Tetromino.from(TetrominoName name, Point<int> spawnPoint) {
     assert(name != null);
@@ -39,6 +41,8 @@ abstract class Tetromino {
         return LMino(spawnPoint);
     }
   }
+
+  factory Tetromino.ghost() => _GhostMino();
 
   void move(Direction direction) {
     blocks.forEach((block) {
@@ -87,6 +91,16 @@ abstract class Tetromino {
     for (int index = 0; index < blocks.length; index++) {
       blocks[index].point = rotatedPoints[index];
     }
+  }
+
+  bool hasSamePoints(Tetromino other) {
+    for (int index = 0; index < blocks.length; index++) {
+      if (blocks[index].point != other.blocks[index].point) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 
@@ -220,4 +234,13 @@ class LMino extends Tetromino {
 
   @override
   Point<int> get center => blocks[1].point;
+}
+
+class _GhostMino extends Tetromino {
+  _GhostMino()
+      : super(TetrominoName.tMino, List.generate(4, (index) => Point(0, 0)),
+            Point(0, 0),
+            isGhost: true);
+  @override
+  Point<int> get center => blocks.first.point;
 }

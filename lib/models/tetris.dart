@@ -41,6 +41,8 @@ class Tetris extends ChangeNotifier {
 
   DropMode _currentDropMode = DropMode.gravity;
 
+  final Tetromino _ghostPiece = Tetromino.ghost();
+
   void startGame() {
     _playfield = _generatePlayField();
 
@@ -72,6 +74,8 @@ class Tetris extends ChangeNotifier {
       tetromino.blocks.forEach((block) {
         _playfield.setBlockAt(block.point, block);
       });
+
+      _setGhostPiece();
     } else {
       _gameOver();
     }
@@ -79,7 +83,7 @@ class Tetris extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool canMove(Tetromino tetromino, Direction direction) {
+  bool canMove(Tetromino tetromino, Direction direction, {Tetromino mask}) {
     for (Block block in tetromino.blocks) {
       final nextPoint = block.point + direction.vector;
 
@@ -89,8 +93,8 @@ class Tetris extends ChangeNotifier {
 
       final blockAtNextpoint = _playfield.getBlockAt(nextPoint);
 
-      if (blockAtNextpoint != null &&
-          !tetromino.blocks.contains(blockAtNextpoint)) return false;
+      if (blockAtNextpoint?.isGhost == false &&
+          !(mask ?? tetromino).blocks.contains(blockAtNextpoint)) return false;
     }
 
     return true;
@@ -117,16 +121,19 @@ class Tetris extends ChangeNotifier {
         if (isMoved) {
           _isStuckedBefore = false;
         } else {
+          _accumulatedPower = 0;
           if (_isStuckedBefore) {
+            checkLines();
             spawn(_randomMinoGenerator.getNext());
+            return;
           }
 
           if (_currentDropMode == DropMode.hard) {
             _currentDropMode = DropMode.gravity;
-            _accumulatedPower = step.toDouble();
           }
+
           _isStuckedBefore = true;
-          break;
+          return;
         }
       }
 
@@ -161,6 +168,10 @@ class Tetris extends ChangeNotifier {
         _playfield.setBlockAt(block.point, block);
       });
 
+      if (direction.isHorizontal) {
+        _setGhostPiece();
+      }
+
       notifyListeners();
 
       return true;
@@ -171,12 +182,49 @@ class Tetris extends ChangeNotifier {
 
   void rotate({bool clockwise: true}) {
     if (rotateBySrs(_currentTetromino, _playfield, clockwise: clockwise)) {
+      _setGhostPiece();
       notifyListeners();
     }
   }
 
   void dropHard() {
     _currentDropMode = DropMode.hard;
+  }
+
+  void checkLines() {
+    final linesCanBroken = _playfield
+        .where((line) => line.every((block) => block != null && !block.isGhost))
+        .toList();
+
+    linesCanBroken.forEach((line) {
+      _playfield.remove(line);
+    });
+
+    _playfield.addAll(List.generate(linesCanBroken.length,
+        (index) => List<Block>.generate(playfieldWidth, (index) => null)));
+  }
+
+  void _setGhostPiece() {
+    for (Block ghostBlock in _ghostPiece.blocks) {
+      if (_playfield.getBlockAt(ghostBlock.point)?.isGhost == true) {
+        _playfield.setBlockAt(ghostBlock.point, null);
+      }
+    }
+
+    for (int index = 0; index < _currentTetromino.blocks.length; index++) {
+      _ghostPiece.blocks[index].point = _currentTetromino.blocks[index].point;
+      _ghostPiece.blocks[index].color = _currentTetromino.blocks[index].color;
+    }
+
+    while (canMove(_ghostPiece, Direction.down, mask: _currentTetromino)) {
+      _ghostPiece.move(Direction.down);
+    }
+
+    if (!_ghostPiece.hasSamePoints(_currentTetromino)) {
+      _ghostPiece.blocks.forEach((ghostBlock) {
+        _playfield.setBlockAt(ghostBlock.point, ghostBlock);
+      });
+    }
   }
 
   void _gameOver() {

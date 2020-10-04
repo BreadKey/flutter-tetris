@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 class Block {
   Point<int> point;
-  final Color color;
+  Color color;
+  final bool isGhost;
 
-  Block({@required this.color, this.point}) : assert(color != null);
+  Block({@required this.color, this.point, this.isGhost: false})
+      : assert(color != null);
 }

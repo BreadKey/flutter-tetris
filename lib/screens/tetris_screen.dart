@@ -29,6 +29,7 @@ class _TetrisScreenState extends State<TetrisScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       color: antiqueWhite,
       child: Column(
         children: [
@@ -38,7 +39,9 @@ class _TetrisScreenState extends State<TetrisScreen> {
           ),
           Expanded(
             flex: 1000,
-            child: Controller(tetris: tetris,),
+            child: Controller(
+              tetris: tetris,
+            ),
           )
         ],
       ),

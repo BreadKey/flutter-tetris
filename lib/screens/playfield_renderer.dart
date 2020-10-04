@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tetris/models/block.dart';
 import 'package:tetris/models/rules.dart';
 import 'package:tetris/models/tetris.dart';
 
@@ -23,11 +24,21 @@ class PlayfieldRenderer extends StatelessWidget {
                       .expand((row) => row)
                       .map((block) => Container(
                             key: block == null ? null : ValueKey(block),
-                            color: block?.color,
+                            color: getBlockColor(block),
                           ))
                       .toList()),
             ),
           ),
         ));
+  }
+
+  Color getBlockColor(Block block) {
+    if (block == null) return null;
+
+    if (block.isGhost) {
+      return block.color.withOpacity(0.5);
+    } else {
+      return block.color;
+    }
   }
 }
