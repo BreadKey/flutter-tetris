@@ -10,7 +10,8 @@ class PlayfieldRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Align(
+      alignment: Alignment.topCenter,
       child: AspectRatio(
           aspectRatio: playfieldWidth / visibleHeight,
           child: Container(
