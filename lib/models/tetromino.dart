@@ -92,16 +92,6 @@ abstract class Tetromino {
       blocks[index].point = rotatedPoints[index];
     }
   }
-
-  bool hasSamePoints(Tetromino other) {
-    for (int index = 0; index < blocks.length; index++) {
-      if (blocks[index].point != other.blocks[index].point) {
-        return false;
-      }
-    }
-
-    return true;
-  }
 }
 
 ///     Z

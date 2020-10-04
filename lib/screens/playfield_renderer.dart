@@ -23,13 +23,33 @@ class PlayfieldRenderer extends StatelessWidget {
                   children: tetris.playfield
                       .expand((row) => row)
                       .map((block) => Container(
-                            key: block == null ? null : ValueKey(block),
-                            color: getBlockColor(block),
-                          ))
+                          key: block == null ? null : ValueKey(block),
+                          decoration: getBlockDecoration(block)))
                       .toList()),
             ),
           ),
         ));
+  }
+
+  Decoration getBlockDecoration(Block block) {
+    if (block == null)
+      return null;
+    else if (block.isGhost) {
+      return BoxDecoration(color: block.color.withOpacity(0.25));
+    } else {
+      return BoxDecoration(
+          borderRadius: BorderRadius.circular(2),
+          gradient: LinearGradient(
+            colors: [
+              block.color[200],
+              block.color[500],
+              block.color[600],
+              block.color[900],
+            ],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+          ));
+    }
   }
 
   Color getBlockColor(Block block) {

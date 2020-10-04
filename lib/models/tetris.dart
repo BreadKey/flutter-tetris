@@ -220,11 +220,14 @@ class Tetris extends ChangeNotifier {
       _ghostPiece.move(Direction.down);
     }
 
-    if (!_ghostPiece.hasSamePoints(_currentTetromino)) {
-      _ghostPiece.blocks.forEach((ghostBlock) {
+    final currentMinoPoints =
+        _currentTetromino.blocks.map((block) => block.point);
+
+    _ghostPiece.blocks.forEach((ghostBlock) {
+      if (!currentMinoPoints.contains(ghostBlock.point)) {
         _playfield.setBlockAt(ghostBlock.point, ghostBlock);
-      });
-    }
+      }
+    });
   }
 
   void _gameOver() {
