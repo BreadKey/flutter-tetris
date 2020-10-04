@@ -30,7 +30,7 @@ bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,
   bool canRotate = true;
 
   for (Block block in tetromino.blocks) {
-    if (playfield.getBlockAt(block.point) != null) {
+    if (playfield.getBlockAt(block.point)?.isGhost == false) {
       canRotate = false;
       break;
     }
