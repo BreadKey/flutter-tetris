@@ -25,6 +25,7 @@ class PlayfieldRenderer extends StatelessWidget {
                         .expand((row) => row)
                         .map((block) => Container(
                             key: block == null ? null : ValueKey(block),
+                            margin: const EdgeInsets.all(0.25),
                             decoration: getBlockDecoration(block)))
                         .toList()),
               ),

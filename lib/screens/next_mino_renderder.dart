@@ -30,8 +30,6 @@ class NextMinoRenderer extends StatelessWidget {
                   (nextMino?.blocks ?? [])
                       .map((block) => MapEntry(block.point, block)));
 
-              print(blockMap);
-
               return GridView.count(
                 key: ValueKey(nextMino),
                 reverse: true,
@@ -40,6 +38,7 @@ class NextMinoRenderer extends StatelessWidget {
                         4, (y) => List.generate(4, (x) => Point(x, y)))
                     .expand((element) => element)
                     .map((point) => Container(
+                          margin: const EdgeInsets.all(0.25),
                           color: blockMap[point]?.color,
                         ))
                     .toList(),
