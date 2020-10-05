@@ -51,6 +51,8 @@ extension SuperRotationSystem on Tetris {
         return Direction.down;
       }
     }
+
+    return null;
   }
 
   void rollback(Tetromino tetromino, Direction kickDirection, bool clockwise) {
