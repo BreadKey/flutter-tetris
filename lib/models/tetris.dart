@@ -20,6 +20,7 @@ extension on List<List<Block>> {
 }
 
 enum DropMode { gravity, soft, hard }
+enum OnHardDrop { instantLock, wait }
 
 class Tetris extends ChangeNotifier with InputListener {
   static const fps = 64;
@@ -37,9 +38,11 @@ class Tetris extends ChangeNotifier with InputListener {
 
   RandomMinoGenerator _randomMinoGenerator;
 
-  bool _isStuckedBefore = false;
-
   DropMode _currentDropMode = DropMode.gravity;
+
+  OnHardDrop _onHardDrop = OnHardDrop.instantLock;
+
+  double _stuckedSeconds = 0.0;
 
   final Tetromino _ghostPiece = Tetromino.ghost();
 
@@ -51,6 +54,8 @@ class Tetris extends ChangeNotifier with InputListener {
 
   void startGame() {
     initPlayfield();
+
+    _stuckedSeconds = 0;
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
@@ -148,26 +153,35 @@ class Tetris extends ChangeNotifier with InputListener {
       for (int i = 0; i < step; i++) {
         final isMoved = move(Direction.down);
         if (isMoved) {
-          _isStuckedBefore = false;
+          _stuckedSeconds = 0;
         } else {
-          _accumulatedPower = 0;
-          if (_isStuckedBefore) {
-            checkLines();
-            spawnNextMino();
+          if (_currentDropMode == DropMode.hard) {
+            _currentDropMode = DropMode.gravity;
+
+            if (_onHardDrop == OnHardDrop.instantLock) {
+              lock();
+              return;
+            }
+          }
+          _stuckedSeconds += _accumulatedPower / gravity;
+          if (_stuckedSeconds >= 0.5) {
+            lock();
             return;
           }
 
-          if (_currentDropMode == DropMode.hard) {
-            _currentDropMode = DropMode.gravity;
-          }
-
-          _isStuckedBefore = true;
           return;
         }
       }
 
       _accumulatedPower -= step;
     }
+  }
+
+  void lock() {
+    _stuckedSeconds = 0;
+    _accumulatedPower = 0;
+    checkLines();
+    spawnNextMino();
   }
 
   void commandMove(Direction direction) {
