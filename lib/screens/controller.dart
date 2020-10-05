@@ -103,11 +103,13 @@ class Controller extends StatelessWidget {
             width: 8,
             color: Colors.transparent,
           ),
-          buildCircleButton(context, onPressed: () {
-            _inputManager.enterButton(ButtonKey.b);
-          },
-              child: const Icon(Icons.file_download),
-              size: defaultCircleButtonSize * 1.618),
+          buildCircleButton(
+            context,
+            onPressed: () {
+              _inputManager.enterButton(ButtonKey.b);
+            },
+            child: const Icon(Icons.file_download),
+          ),
           const VerticalDivider(
             width: 8,
             color: Colors.transparent,
