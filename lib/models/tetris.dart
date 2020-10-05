@@ -22,8 +22,9 @@ extension on List<List<Block>> {
 enum DropMode { gravity, soft, hard }
 enum OnHardDrop { instantLock, wait }
 
-class Tetris extends ChangeNotifier with InputListener {
+class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   static const fps = 64;
+  static const secondsPerFrame = 1 / fps;
   List<List<Block>> _playfield;
 
   Iterable<Iterable<Block>> get playfield => _playfield;
@@ -52,6 +53,15 @@ class Tetris extends ChangeNotifier with InputListener {
       StreamController();
   Stream<TetrominoName> get nextMinoStream => _nextMinoStreamController.stream;
 
+  bool _isStucked = false;
+
+  bool _paused = false;
+
+  Tetris() {
+    InputManager.instance.register(this);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
   void startGame() {
     initPlayfield();
 
@@ -59,7 +69,9 @@ class Tetris extends ChangeNotifier with InputListener {
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
-      _update();
+      if (!_paused) {
+        _update();
+      }
     });
 
     _randomMinoGenerator = RandomMinoGenerator();
@@ -79,14 +91,11 @@ class Tetris extends ChangeNotifier with InputListener {
   List<List<Block>> _generatePlayField() => List.generate(
       playfieldHeight, (y) => List.generate(playfieldWidth, (x) => null));
 
-  Tetris() {
-    InputManager.instance.register(this);
-  }
-
   void dispose() {
     _frameGenerator?.cancel();
     _nextMinoStreamController.close();
     InputManager.instance.unregister(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -142,6 +151,13 @@ class Tetris extends ChangeNotifier with InputListener {
 
   void _update() {
     _handleGravity(_currentDropMode == DropMode.hard ? 20 : _gravity);
+    if (_isStucked) {
+      _stuckedSeconds += secondsPerFrame;
+      if (_stuckedSeconds >= 0.5) {
+        lock();
+        return;
+      }
+    }
   }
 
   void _handleGravity(double gravity) {
@@ -154,6 +170,7 @@ class Tetris extends ChangeNotifier with InputListener {
         final isMoved = move(Direction.down);
         if (isMoved) {
           _stuckedSeconds = 0;
+          _isStucked = false;
         } else {
           if (_currentDropMode == DropMode.hard) {
             _currentDropMode = DropMode.gravity;
@@ -163,13 +180,9 @@ class Tetris extends ChangeNotifier with InputListener {
               return;
             }
           }
-          _stuckedSeconds += _accumulatedPower / gravity;
-          if (_stuckedSeconds >= 0.5) {
-            lock();
-            return;
-          }
 
-          return;
+          _isStucked = true;
+          break;
         }
       }
 
@@ -178,6 +191,7 @@ class Tetris extends ChangeNotifier with InputListener {
   }
 
   void lock() {
+    _isStucked = false;
     _stuckedSeconds = 0;
     _accumulatedPower = 0;
     checkLines();
@@ -295,6 +309,17 @@ class Tetris extends ChangeNotifier with InputListener {
       case ButtonKey.c:
         commandRotate();
         break;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused) {
+      _paused = true;
+    } else if (state == AppLifecycleState.resumed) {
+      _paused = false;
     }
   }
 }

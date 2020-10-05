@@ -17,45 +17,16 @@ class Controller extends StatelessWidget {
         super(key: key);
 
   @override
-  build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  build(BuildContext context) => Stack(
         children: [
-          buildDirectionButtons(context),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Divider(),
-                  buildCircleButton(
-                    context,
-                    onPressed: () {
-                      _inputManager.enterButton(ButtonKey.a);
-                    },
-                    child: const Icon(Icons.vertical_align_bottom),
-                    size: defaultCircleButtonSize * 1.618,
-                  ),
-                ],
-              ),
-              buildCircleButton(
-                context,
-                onPressed: () {
-                  _inputManager.enterButton(ButtonKey.b);
-                },
-                child: const Icon(Icons.rotate_left),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildCircleButton(context, onPressed: () {
-                    _inputManager.enterButton(ButtonKey.c);
-                  }, child: const Icon(Icons.rotate_right)),
-                  const Divider()
-                ],
-              )
-            ],
+          Align(
+            alignment: Alignment.centerLeft,
+            child: buildDirectionButtons(context),
           ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: buildActionButtons(context),
+          )
         ],
       );
 
@@ -106,6 +77,50 @@ class Controller extends StatelessWidget {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
                     top: Radius.circular(8), bottom: Radius.circular(24))),
+          )
+        ],
+      );
+
+  Widget buildActionButtons(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(
+                height: 24 * 1.618,
+              ),
+              buildCircleButton(
+                context,
+                onPressed: () {
+                  _inputManager.enterButton(ButtonKey.a);
+                },
+                child: const Icon(Icons.file_download),
+                size: defaultCircleButtonSize * 1.618,
+              ),
+            ],
+          ),
+          const VerticalDivider(
+            width: 8,
+            color: Colors.transparent,
+          ),
+          buildCircleButton(
+            context,
+            onPressed: () {
+              _inputManager.enterButton(ButtonKey.b);
+            },
+            child: const Icon(Icons.rotate_left),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildCircleButton(context, onPressed: () {
+                _inputManager.enterButton(ButtonKey.c);
+              }, child: const Icon(Icons.rotate_right)),
+              const Divider(
+                height: 24 * 1.618,
+              )
+            ],
           )
         ],
       );
