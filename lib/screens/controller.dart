@@ -17,7 +17,9 @@ class Controller extends StatelessWidget {
         super(key: key);
 
   @override
-  build(BuildContext context) => Stack(
+  build(BuildContext context) => Padding(
+      padding: const EdgeInsets.all(8),
+      child: Stack(
         children: [
           Align(
             alignment: Alignment.centerLeft,
@@ -28,7 +30,7 @@ class Controller extends StatelessWidget {
             child: buildActionButtons(context),
           )
         ],
-      );
+      ));
 
   Widget buildDirectionButtons(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
