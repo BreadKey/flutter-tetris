@@ -173,8 +173,9 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     if (_isStucked) {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
-        lock();
-        return;
+        if (!canMove(_currentTetromino, Direction.down)) {
+          lock();
+        }
       }
     }
   }
@@ -356,10 +357,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   void onButtonEntered(ButtonKey key) {
     switch (key) {
       case ButtonKey.a:
-        dropHard();
+        commandRotate(clockwise: false);
         break;
       case ButtonKey.b:
-        commandRotate(clockwise: false);
+        dropHard();
         break;
       case ButtonKey.c:
         commandRotate();

@@ -95,8 +95,7 @@ class Controller extends StatelessWidget {
                 onPressed: () {
                   _inputManager.enterButton(ButtonKey.a);
                 },
-                child: const Icon(Icons.file_download),
-                size: defaultCircleButtonSize * 1.618,
+                child: const Icon(Icons.rotate_left),
               ),
             ],
           ),
@@ -104,19 +103,23 @@ class Controller extends StatelessWidget {
             width: 8,
             color: Colors.transparent,
           ),
-          buildCircleButton(
-            context,
-            onPressed: () {
-              _inputManager.enterButton(ButtonKey.b);
-            },
-            child: const Icon(Icons.rotate_left),
+          buildCircleButton(context, onPressed: () {
+            _inputManager.enterButton(ButtonKey.b);
+          },
+              child: const Icon(Icons.file_download),
+              size: defaultCircleButtonSize * 1.618),
+          const VerticalDivider(
+            width: 8,
+            color: Colors.transparent,
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               buildCircleButton(context, onPressed: () {
                 _inputManager.enterButton(ButtonKey.c);
-              }, child: const Icon(Icons.rotate_right)),
+              },
+                  child: const Icon(Icons.rotate_right),
+                  size: defaultCircleButtonSize),
               const Divider(
                 height: 24 * 1.618,
               )
