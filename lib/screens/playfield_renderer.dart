@@ -22,6 +22,7 @@ class PlayfieldRenderer extends StatelessWidget {
                   crossAxisCount: playfieldWidth,
                   reverse: true,
                   children: tetris.playfield
+                      .take(visibleHeight)
                       .expand((row) => row)
                       .map((block) => block == null
                           ? const SizedBox()
