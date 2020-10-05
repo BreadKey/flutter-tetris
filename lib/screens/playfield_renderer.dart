@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
+import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
 class PlayfieldRenderer extends StatelessWidget {
@@ -9,30 +10,28 @@ class PlayfieldRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topRight,
-      child: AspectRatio(
-          aspectRatio: playfieldWidth / visibleHeight,
-          child: Container(
-            color: Colors.black,
-            child: ChangeNotifierProvider<Tetris>.value(
-              value: tetris,
-              child: Consumer<Tetris>(
-                builder: (context, value, child) => GridView.count(
-                    crossAxisCount: playfieldWidth,
-                    reverse: true,
-                    children: tetris.playfield
-                        .expand((row) => row)
-                        .map((block) => block == null
-                            ? const SizedBox()
-                            : BlockRenderer(
-                                block,
-                                key: ValueKey(block),
-                              ))
-                        .toList()),
-              ),
+    return AspectRatio(
+        aspectRatio: playfieldWidth / visibleHeight,
+        child: Material(
+          color: neutralBlackC,
+          elevation: 4,
+          child: ChangeNotifierProvider<Tetris>.value(
+            value: tetris,
+            child: Consumer<Tetris>(
+              builder: (context, value, child) => GridView.count(
+                  crossAxisCount: playfieldWidth,
+                  reverse: true,
+                  children: tetris.playfield
+                      .expand((row) => row)
+                      .map((block) => block == null
+                          ? const SizedBox()
+                          : BlockRenderer(
+                              block,
+                              key: ValueKey(block),
+                            ))
+                      .toList()),
             ),
-          )),
-    );
+          ),
+        ));
   }
 }

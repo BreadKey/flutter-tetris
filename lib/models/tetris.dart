@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
 
@@ -32,7 +33,6 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   Tetromino _currentTetromino;
   Tetromino get currentTetromino => _currentTetromino;
 
-  double _gravity = 1 / fps;
   double _accumulatedPower = 0;
 
   Timer _frameGenerator;
@@ -49,13 +49,20 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   final Queue<TetrominoName> _nextMinoQueue = Queue<TetrominoName>();
 
-  final StreamController<TetrominoName> _nextMinoStreamController =
-      StreamController();
-  Stream<TetrominoName> get nextMinoStream => _nextMinoStreamController.stream;
+  final BehaviorSubject<TetrominoName> _nextMinoSubject = BehaviorSubject();
+  Stream<TetrominoName> get nextMinoStream => _nextMinoSubject.stream;
 
   bool _isStucked = false;
 
   bool _paused = false;
+
+  int _level = 1;
+  final BehaviorSubject<int> _levelSubject = BehaviorSubject();
+  Stream<int> get levelStream => _levelSubject.stream;
+
+  int _score = 0;
+  final BehaviorSubject<int> _scoreSubject = BehaviorSubject();
+  Stream<int> get scoreStream => _scoreSubject.stream;
 
   Tetris() {
     InputManager.instance.register(this);
@@ -66,6 +73,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     initPlayfield();
 
     _stuckedSeconds = 0;
+
+    initStatus();
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
@@ -91,9 +100,19 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   List<List<Block>> _generatePlayField() => List.generate(
       playfieldHeight, (y) => List.generate(playfieldWidth, (x) => null));
 
+  void initStatus() {
+    _level = 1;
+    _levelSubject.sink.add(_level);
+
+    _score = 0;
+    _scoreSubject.sink.add(_score);
+  }
+
   void dispose() {
     _frameGenerator?.cancel();
-    _nextMinoStreamController.close();
+    _nextMinoSubject.close();
+    _levelSubject.close();
+    _scoreSubject.close();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -102,7 +121,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   void spawnNextMino() {
     spawn(_nextMinoQueue.removeFirst());
     _nextMinoQueue.add(_randomMinoGenerator.getNext());
-    _nextMinoStreamController.sink.add(_nextMinoQueue.first);
+    _nextMinoSubject.sink.add(_nextMinoQueue.first);
   }
 
   void spawn(TetrominoName tetrominoName) {
@@ -150,7 +169,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       point.y >= playfieldHeight;
 
   void _update() {
-    _handleGravity(_currentDropMode == DropMode.hard ? 20 : _gravity);
+    _handleGravity(_currentDropMode == DropMode.hard ? 20 : gravities[_level]);
     if (_isStucked) {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
@@ -257,8 +276,44 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       _playfield.remove(line);
     });
 
+    scoreUp(linesCanBroken);
+
+    if (isTetrisies(linesCanBroken)) {
+      levelUp();
+    }
+
     _playfield.addAll(List.generate(linesCanBroken.length,
         (index) => List<Block>.generate(playfieldWidth, (index) => null)));
+  }
+
+  bool isTetrisies(List<List<Block>> brokenLines) => brokenLines.length == 4;
+
+  void scoreUp(List<List<Block>> brokenLines) {
+    if (brokenLines.length == 0) return;
+
+    switch (brokenLines.length) {
+      case 1:
+        _score += 40 * (_level + 1);
+        break;
+      case 2:
+        _score += 100 * (_level + 1);
+        break;
+      case 3:
+        _score += 300 * (_level + 1);
+        break;
+      case 4:
+        _score += 1200 * (_level + 1);
+        break;
+    }
+
+    _scoreSubject.sink.add(_score);
+  }
+
+  void levelUp() {
+    if (_level != maxLevel) {
+      _level++;
+      _levelSubject.sink.add(_level);
+    }
   }
 
   void _setGhostPiece() {

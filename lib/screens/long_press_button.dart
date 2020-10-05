@@ -44,6 +44,7 @@ class _LongPressButtonState extends State<LongPressButton> {
     return MaterialButton(
       shape: widget.shape,
       color: widget.color,
+      elevation: 4,
       textColor: widget.textColor,
       minWidth: widget.minWidth,
       height: widget.height,
