@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tetris/models/block.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/models/tetromino.dart';
+import 'package:tetris/screens/block_renderer.dart';
 
 class NextMinoRenderer extends StatelessWidget {
   final Tetris tetris;
@@ -37,11 +38,16 @@ class NextMinoRenderer extends StatelessWidget {
                 children: List.generate(
                         4, (y) => List.generate(4, (x) => Point(x, y)))
                     .expand((element) => element)
-                    .map((point) => Container(
-                          margin: const EdgeInsets.all(0.25),
-                          color: blockMap[point]?.color,
-                        ))
-                    .toList(),
+                    .map((point) {
+                  final block = blockMap[point];
+
+                  return block == null
+                      ? const SizedBox()
+                      : BlockRenderer(
+                          block,
+                          key: ValueKey(block),
+                        );
+                }).toList(),
               );
             },
           ),
