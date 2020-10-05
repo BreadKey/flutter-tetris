@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tetris/models/rules.dart';
 
 class LongPressButton extends StatefulWidget {
   final int sensitivity;
@@ -12,6 +11,7 @@ class LongPressButton extends StatefulWidget {
   final ShapeBorder shape;
   final Color color;
   final Color textColor;
+  final Duration interval;
 
   const LongPressButton(
       {Key key,
@@ -22,7 +22,8 @@ class LongPressButton extends StatefulWidget {
       this.height,
       this.shape,
       this.color,
-      this.textColor})
+      this.textColor,
+      @required this.interval})
       : super(key: key);
 
   @override
@@ -53,8 +54,7 @@ class _LongPressButtonState extends State<LongPressButton> {
 
           int pressTick = 0;
           _longPressTimer?.cancel();
-          _longPressTimer = Timer.periodic(
-              const Duration(milliseconds: 1000 ~/ dasHz), (timer) {
+          _longPressTimer = Timer.periodic(widget.interval, (timer) {
             pressTick++;
 
             if (pressTick > widget.sensitivity) {

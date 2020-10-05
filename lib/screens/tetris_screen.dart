@@ -55,7 +55,8 @@ class _TetrisScreenState extends State<TetrisScreen> {
           Expanded(
             flex: 1000,
             child: Controller(
-              tetris: tetris,
+              longPressInterval:
+                  const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
             ),
           )
         ],

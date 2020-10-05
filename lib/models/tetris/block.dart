@@ -1,8 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:tetris/models/tetromino.dart';
+part of '../tetris.dart';
 
 class Block {
   Point<int> point;

@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tetris/models/block.dart';
 import 'package:tetris/models/direction.dart';
-import 'package:tetris/models/random_mino_generator.dart';
-import 'package:tetris/models/rules.dart';
-import 'package:tetris/models/tetromino.dart';
+import 'package:tetris/models/input_manager.dart';
 
-part 'super_rotation_system.dart';
+part 'tetris/block.dart';
+part 'tetris/random_mino_generator.dart';
+part 'tetris/rules.dart';
+part 'tetris/super_rotation_system.dart';
+part 'tetris/tetromino.dart';
 
 extension on List<List<Block>> {
   Block getBlockAt(Point<int> point) => this[point.y][point.x];
@@ -21,7 +21,7 @@ extension on List<List<Block>> {
 
 enum DropMode { gravity, soft, hard }
 
-class Tetris extends ChangeNotifier {
+class Tetris extends ChangeNotifier with InputListener {
   static const fps = 64;
   List<List<Block>> _playfield;
 
@@ -74,9 +74,14 @@ class Tetris extends ChangeNotifier {
   List<List<Block>> _generatePlayField() => List.generate(
       playfieldHeight, (y) => List.generate(playfieldWidth, (x) => null));
 
+  Tetris() {
+    InputManager.instance.register(this);
+  }
+
   void dispose() {
     _frameGenerator?.cancel();
     _nextMinoStreamController.close();
+    InputManager.instance.unregister(this);
     super.dispose();
   }
 
@@ -257,5 +262,25 @@ class Tetris extends ChangeNotifier {
   void _gameOver() {
     _frameGenerator.cancel();
     startGame();
+  }
+
+  @override
+  void onDirectionEntered(Direction direction) {
+    commandMove(direction);
+  }
+
+  @override
+  void onButtonEntered(ButtonKey key) {
+    switch (key) {
+      case ButtonKey.a:
+        dropHard();
+        break;
+      case ButtonKey.b:
+        commandRotate(clockwise: false);
+        break;
+      case ButtonKey.c:
+        commandRotate();
+        break;
+    }
   }
 }

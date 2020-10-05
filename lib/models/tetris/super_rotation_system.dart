@@ -1,4 +1,4 @@
-part of 'tetris.dart';
+part of '../tetris.dart';
 
 extension SuperRotationSystem on Tetris {
   bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,

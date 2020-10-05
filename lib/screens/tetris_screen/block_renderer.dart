@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tetris/models/block.dart';
+import 'package:tetris/models/tetris.dart';
 
 class BlockRenderer extends StatelessWidget {
   final Block block;

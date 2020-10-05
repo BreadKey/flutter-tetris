@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/tetris.dart';
-import 'package:tetris/models/tetromino.dart';
 
 import 'tetromino_test.dart';
 

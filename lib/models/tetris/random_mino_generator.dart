@@ -1,7 +1,4 @@
-import 'dart:collection';
-import 'dart:math';
-
-import 'package:tetris/models/tetromino.dart';
+part of '../tetris.dart';
 
 class RandomMinoGenerator {
   final _bag = Queue<TetrominoName>();

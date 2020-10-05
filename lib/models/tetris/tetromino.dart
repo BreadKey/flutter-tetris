@@ -1,8 +1,4 @@
-import 'dart:math';
-
-import 'package:tetris/models/block.dart';
-import 'package:tetris/models/direction.dart';
-import 'package:tetris/models/rules.dart';
+part of '../tetris.dart';
 
 enum TetrominoName { iMino, oMino, tMino, sMino, zMino, jMino, lMino }
 

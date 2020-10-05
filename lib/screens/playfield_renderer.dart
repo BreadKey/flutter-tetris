@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tetris/models/rules.dart';
 import 'package:tetris/models/tetris.dart';
-import 'package:tetris/screens/block_renderer.dart';
+import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
 class PlayfieldRenderer extends StatelessWidget {
   final Tetris tetris;

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/models/direction.dart';
-import 'package:tetris/models/tetris.dart';
+import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
-  final Tetris tetris;
   final int longPressSensitivity;
   final double defaultCircleButtonSize = 48;
+  final Duration longPressInterval;
 
-  const Controller(
-      {Key key, @required this.tetris, this.longPressSensitivity: 3})
-      : assert(tetris != null),
+  final _inputManager = InputManager.instance;
+
+  Controller(
+      {Key key, @required this.longPressInterval, this.longPressSensitivity: 3})
+      : assert(longPressInterval != null),
         super(key: key);
 
   @override
@@ -29,7 +31,7 @@ class Controller extends StatelessWidget {
                   buildCircleButton(
                     context,
                     onPressed: () {
-                      tetris.dropHard();
+                      _inputManager.enterButton(ButtonKey.a);
                     },
                     child: const Icon(Icons.vertical_align_bottom),
                     size: defaultCircleButtonSize * 1.618,
@@ -39,7 +41,7 @@ class Controller extends StatelessWidget {
               buildCircleButton(
                 context,
                 onPressed: () {
-                  tetris.commandRotate(clockwise: false);
+                  _inputManager.enterButton(ButtonKey.b);
                 },
                 child: const Icon(Icons.rotate_left),
               ),
@@ -47,7 +49,7 @@ class Controller extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   buildCircleButton(context, onPressed: () {
-                    tetris.commandRotate();
+                    _inputManager.enterButton(ButtonKey.c);
                   }, child: const Icon(Icons.rotate_right)),
                   const Divider()
                 ],
@@ -66,11 +68,12 @@ class Controller extends StatelessWidget {
             children: [
               LongPressButton(
                 sensitivity: longPressSensitivity,
+                interval: longPressInterval,
                 color: neutralBlackC,
                 textColor: Colors.white,
                 child: const Icon(Icons.arrow_left),
                 onPressed: () {
-                  tetris.move(Direction.left);
+                  _inputManager.enterDirection(Direction.left);
                 },
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.horizontal(
@@ -78,11 +81,12 @@ class Controller extends StatelessWidget {
               ),
               LongPressButton(
                 sensitivity: longPressSensitivity,
+                interval: longPressInterval,
                 color: neutralBlackC,
                 textColor: Colors.white,
                 child: const Icon(Icons.arrow_right),
                 onPressed: () {
-                  tetris.commandMove(Direction.right);
+                  _inputManager.enterDirection(Direction.right);
                 },
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.horizontal(
@@ -92,8 +96,9 @@ class Controller extends StatelessWidget {
           ),
           LongPressButton(
             sensitivity: longPressSensitivity,
+            interval: longPressInterval,
             onPressed: () {
-              tetris.commandMove(Direction.down);
+              _inputManager.enterDirection(Direction.down);
             },
             color: neutralBlackC,
             textColor: Colors.white,
@@ -111,6 +116,7 @@ class Controller extends StatelessWidget {
           double size}) =>
       LongPressButton(
         sensitivity: longPressSensitivity,
+        interval: longPressInterval,
         onPressed: onPressed,
         child: child,
         minWidth: size ?? defaultCircleButtonSize,
