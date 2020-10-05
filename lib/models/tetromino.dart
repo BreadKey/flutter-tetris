@@ -9,7 +9,10 @@ enum TetrominoName { iMino, oMino, tMino, sMino, zMino, jMino, lMino }
 abstract class Tetromino {
   final TetrominoName name;
   final List<Point<int>> downwardOffsets;
-  Direction heading = Direction.down;
+
+  Direction _heading = Direction.down;
+  Direction get heading => _heading;
+
   final List<Block> blocks;
   Tetromino(this.name, this.downwardOffsets, Point<int> spawnPoint,
       {bool isGhost: false})
@@ -69,18 +72,18 @@ abstract class Tetromino {
   }
 
   void rotate({bool clockwise: true}) {
-    switch (heading) {
+    switch (_heading) {
       case Direction.down:
-        heading = clockwise ? Direction.left : Direction.right;
+        _heading = clockwise ? Direction.left : Direction.right;
         break;
       case Direction.left:
-        heading = clockwise ? Direction.up : Direction.down;
+        _heading = clockwise ? Direction.up : Direction.down;
         break;
       case Direction.up:
-        heading = clockwise ? Direction.right : Direction.left;
+        _heading = clockwise ? Direction.right : Direction.left;
         break;
       case Direction.right:
-        heading = clockwise ? Direction.down : Direction.up;
+        _heading = clockwise ? Direction.down : Direction.up;
         break;
     }
 

@@ -19,6 +19,10 @@ void main() {
   test("rotate I mino", () {
     final iMino = IMino(Point(0, 0));
 
+    expect(iMino.heading, Direction.down);
+    expectPoints(
+        iMino, [Point(-1, -1), Point(0, -1), Point(1, -1), Point(2, -1)]);
+
     iMino.rotate();
 
     expect(iMino.heading, Direction.left);

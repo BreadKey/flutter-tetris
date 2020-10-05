@@ -47,11 +47,10 @@ class Tetris extends ChangeNotifier {
 
   final StreamController<TetrominoName> _nextMinoStreamController =
       StreamController();
-  Stream<TetrominoName> get nextMinoStream =>
-      _nextMinoStreamController.stream;
+  Stream<TetrominoName> get nextMinoStream => _nextMinoStreamController.stream;
 
   void startGame() {
-    _playfield = _generatePlayField();
+    initPlayfield();
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
@@ -65,7 +64,11 @@ class Tetris extends ChangeNotifier {
     _nextMinoQueue.addAll(
         [_randomMinoGenerator.getNext(), _randomMinoGenerator.getNext()]);
 
-    spawn(_nextMinoQueue.removeFirst());
+    spawnNextMino();
+  }
+
+  void initPlayfield() {
+    _playfield = _generatePlayField();
   }
 
   List<List<Block>> _generatePlayField() => List.generate(
@@ -77,10 +80,14 @@ class Tetris extends ChangeNotifier {
     super.dispose();
   }
 
-  void spawn(TetrominoName tetrominoName) {
-    final tetromino = Tetromino.from(tetrominoName, spawnPoint);
+  void spawnNextMino() {
+    spawn(_nextMinoQueue.removeFirst());
     _nextMinoQueue.add(_randomMinoGenerator.getNext());
     _nextMinoStreamController.sink.add(_nextMinoQueue.first);
+  }
+
+  void spawn(TetrominoName tetrominoName) {
+    final tetromino = Tetromino.from(tetrominoName, spawnPoint);
 
     if (canMove(tetromino, Direction.down)) {
       tetromino.move(Direction.down);
@@ -108,12 +115,14 @@ class Tetris extends ChangeNotifier {
 
       final blockAtNextpoint = _playfield.getBlockAt(nextPoint);
 
-      if (blockAtNextpoint?.isGhost == false &&
-          !(mask ?? tetromino).blocks.contains(blockAtNextpoint)) return false;
+      if (!isBlockNullOrGhost(blockAtNextpoint) &&
+          !blockAtNextpoint.isPartOf(mask ?? tetromino)) return false;
     }
 
     return true;
   }
+
+  bool isBlockNullOrGhost(Block block) => block?.isGhost != false;
 
   bool isOutOfPlayfield(Point<int> point) =>
       point.x < 0 ||
@@ -139,7 +148,7 @@ class Tetris extends ChangeNotifier {
           _accumulatedPower = 0;
           if (_isStuckedBefore) {
             checkLines();
-            spawn(_nextMinoQueue.removeFirst());
+            spawnNextMino();
             return;
           }
 
