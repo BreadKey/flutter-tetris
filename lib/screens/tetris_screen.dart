@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
@@ -11,8 +13,14 @@ class TetrisScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _TetrisScreenState();
 }
 
-class _TetrisScreenState extends State<TetrisScreen> {
+class _TetrisScreenState extends State<TetrisScreen>
+    with SingleTickerProviderStateMixin {
   Tetris tetris;
+
+  AnimationController hardDropAnimController;
+  Animation<Offset> hardDropAnimation;
+
+  StreamSubscription tetrisEventSubscriber;
 
   @override
   void initState() {
@@ -20,11 +28,32 @@ class _TetrisScreenState extends State<TetrisScreen> {
     tetris = Tetris();
 
     tetris.startGame();
+
+    hardDropAnimController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 100));
+
+    hardDropAnimation = Tween(begin: Offset(0, 0), end: Offset(0, 0.01))
+        .animate(CurvedAnimation(
+            parent: hardDropAnimController, curve: Curves.bounceOut));
+
+    hardDropAnimController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        hardDropAnimController.reverse();
+      }
+    });
+
+    tetrisEventSubscriber = tetris.eventStream.listen((event) {
+      if (event == TetrisEvent.hardDrop) {
+        hardDropAnimController.forward();
+      }
+    });
   }
 
   @override
   void dispose() {
     tetris.dispose();
+    hardDropAnimController.dispose();
+    tetrisEventSubscriber.cancel();
     super.dispose();
   }
 
@@ -62,7 +91,10 @@ class _TetrisScreenState extends State<TetrisScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PlayfieldRenderer(tetris),
+                      SlideTransition(
+                        position: hardDropAnimation,
+                        child: PlayfieldRenderer(tetris),
+                      ),
                       const VerticalDivider(
                         color: Colors.transparent,
                       ),

@@ -12,6 +12,7 @@ part 'tetris/random_mino_generator.dart';
 part 'tetris/rules.dart';
 part 'tetris/super_rotation_system.dart';
 part 'tetris/tetromino.dart';
+part 'tetris/event.dart';
 
 extension Playfield on List<List<Block>> {
   Block getBlockAt(Point<int> point) => this[point.y][point.x];
@@ -70,9 +71,23 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   final BehaviorSubject<int> _scoreSubject = BehaviorSubject();
   Stream<int> get scoreStream => _scoreSubject.stream;
 
+  final PublishSubject<TetrisEvent> _eventSubject = PublishSubject();
+  Stream<TetrisEvent> get eventStream => _eventSubject.stream;
+
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
+  }
+
+  void dispose() {
+    _frameGenerator?.cancel();
+    _nextMinoSubject.close();
+    _levelSubject.close();
+    _scoreSubject.close();
+    _eventSubject.close();
+    InputManager.instance.unregister(this);
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 
   void startGame() {
@@ -112,16 +127,6 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     _score = 0;
     _scoreSubject.sink.add(_score);
-  }
-
-  void dispose() {
-    _frameGenerator?.cancel();
-    _nextMinoSubject.close();
-    _levelSubject.close();
-    _scoreSubject.close();
-    InputManager.instance.unregister(this);
-    WidgetsBinding.instance?.removeObserver(this);
-    super.dispose();
   }
 
   void spawnNextMino() {
@@ -196,6 +201,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         } else {
           if (_currentDropMode == DropMode.hard) {
             _currentDropMode = DropMode.gravity;
+            _eventSubject.sink.add(TetrisEvent.hardDrop);
 
             if (_onHardDrop == OnHardDrop.instantLock) {
               lock();
