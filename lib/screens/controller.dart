@@ -5,6 +5,8 @@ import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
+  static const double actionButtonSpace = 12 * 1.518;
+
   final int longPressSensitivity;
   final double defaultCircleButtonSize = 52;
   final Duration longPressInterval;
@@ -27,10 +29,7 @@ class Controller extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: Transform.translate(
-              offset: Offset(0, 10),
-              child: buildActionButtons(context),
-            ),
+            child: buildActionButtons(context),
           )
         ],
       ));
@@ -106,7 +105,7 @@ class Controller extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(
-                height: 24 * 1.618,
+                height: actionButtonSpace * 5,
               ),
               buildCircleButton(
                 context,
@@ -121,12 +120,20 @@ class Controller extends StatelessWidget {
             width: 4,
             color: Colors.transparent,
           ),
-          buildCircleButton(
-            context,
-            onPressed: () {
-              _inputManager.enterButton(ButtonKey.b);
-            },
-            child: const Icon(Icons.file_download),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(
+                height: actionButtonSpace * 3,
+              ),
+              buildCircleButton(
+                context,
+                onPressed: () {
+                  _inputManager.enterButton(ButtonKey.b);
+                },
+                child: const Icon(Icons.file_download),
+              ),
+            ],
           ),
           const VerticalDivider(
             width: 4,
@@ -135,14 +142,14 @@ class Controller extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const Divider(
+                height: actionButtonSpace,
+              ),
               buildCircleButton(context, onPressed: () {
                 _inputManager.enterButton(ButtonKey.c);
               },
                   child: const Icon(Icons.rotate_right),
                   size: defaultCircleButtonSize),
-              const Divider(
-                height: 24 * 1.618,
-              )
             ],
           )
         ],
