@@ -359,7 +359,11 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   @override
   void onDirectionEntered(Direction direction) {
-    commandMove(direction);
+    if (direction == Direction.up) {
+      commandRotate();
+    } else {
+      commandMove(direction);
+    }
   }
 
   @override

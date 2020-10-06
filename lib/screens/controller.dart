@@ -6,7 +6,7 @@ import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
   final int longPressSensitivity;
-  final double defaultCircleButtonSize = 48;
+  final double defaultCircleButtonSize = 52;
   final Duration longPressInterval;
 
   final _inputManager = InputManager.instance;
@@ -18,7 +18,7 @@ class Controller extends StatelessWidget {
 
   @override
   build(BuildContext context) => Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
       child: Stack(
         children: [
           Align(
@@ -27,7 +27,10 @@ class Controller extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: buildActionButtons(context),
+            child: Transform.translate(
+              offset: Offset(0, 10),
+              child: buildActionButtons(context),
+            ),
           )
         ],
       ));
@@ -36,6 +39,19 @@ class Controller extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          LongPressButton(
+            sensitivity: longPressSensitivity,
+            interval: longPressInterval,
+            onPressed: () {
+              _inputManager.enterDirection(Direction.up);
+            },
+            color: neutralBlackC,
+            textColor: Colors.white,
+            child: const Icon(Icons.arrow_drop_up),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(24), bottom: Radius.circular(8))),
+          ),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -102,7 +118,7 @@ class Controller extends StatelessWidget {
             ],
           ),
           const VerticalDivider(
-            width: 8,
+            width: 4,
             color: Colors.transparent,
           ),
           buildCircleButton(
@@ -113,7 +129,7 @@ class Controller extends StatelessWidget {
             child: const Icon(Icons.file_download),
           ),
           const VerticalDivider(
-            width: 8,
+            width: 4,
             color: Colors.transparent,
           ),
           Column(
