@@ -20,7 +20,7 @@ abstract class Tetromino {
                 point: spawnPoint + downwardOffsets[index],
                 isGhost: isGhost)));
 
-  factory Tetromino.from(TetrominoName name, Point<int> spawnPoint) {
+  factory Tetromino.spawn(TetrominoName name, Point<int> spawnPoint) {
     assert(name != null);
 
     Tetromino tetromino;
@@ -70,7 +70,7 @@ abstract class Tetromino {
     moveDistance(direction.vector);
   }
 
-  void moveDistance(Point distance) {
+  void moveDistance(Point<int> distance) {
     blocks.forEach((block) {
       block.point += distance;
     });
@@ -137,7 +137,7 @@ class IMino extends Tetromino {
   Point<int> get center => _center;
 
   @override
-  void moveDistance(Point distance) {
+  void moveDistance(Point<int> distance) {
     super.moveDistance(distance);
     _center += distance;
   }
@@ -156,6 +156,12 @@ class IMino extends Tetromino {
       case Direction.up:
         blocks.forEach((block) {
           block.point += Point(1, -1);
+        });
+        break;
+
+      case Direction.right:
+        blocks.forEach((block) {
+          block.point += Point(0, -1);
         });
         break;
 

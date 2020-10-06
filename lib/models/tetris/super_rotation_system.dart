@@ -2,10 +2,10 @@ part of '../tetris.dart';
 
 extension SuperRotationSystem on Tetris {
   static const testTable = {
-    2: Point<int>(1, 0),
-    3: Point<int>(1, -1),
-    4: Point<int>(0, 2),
-    5: Point<int>(1, 2)
+    2: Point<int>(-1, 0),
+    3: Point<int>(-1, 1),
+    4: Point<int>(0, -2),
+    5: Point<int>(-1, -2)
   };
 
   bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,
@@ -51,13 +51,15 @@ extension SuperRotationSystem on Tetris {
         y *= -1;
       }
 
-      tetromino.moveDistance(Point<int>(x, y));
+      print("$x $y");
+
+      tetromino.moveDistance(Point(x, y));
 
       if (isValidPosition(tetromino, playfield)) {
         kickSucceed = true;
         break;
       } else {
-        tetromino.moveDistance(Point<int>(-x, -y));
+        tetromino.moveDistance(Point(-x, -y));
       }
     }
 
@@ -91,13 +93,5 @@ extension SuperRotationSystem on Tetris {
     }
 
     return null;
-  }
-
-  void rollback(Tetromino tetromino, Direction kickDirection, bool clockwise) {
-    if (kickDirection != null) {
-      tetromino.move(kickDirection.opposite);
-    }
-
-    tetromino.rotate(clockwise: !clockwise);
   }
 }

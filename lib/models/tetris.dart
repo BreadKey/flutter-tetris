@@ -13,7 +13,7 @@ part 'tetris/rules.dart';
 part 'tetris/super_rotation_system.dart';
 part 'tetris/tetromino.dart';
 
-extension on List<List<Block>> {
+extension Playfield on List<List<Block>> {
   Block getBlockAt(Point<int> point) => this[point.y][point.x];
   void setBlockAt(Point<int> point, Block block) {
     this[point.y][point.x] = block;
@@ -125,7 +125,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   }
 
   void spawn(TetrominoName tetrominoName) {
-    final tetromino = Tetromino.from(tetrominoName, spawnPoint);
+    final tetromino = Tetromino.spawn(tetrominoName, spawnPoint);
 
     if (canMove(tetromino, Direction.down)) {
       tetromino.move(Direction.down);

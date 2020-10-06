@@ -20,14 +20,14 @@ void main() {
   test("spawn I mino", () {
     tetris.spawn(TetrominoName.I);
     expectPoints(tetris.currentTetromino,
-        [Point(3, 20), Point(4, 20), Point(5, 20), Point(6, 20)]);
+        [Point(3, 19), Point(4, 19), Point(5, 19), Point(6, 19)]);
   });
 
   test("spawn T mino", () {
     tetris.spawn(TetrominoName.T);
 
     expectPoints(tetris.currentTetromino,
-        [Point(3, 20), Point(4, 20), Point(5, 20), Point(4, 21)]);
+        [Point(3, 19), Point(4, 19), Point(5, 19), Point(4, 20)]);
   });
 
   test("point equals", () {
@@ -46,22 +46,6 @@ void main() {
     expect(tetris.canMove(tetris.currentTetromino, Direction.down), false);
   });
 
-  test("roll back", () {
-    tetris.spawn(TetrominoName.I);
-
-    final kickDirection = Direction.left;
-    final clockwise = false;
-
-    tetris.currentTetromino.move(kickDirection);
-    tetris.currentTetromino.rotate(clockwise: clockwise);
-
-    tetris.rollback(tetris.currentTetromino, kickDirection, clockwise);
-
-    expect(tetris.currentTetromino.heading, Direction.down);
-    expectPoints(tetris.currentTetromino,
-        [Point(3, 20), Point(4, 20), Point(5, 20), Point(6, 20)]);
-  });
-
   test("super rotation system", () {
     final mino = null; //just more readable;
     final grey = Block(color: Colors.grey);
@@ -75,12 +59,37 @@ void main() {
       <Block>[grey, grey, grey, grey, grey, null, grey, grey, grey, grey],
     ].reversed.toList();
 
-    final jMino = Tetromino.from(TetrominoName.J, Point(5, 3));
-    jMino.rotate();
-    jMino.rotate();
+    final jMino = Tetromino.spawn(TetrominoName.J, Point(5, 3));
 
     tetris.rotateBySrs(jMino, playfield, clockwise: false);
 
     expectPoints(jMino, [Point(4, 1), Point(5, 1), Point(5, 2), Point(5, 3)]);
+  });
+
+  test("rotate T test", () {
+    final List<List<Block>> playfield = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null]
+    ];
+
+    final tMino = Tetromino.spawn(TetrominoName.T, Point(1, 2));
+
+    tetris.rotateBySrs(tMino, playfield);
+    expectPoints(tMino, [Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 1)]);
+
+    tMino.blocks.forEach((block) {
+      playfield.setBlockAt(block.point, null);
+    });
+
+    tMino.move(Direction.left);
+
+    tMino.blocks.forEach((block) {
+      playfield.setBlockAt(block.point, block);
+    });
+
+    tetris.rotateBySrs(tMino, playfield);
+
+    expectPoints(tMino, [Point(0, 1), Point(1, 1), Point(2, 1), Point(1, 0)]);
   });
 }

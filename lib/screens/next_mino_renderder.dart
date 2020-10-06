@@ -10,7 +10,7 @@ class NextMinoRenderer extends StatelessWidget {
   final Tetris tetris;
   final tetrominoes = Map<TetrominoName, Tetromino>.fromEntries(TetrominoName
       .values
-      .map((name) => MapEntry(name, Tetromino.from(name, Point(2, 2)))));
+      .map((name) => MapEntry(name, Tetromino.spawn(name, Point(2, 2)))));
 
   NextMinoRenderer(this.tetris, {Key key}) : super(key: key);
 

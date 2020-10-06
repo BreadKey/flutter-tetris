@@ -52,6 +52,6 @@ void expectPoints(Tetromino tetromino, Iterable<Point<int>> points) {
   final tetrominoPoints = tetromino.blocks.map((e) => e.point);
 
   points.forEach((point) {
-    tetrominoPoints.contains(point);
+    expect(tetrominoPoints.contains(point), true); 
   });
 }
