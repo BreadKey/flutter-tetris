@@ -66,7 +66,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   Tetris() {
     InputManager.instance.register(this);
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   void startGame() {
@@ -114,7 +114,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _levelSubject.close();
     _scoreSubject.close();
     InputManager.instance.unregister(this);
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
@@ -126,6 +126,18 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   void spawn(TetrominoName tetrominoName) {
     final tetromino = Tetromino.from(tetrominoName, spawnPoint);
+
+    switch (tetrominoName) {
+      case TetrominoName.J:
+      case TetrominoName.L:
+      case TetrominoName.T:
+        tetromino.rotate();
+        tetromino.rotate();
+        tetromino.move(Direction.down);
+        break;
+      default:
+        break;
+    }
 
     if (canMove(tetromino, Direction.down)) {
       tetromino.move(Direction.down);

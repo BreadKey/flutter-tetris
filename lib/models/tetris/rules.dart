@@ -7,13 +7,13 @@ const fps = 64;
 const delayedAutoShiftHz = 20;
 
 const tetriminoColors = {
-  TetrominoName.iMino: Colors.cyan,
-  TetrominoName.oMino: Colors.yellow,
-  TetrominoName.tMino: Colors.purple,
-  TetrominoName.sMino: Colors.green,
-  TetrominoName.zMino: Colors.red,
-  TetrominoName.jMino: Colors.blue,
-  TetrominoName.lMino: Colors.orange
+  TetrominoName.I: Colors.cyan,
+  TetrominoName.O: Colors.yellow,
+  TetrominoName.T: Colors.purple,
+  TetrominoName.S: Colors.green,
+  TetrominoName.Z: Colors.red,
+  TetrominoName.J: Colors.blue,
+  TetrominoName.L: Colors.orange
 };
 
 /*

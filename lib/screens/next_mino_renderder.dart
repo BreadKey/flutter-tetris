@@ -34,11 +34,11 @@ class NextMinoRenderer extends StatelessWidget {
                         .map((block) => MapEntry(block.point, block)));
 
                 final offsetX =
-                    name == TetrominoName.iMino || name == TetrominoName.oMino
+                    name == TetrominoName.I || name == TetrominoName.O
                         ? -constraints.maxWidth / 5 / 2
                         : 0.0;
 
-                final offsetY = name == TetrominoName.iMino
+                final offsetY = name == TetrominoName.I
                     ? -constraints.maxHeight / 4 / 2
                     : 0.0;
 

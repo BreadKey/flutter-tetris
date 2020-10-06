@@ -1,6 +1,6 @@
 part of '../tetris.dart';
 
-enum TetrominoName { iMino, oMino, tMino, sMino, zMino, jMino, lMino }
+enum TetrominoName { I, O, T, S, Z, J, L }
 
 abstract class Tetromino {
   final TetrominoName name;
@@ -24,19 +24,19 @@ abstract class Tetromino {
     assert(name != null);
 
     switch (name) {
-      case TetrominoName.iMino:
+      case TetrominoName.I:
         return IMino(spawnPoint);
-      case TetrominoName.oMino:
+      case TetrominoName.O:
         return OMino(spawnPoint);
-      case TetrominoName.tMino:
+      case TetrominoName.T:
         return TMino(spawnPoint);
-      case TetrominoName.sMino:
+      case TetrominoName.S:
         return SMino(spawnPoint);
-      case TetrominoName.zMino:
+      case TetrominoName.Z:
         return ZMino(spawnPoint);
-      case TetrominoName.jMino:
+      case TetrominoName.J:
         return JMino(spawnPoint);
-      case TetrominoName.lMino:
+      case TetrominoName.L:
         return LMino(spawnPoint);
     }
   }
@@ -44,8 +44,12 @@ abstract class Tetromino {
   factory Tetromino.ghost() => _GhostMino();
 
   void move(Direction direction) {
+    moveDistance(direction.vector);
+  }
+
+  void moveDistance(Point distance) {
     blocks.forEach((block) {
-      block.point += direction.vector;
+      block.point += distance;
     });
   }
 
@@ -98,7 +102,7 @@ abstract class Tetromino {
 class IMino extends Tetromino {
   IMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.iMino,
+            TetrominoName.I,
             List.unmodifiable(
                 [Point(-1, -1), Point(0, -1), Point(1, -1), Point(2, -1)]),
             spawnPoint) {
@@ -110,9 +114,9 @@ class IMino extends Tetromino {
   Point<int> get center => _center;
 
   @override
-  void move(Direction direction) {
-    super.move(direction);
-    _center += direction.vector;
+  void moveDistance(Point distance) {
+    super.moveDistance(distance);
+    _center += distance;
   }
 
   @override
@@ -143,7 +147,7 @@ class IMino extends Tetromino {
 class OMino extends Tetromino {
   OMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.oMino,
+            TetrominoName.O,
             List.unmodifiable(
                 [Point(0, 0), Point(1, 0), Point(0, -1), Point(1, -1)]),
             spawnPoint);
@@ -160,7 +164,7 @@ class OMino extends Tetromino {
 class TMino extends Tetromino {
   TMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.tMino,
+            TetrominoName.T,
             List.unmodifiable(
                 [Point(-1, 0), Point(0, 0), Point(1, 0), Point(0, -1)]),
             spawnPoint);
@@ -174,7 +178,7 @@ class TMino extends Tetromino {
 class SMino extends Tetromino {
   SMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.sMino,
+            TetrominoName.S,
             List.unmodifiable(
                 [Point(0, 0), Point(1, 0), Point(-1, -1), Point(0, -1)]),
             spawnPoint);
@@ -188,7 +192,7 @@ class SMino extends Tetromino {
 class ZMino extends Tetromino {
   ZMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.zMino,
+            TetrominoName.Z,
             List.unmodifiable(
                 [Point(-1, 0), Point(0, 0), Point(0, -1), Point(1, -1)]),
             spawnPoint);
@@ -202,7 +206,7 @@ class ZMino extends Tetromino {
 class JMino extends Tetromino {
   JMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.jMino,
+            TetrominoName.J,
             List.unmodifiable(
                 [Point(-1, 0), Point(0, 0), Point(1, 0), Point(1, -1)]),
             spawnPoint);
@@ -216,7 +220,7 @@ class JMino extends Tetromino {
 class LMino extends Tetromino {
   LMino(Point<int> spawnPoint)
       : super(
-            TetrominoName.lMino,
+            TetrominoName.L,
             List.unmodifiable(
                 [Point(-1, 0), Point(0, 0), Point(1, 0), Point(-1, -1)]),
             spawnPoint);
@@ -227,7 +231,7 @@ class LMino extends Tetromino {
 
 class _GhostMino extends Tetromino {
   _GhostMino()
-      : super(TetrominoName.tMino, List.generate(4, (index) => Point(0, 0)),
+      : super(TetrominoName.T, List.generate(4, (index) => Point(0, 0)),
             Point(0, 0),
             isGhost: true);
   @override
