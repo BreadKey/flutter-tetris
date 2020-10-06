@@ -94,7 +94,6 @@ extension SuperRotationSystem on Tetris {
         break;
       case Direction.left:
         x *= -1;
-        y *= -1;
         break;
     }
 

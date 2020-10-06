@@ -106,4 +106,22 @@ void main() {
     tetris.rotateBySrs(tMino, playfield);
     expectPoints(tMino, [Point(1, 1), Point(2, 1), Point(3, 1), Point(2, 2)]);
   });
+
+  test("T spin test", () {
+    final grey = Block(color: Colors.grey);
+    final List<List<Block>> playfield = [
+      [null, null, grey, grey],
+      [null, null, grey, grey],
+      [null, null, null, grey],
+      [grey, grey, null, grey],
+      [grey, null, null, grey],
+      [grey, grey, null, grey]
+    ].reversed.toList();
+
+    final tMino = Tetromino.spawn(TetrominoName.T, Point(1, 4));
+
+    tetris.rotateBySrs(tMino, playfield, clockwise: false);
+
+    expectPoints(tMino, [Point(1, 1), Point(2, 2), Point(2, 1), Point(2, 0)]);
+  });
 }
