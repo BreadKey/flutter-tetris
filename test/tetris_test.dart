@@ -37,13 +37,19 @@ void main() {
   test("can move", () {
     tetris.spawn(TetrominoName.I);
 
-    expect(tetris.canMove(tetris.currentTetromino, Direction.down), true);
+    expect(
+        tetris.canMove(
+            tetris.currentTetromino, tetris.playfield, Direction.down),
+        true);
 
-    tetris.move(Direction.down);
+    tetris.moveCurrentMino(Direction.down);
 
     tetris.spawn(TetrominoName.I);
 
-    expect(tetris.canMove(tetris.currentTetromino, Direction.down), false);
+    expect(
+        tetris.canMove(
+            tetris.currentTetromino, tetris.playfield, Direction.down),
+        false);
   });
 
   test("super rotation system", () {
@@ -66,7 +72,7 @@ void main() {
     expectPoints(jMino, [Point(4, 1), Point(5, 1), Point(5, 2), Point(5, 3)]);
   });
 
-  test("rotate T test", () {
+  test("kick T test", () {
     final List<List<Block>> playfield = [
       [null, null, null, null],
       [null, null, null, null],
@@ -78,18 +84,26 @@ void main() {
     tetris.rotateBySrs(tMino, playfield);
     expectPoints(tMino, [Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 1)]);
 
-    tMino.blocks.forEach((block) {
-      playfield.setBlockAt(block.point, null);
-    });
-
-    tMino.move(Direction.left);
-
-    tMino.blocks.forEach((block) {
-      playfield.setBlockAt(block.point, block);
-    });
+    tetris.move(tMino, playfield, Direction.left);
 
     tetris.rotateBySrs(tMino, playfield);
-
     expectPoints(tMino, [Point(0, 1), Point(1, 1), Point(2, 1), Point(1, 0)]);
+
+    tetris.rotateBySrs(tMino, playfield, clockwise: false);
+    expectPoints(tMino, [Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 1)]);
+
+    tetris.move(tMino, playfield, Direction.left);
+
+    tetris.rotateBySrs(tMino, playfield, clockwise: false);
+
+    expectPoints(tMino, [Point(0, 1), Point(1, 1), Point(2, 1), Point(1, 2)]);
+
+    tetris.rotateBySrs(tMino, playfield, clockwise: false);
+
+    tetris.move(tMino, playfield, Direction.right);
+    tetris.move(tMino, playfield, Direction.right);
+
+    tetris.rotateBySrs(tMino, playfield);
+    expectPoints(tMino, [Point(1, 1), Point(2, 1), Point(3, 1), Point(2, 2)]);
   });
 }

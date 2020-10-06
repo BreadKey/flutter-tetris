@@ -2,10 +2,26 @@ part of '../tetris.dart';
 
 extension SuperRotationSystem on Tetris {
   static const testTable = {
-    2: Point<int>(-1, 0),
-    3: Point<int>(-1, 1),
-    4: Point<int>(0, -2),
-    5: Point<int>(-1, -2)
+    2: Point(-1, 0),
+    3: Point(-1, 1),
+    4: Point(0, -2),
+    5: Point(-1, -2)
+  };
+
+  static const testTableI = {
+    /// Clockwise
+    true: {
+      2: Point(-2, 0),
+      3: Point(1, 0),
+      4: Point(-2, -1),
+      5: Point(1, 2),
+    },
+    false: {
+      2: Point(1, 0),
+      3: Point(-2, 0),
+      4: Point(1, -2),
+      5: Point(-2, 1),
+    }
   };
 
   bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,
@@ -35,40 +51,59 @@ extension SuperRotationSystem on Tetris {
     return rotationSucceed;
   }
 
-  bool kick(Tetromino tetromino, List<List<Block>> playfiled, bool clockwise) {
+  bool kick(Tetromino tetromino, List<List<Block>> playfield, bool clockwise) {
     bool kickSucceed = false;
     for (int testStep = 2; testStep <= 5; testStep++) {
-      int x = testTable[testStep].x;
-      int y = testTable[testStep].y;
+      final testOffset = getTestOffset(tetromino, testStep, clockwise);
 
-      if (!clockwise) {
-        x *= -1;
-        y *= -1;
-      }
-
-      if (!tetromino.heading.isHorizontal) {
-        x *= -1;
-        y *= -1;
-      }
-
-      print("$x $y");
-
-      tetromino.moveDistance(Point(x, y));
+      tetromino.moveDistance(testOffset);
 
       if (isValidPosition(tetromino, playfield)) {
         kickSucceed = true;
         break;
       } else {
-        tetromino.moveDistance(Point(-x, -y));
+        tetromino.moveDistance(Point(-testOffset.x, -testOffset.y));
       }
     }
 
     return kickSucceed;
   }
 
+  Point<int> getTestOffset(Tetromino tetromino, int testStep, bool clockwise) {
+    final testOffset = tetromino.name == TetrominoName.I
+        ? testTableI[clockwise][testStep]
+        : testTable[testStep];
+
+    int x = testOffset.x;
+    int y = testOffset.y;
+
+    switch (tetromino.heading) {
+      case Direction.right:
+        break;
+      case Direction.up:
+        if (!clockwise) {
+          x *= -1;
+          y *= -1;
+        }
+        break;
+      case Direction.down:
+        if (clockwise) {
+          x *= -1;
+          y *= -1;
+        }
+        break;
+      case Direction.left:
+        x *= -1;
+        y *= -1;
+        break;
+    }
+
+    return Point(x, y);
+  }
+
   bool isValidPosition(Tetromino tetromino, List<List<Block>> playfield) {
     for (Block block in tetromino.blocks) {
-      if (isOutOfPlayfield(block.point)) return false;
+      if (playfield.isWall(block.point)) return false;
 
       final placedBlock = playfield.getBlockAt(block.point);
       if (!isBlockNullOrGhost(placedBlock)) {

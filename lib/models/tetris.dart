@@ -18,6 +18,12 @@ extension Playfield on List<List<Block>> {
   void setBlockAt(Point<int> point, Block block) {
     this[point.y][point.x] = block;
   }
+
+  int get width => first.length;
+  int get height => length;
+
+  bool isWall(Point<int> point) =>
+      point.x < 0 || point.x >= width || point.y < 0 || point.y >= height;
 }
 
 enum DropMode { gravity, soft, hard }
@@ -127,7 +133,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   void spawn(TetrominoName tetrominoName) {
     final tetromino = Tetromino.spawn(tetrominoName, spawnPoint);
 
-    if (canMove(tetromino, Direction.down)) {
+    if (canMove(tetromino, _playfield, Direction.down)) {
       tetromino.move(Direction.down);
 
       _currentTetromino = tetromino;
@@ -135,7 +141,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         _playfield.setBlockAt(block.point, block);
       });
 
-      _setGhostPiece();
+      _setGhostPiece(_currentTetromino, _playfield);
     } else {
       _gameOver();
     }
@@ -143,15 +149,17 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     notifyListeners();
   }
 
-  bool canMove(Tetromino tetromino, Direction direction, {Tetromino mask}) {
+  bool canMove(
+      Tetromino tetromino, List<List<Block>> playfield, Direction direction,
+      {Tetromino mask}) {
     for (Block block in tetromino.blocks) {
       final nextPoint = block.point + direction.vector;
 
-      if (isOutOfPlayfield(nextPoint)) {
+      if (playfield.isWall(nextPoint)) {
         return false;
       }
 
-      final blockAtNextpoint = _playfield.getBlockAt(nextPoint);
+      final blockAtNextpoint = playfield.getBlockAt(nextPoint);
 
       if (!isBlockNullOrGhost(blockAtNextpoint) &&
           !blockAtNextpoint.isPartOf(mask ?? tetromino)) return false;
@@ -162,18 +170,12 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   bool isBlockNullOrGhost(Block block) => block?.isGhost != false;
 
-  bool isOutOfPlayfield(Point<int> point) =>
-      point.x < 0 ||
-      point.x >= playfieldWidth ||
-      point.y < 0 ||
-      point.y >= playfieldHeight;
-
   void _update() {
     _handleGravity(_currentDropMode == DropMode.hard ? 20 : gravities[_level]);
     if (_isStucked) {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
-        if (!canMove(_currentTetromino, Direction.down)) {
+        if (!canMove(_currentTetromino, _playfield, Direction.down)) {
           lock();
         }
       }
@@ -187,7 +189,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       final step = _accumulatedPower ~/ 1;
 
       for (int i = 0; i < step; i++) {
-        final isMoved = move(Direction.down);
+        final isMoved = moveCurrentMino(Direction.down);
         if (isMoved) {
           _stuckedSeconds = 0;
           _isStucked = false;
@@ -220,35 +222,21 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   void commandMove(Direction direction) {
     if (_currentDropMode != DropMode.hard) {
-      move(direction);
+      moveCurrentMino(direction);
     }
   }
 
   void commandRotate({bool clockwise: true}) {
     if (_currentDropMode != DropMode.hard) {
-      rotate(clockwise: clockwise);
+      rotateCurrentMino(clockwise: clockwise);
     }
   }
 
-  bool move(Direction direction) {
-    if (_currentTetromino == null) {
-      return false;
-    }
-
-    if (canMove(_currentTetromino, direction)) {
-      _currentTetromino.blocks.forEach((block) {
-        _playfield.setBlockAt(block.point, null);
-      });
-
-      _currentTetromino.move(direction);
-      _currentTetromino.blocks.forEach((block) {
-        _playfield.setBlockAt(block.point, block);
-      });
-
+  bool moveCurrentMino(Direction direction) {
+    if (move(_currentTetromino, _playfield, direction)) {
       if (direction.isHorizontal) {
-        _setGhostPiece();
+        _setGhostPiece(_currentTetromino, _playfield);
       }
-
       notifyListeners();
 
       return true;
@@ -257,9 +245,31 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     return false;
   }
 
-  void rotate({bool clockwise: true}) {
+  bool move(
+      Tetromino tetromino, List<List<Block>> playfield, Direction direction) {
+    if (tetromino == null) {
+      return false;
+    }
+
+    if (canMove(tetromino, playfield, direction)) {
+      tetromino.blocks.forEach((block) {
+        playfield.setBlockAt(block.point, null);
+      });
+
+      tetromino.move(direction);
+      tetromino.blocks.forEach((block) {
+        playfield.setBlockAt(block.point, block);
+      });
+
+      return true;
+    }
+
+    return false;
+  }
+
+  void rotateCurrentMino({bool clockwise: true}) {
     if (rotateBySrs(_currentTetromino, _playfield, clockwise: clockwise)) {
-      _setGhostPiece();
+      _setGhostPiece(_currentTetromino, _playfield);
       notifyListeners();
     }
   }
@@ -317,10 +327,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     }
   }
 
-  void _setGhostPiece() {
+  void _setGhostPiece(Tetromino tetromino, List<List<Block>> playfield) {
     for (Block ghostBlock in _ghostPiece.blocks) {
-      if (_playfield.getBlockAt(ghostBlock.point)?.isGhost == true) {
-        _playfield.setBlockAt(ghostBlock.point, null);
+      if (playfield.getBlockAt(ghostBlock.point)?.isGhost == true) {
+        playfield.setBlockAt(ghostBlock.point, null);
       }
     }
 
@@ -329,12 +339,11 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       _ghostPiece.blocks[index].color = _currentTetromino.blocks[index].color;
     }
 
-    while (canMove(_ghostPiece, Direction.down, mask: _currentTetromino)) {
+    while (canMove(_ghostPiece, playfield, Direction.down, mask: tetromino)) {
       _ghostPiece.move(Direction.down);
     }
 
-    final currentMinoPoints =
-        _currentTetromino.blocks.map((block) => block.point);
+    final currentMinoPoints = tetromino.blocks.map((block) => block.point);
 
     _ghostPiece.blocks.forEach((ghostBlock) {
       if (!currentMinoPoints.contains(ghostBlock.point)) {
