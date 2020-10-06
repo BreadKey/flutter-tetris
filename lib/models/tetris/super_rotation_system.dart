@@ -2,10 +2,10 @@ part of '../tetris.dart';
 
 extension SuperRotationSystem on Tetris {
   static const testTable = {
-    2: Point<int>(-1, 0),
-    3: Point<int>(-1, 1),
-    4: Point<int>(0, -2),
-    5: Point<int>(-1, -2)
+    2: Point<int>(1, 0),
+    3: Point<int>(1, -1),
+    4: Point<int>(0, 2),
+    5: Point<int>(1, 2)
   };
 
   bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,

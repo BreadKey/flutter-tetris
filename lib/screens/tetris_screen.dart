@@ -33,85 +33,78 @@ class _TetrisScreenState extends State<TetrisScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       color: antiqueWhite,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
         children: [
-          Expanded(
-            flex: 2618,
-            child: Align(
-                alignment: Alignment.topCenter,
-                child: AspectRatio(
-                  aspectRatio: 4 / 5,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 14),
-                    padding: EdgeInsets.only(
-                        left: 24, right: 24, bottom: 38),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(24),
-                            bottom: Radius.circular(38)),
-                        gradient: LinearGradient(
-                            colors: [
-                              Colors.grey[400],
-                              Colors.grey[500],
-                              Colors.grey[600],
-                              Colors.grey[700],
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight),
-                        boxShadow: [
-                          BoxShadow(color: Colors.grey[800], blurRadius: 14),
-                          BoxShadow(
-                            color: Colors.grey,
-                            spreadRadius: 8,
-                          ),
-                        ]),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PlayfieldRenderer(tetris),
-                        const VerticalDivider(
-                          color: Colors.transparent,
+          Align(
+              alignment: Alignment.topCenter,
+              child: AspectRatio(
+                aspectRatio: 4 / 5,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 14),
+                  padding: EdgeInsets.only(left: 24, right: 24, bottom: 38),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(24),
+                          bottom: Radius.circular(38)),
+                      gradient: LinearGradient(colors: [
+                        Colors.grey[400],
+                        Colors.grey[500],
+                        Colors.grey[600],
+                        Colors.grey[700],
+                      ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                      boxShadow: [
+                        BoxShadow(color: Colors.grey[800], blurRadius: 14),
+                        BoxShadow(
+                          color: Colors.grey,
+                          spreadRadius: 8,
                         ),
-                        Expanded(
-                          child: SafeArea(
-                              child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              NextMinoRenderer(tetris),
-                              const Divider(
-                                color: Colors.transparent,
+                      ]),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PlayfieldRenderer(tetris),
+                      const VerticalDivider(
+                        color: Colors.transparent,
+                      ),
+                      Expanded(
+                        child: SafeArea(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            NextMinoRenderer(tetris),
+                            const Divider(
+                              color: Colors.transparent,
+                            ),
+                            LabelAndNumberRenderer("Level", tetris.levelStream),
+                            const Divider(
+                              color: Colors.transparent,
+                            ),
+                            LabelAndNumberRenderer("Score", tetris.scoreStream),
+                            const Divider(
+                              color: Colors.transparent,
+                            ),
+                            Expanded(
+                              child: Material(
+                                color: neutralBlackC,
+                                elevation: 4,
+                                child: const SizedBox.expand(),
                               ),
-                              LabelAndNumberRenderer(
-                                  "Level", tetris.levelStream),
-                              const Divider(
-                                color: Colors.transparent,
-                              ),
-                              LabelAndNumberRenderer(
-                                  "Score", tetris.scoreStream),
-                              const Divider(
-                                color: Colors.transparent,
-                              ),
-                              Expanded(
-                                child: Material(
-                                  color: neutralBlackC,
-                                  elevation: 4,
-                                  child: const SizedBox.expand(),
-                                ),
-                              )
-                            ],
-                          )),
-                        )
-                      ],
-                    ),
+                            )
+                          ],
+                        )),
+                      )
+                    ],
                   ),
-                )),
-          ),
-          Expanded(
-            flex: 1000,
-            child: Controller(
-              longPressInterval:
-                  const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
+                ),
+              )),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 240,
+              child: Controller(
+                longPressInterval:
+                    const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
+              ),
             ),
           )
         ],
