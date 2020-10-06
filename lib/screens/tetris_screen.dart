@@ -67,7 +67,7 @@ class _TetrisScreenState extends State<TetrisScreen>
           Align(
               alignment: Alignment.topCenter,
               child: AspectRatio(
-                aspectRatio: 6 / 7,
+                aspectRatio: 5 / 6,
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 14),
                   padding: EdgeInsets.only(left: 24, right: 24, bottom: 38),
