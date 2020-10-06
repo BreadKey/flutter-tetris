@@ -1,6 +1,6 @@
-# tetris
+# Just Tetris
 
-A new Flutter project.
+A new Flutter Tetris game.
 
 ## Getting Started
 
@@ -14,3 +14,9 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Demo
+### Android
+![ezgif com-video-to-gif-3](https://user-images.githubusercontent.com/37973204/95225919-4f348e80-0837-11eb-9f67-c382e6352b5a.gif)
+### iOS(iPad)
+![IMG_0097](https://user-images.githubusercontent.com/37973204/95226733-42646a80-0838-11eb-9848-58e799683f92.PNG)
