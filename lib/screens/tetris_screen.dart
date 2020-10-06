@@ -132,7 +132,7 @@ class _TetrisScreenState extends State<TetrisScreen>
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 210 - MediaQuery.of(context).padding.bottom,
+              height: 220 - MediaQuery.of(context).padding.bottom,
               child: Controller(
                 longPressInterval:
                     const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
