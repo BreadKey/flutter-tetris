@@ -17,6 +17,8 @@ class TetrisScreen extends StatefulWidget {
 class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
   static const gameScreenRatio = 4 / 5;
+  static const controllerHeight = 220;
+
   Tetris tetris;
 
   AnimationController hardDropAnimController;
@@ -61,12 +63,15 @@ class _TetrisScreenState extends State<TetrisScreen>
 
   @override
   Widget build(BuildContext context) {
-    final sizeOfScreen = MediaQuery.of(context).size;
+    final mediaQuery = MediaQuery.of(context);
+    final sizeOfScreen = mediaQuery.size;
 
     final height = min(
-            min(sizeOfScreen.width, sizeOfScreen.height) / gameScreenRatio,
-            sizeOfScreen.height) -
-        30;
+        min(sizeOfScreen.width, sizeOfScreen.height) / gameScreenRatio,
+        sizeOfScreen.height -
+            (mediaQuery.orientation == Orientation.portrait
+                ? controllerHeight
+                : 30));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -140,7 +145,7 @@ class _TetrisScreenState extends State<TetrisScreen>
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 220 - MediaQuery.of(context).padding.bottom,
+              height: controllerHeight - MediaQuery.of(context).padding.bottom,
               child: Controller(
                 longPressInterval:
                     const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
