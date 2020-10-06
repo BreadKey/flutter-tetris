@@ -23,22 +23,45 @@ abstract class Tetromino {
   factory Tetromino.from(TetrominoName name, Point<int> spawnPoint) {
     assert(name != null);
 
+    Tetromino tetromino;
+
     switch (name) {
       case TetrominoName.I:
-        return IMino(spawnPoint);
+        tetromino = IMino(spawnPoint);
+        break;
       case TetrominoName.O:
-        return OMino(spawnPoint);
+        tetromino = OMino(spawnPoint);
+        break;
       case TetrominoName.T:
-        return TMino(spawnPoint);
+        tetromino = TMino(spawnPoint);
+        break;
       case TetrominoName.S:
-        return SMino(spawnPoint);
+        tetromino = SMino(spawnPoint);
+        break;
       case TetrominoName.Z:
-        return ZMino(spawnPoint);
+        tetromino = ZMino(spawnPoint);
+        break;
       case TetrominoName.J:
-        return JMino(spawnPoint);
+        tetromino = JMino(spawnPoint);
+        break;
       case TetrominoName.L:
-        return LMino(spawnPoint);
+        tetromino = LMino(spawnPoint);
+        break;
     }
+
+    switch (name) {
+      case TetrominoName.J:
+      case TetrominoName.L:
+      case TetrominoName.T:
+        tetromino.rotate();
+        tetromino.rotate();
+        tetromino.move(Direction.down);
+        break;
+      default:
+        break;
+    }
+
+    return tetromino;
   }
 
   factory Tetromino.ghost() => _GhostMino();

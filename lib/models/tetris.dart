@@ -127,18 +127,6 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   void spawn(TetrominoName tetrominoName) {
     final tetromino = Tetromino.from(tetrominoName, spawnPoint);
 
-    switch (tetrominoName) {
-      case TetrominoName.J:
-      case TetrominoName.L:
-      case TetrominoName.T:
-        tetromino.rotate();
-        tetromino.rotate();
-        tetromino.move(Direction.down);
-        break;
-      default:
-        break;
-    }
-
     if (canMove(tetromino, Direction.down)) {
       tetromino.move(Direction.down);
 
