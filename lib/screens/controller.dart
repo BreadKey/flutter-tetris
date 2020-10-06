@@ -8,7 +8,7 @@ class Controller extends StatelessWidget {
   static const double actionButtonSpace = 12 * 1.518;
 
   final int longPressSensitivity;
-  final double defaultCircleButtonSize = 52;
+  final double defaultCircleButtonSize = 48;
   final Duration longPressInterval;
 
   final _inputManager = InputManager.instance;

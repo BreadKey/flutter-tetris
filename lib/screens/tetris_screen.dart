@@ -38,7 +38,7 @@ class _TetrisScreenState extends State<TetrisScreen> {
           Align(
               alignment: Alignment.topCenter,
               child: AspectRatio(
-                aspectRatio: 4 / 5,
+                aspectRatio: 6 / 7,
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 14),
                   padding: EdgeInsets.only(left: 24, right: 24, bottom: 38),
@@ -100,7 +100,7 @@ class _TetrisScreenState extends State<TetrisScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 200 - MediaQuery.of(context).padding.bottom,
+              height: 210 - MediaQuery.of(context).padding.bottom,
               child: Controller(
                 longPressInterval:
                     const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
