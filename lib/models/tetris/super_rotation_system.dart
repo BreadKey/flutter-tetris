@@ -84,6 +84,8 @@ extension SuperRotationSystem on Tetris {
         if (!clockwise) {
           x *= -1;
           y *= -1;
+        } else {
+          y *= -1;
         }
         break;
       case Direction.down:
