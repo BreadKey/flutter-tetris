@@ -74,6 +74,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   final PublishSubject<TetrisEvent> _eventSubject = PublishSubject();
   Stream<TetrisEvent> get eventStream => _eventSubject.stream;
 
+  bool _isGameOver = false;
+
+  bool get canUpdate => !_paused;
+
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
@@ -99,7 +103,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
-      if (!_paused) {
+      if (canUpdate) {
         _update();
       }
     });
@@ -127,6 +131,9 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     _score = 0;
     _scoreSubject.sink.add(_score);
+
+    _isGameOver = false;
+    _eventSubject.sink.add(null);
   }
 
   void spawnNextMino() {
@@ -289,27 +296,48 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         .where((line) => line.every((block) => block != null && !block.isGhost))
         .toList();
 
-    linesCanBroken.forEach((line) {
-      _playfield.remove(line);
-    });
+    TetrisEvent event;
 
-    if (isTetris(linesCanBroken)) {
-      _eventSubject.sink.add(TetrisEvent.tetris);
-      scoreUp(linesCanBroken.length);
-      levelUp();
-    } else if (isTSpin(_currentTetromino, linesCanBroken)) {
-      _eventSubject.sink.add(TetrisEvent.tetris);
-      levelUp();
+    final lastLevel = _level;
+
+    if (linesCanBroken.isNotEmpty) {
+      if (isTetris(linesCanBroken)) {
+        event = TetrisEvent.tetris;
+        levelUp();
+      } else if (isTSpin(_currentTetromino, linesCanBroken)) {
+        switch (linesCanBroken.length) {
+          case 1:
+            event = TetrisEvent.tSpinSingle;
+            break;
+          case 2:
+            event = TetrisEvent.tSpinDouble;
+            break;
+          case 3:
+            event = TetrisEvent.tSpinTriple;
+        }
+        levelUp();
+      }
+
+      scoreUp(lastLevel, linesCanBroken.length, event);
+      brakeLines(linesCanBroken);
     }
 
-    _playfield.addAll(List.generate(linesCanBroken.length,
-        (index) => List<Block>.generate(playfieldWidth, (index) => null)));
+    _eventSubject.sink.add(event);
   }
 
   bool isTetris(List<List<Block>> brokenLines) => brokenLines.length == 4;
   bool isTSpin(Tetromino tetromino, List<List<Block>> brokenLines) => false;
 
-  void scoreUp(int brokenLinesLength) {
+  void brakeLines(List<List<Block>> linesCanBroken) {
+    linesCanBroken.forEach((line) {
+      _playfield.remove(line);
+    });
+
+    _playfield.addAll(List.generate(linesCanBroken.length,
+        (index) => List<Block>.generate(playfieldWidth, (index) => null)));
+  }
+
+  void scoreUp(int level, int brokenLinesLength, TetrisEvent event) {
     if (brokenLinesLength == 0) return;
 
     switch (brokenLinesLength) {
@@ -363,12 +391,14 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   }
 
   void _gameOver() {
+    _isGameOver = true;
     _frameGenerator.cancel();
-    startGame();
+    _eventSubject.sink.add(TetrisEvent.gameOver);
   }
 
   @override
   void onDirectionEntered(Direction direction) {
+    if (_isGameOver) return;
     if (direction == Direction.up) {
       commandRotate();
     } else {
@@ -378,6 +408,11 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   @override
   void onButtonEntered(ButtonKey key) {
+    if (_isGameOver) {
+      startGame();
+      return;
+    }
+
     switch (key) {
       case ButtonKey.a:
         commandRotate(clockwise: false);

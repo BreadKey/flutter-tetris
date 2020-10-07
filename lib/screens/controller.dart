@@ -5,7 +5,7 @@ import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
-  static const double actionButtonSpace = 12 * 1.518;
+  static const double actionButtonSpace = 14 * 1.518;
 
   final int longPressSensitivity;
   final double defaultCircleButtonSize = 52;

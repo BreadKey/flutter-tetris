@@ -6,5 +6,6 @@ enum TetrisEvent {
   miniTSpin,
   tSpinSingle,
   tSpinDouble,
-  tSpinTriple
+  tSpinTriple,
+  gameOver
 }
