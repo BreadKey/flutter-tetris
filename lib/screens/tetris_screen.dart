@@ -18,7 +18,7 @@ class TetrisScreen extends StatefulWidget {
 class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
   static const gameScreenRatio = 4 / 5;
-  static const controllerHeight = 225;
+  static const controllerHeight = 220;
 
   Tetris tetris;
 

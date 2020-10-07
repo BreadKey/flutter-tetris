@@ -105,7 +105,7 @@ class Controller extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(
-                height: actionButtonSpace * 5,
+                height: actionButtonSpace * 3,
               ),
               buildCircleButton(
                 context,
@@ -124,7 +124,7 @@ class Controller extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(
-                height: actionButtonSpace * 3,
+                height: actionButtonSpace,
               ),
               buildCircleButton(
                 context,
@@ -142,14 +142,14 @@ class Controller extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Divider(
-                height: actionButtonSpace,
-              ),
               buildCircleButton(context, onPressed: () {
                 _inputManager.enterButton(ButtonKey.c);
               },
                   child: const Icon(Icons.rotate_right),
                   size: defaultCircleButtonSize),
+              const Divider(
+                height: actionButtonSpace,
+              ),
             ],
           )
         ],
