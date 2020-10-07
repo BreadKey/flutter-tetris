@@ -59,6 +59,7 @@ class Controller extends StatelessWidget {
                 interval: longPressInterval,
                 color: neutralBlackC,
                 textColor: Colors.white,
+                height: defaultCircleButtonSize,
                 child: const Icon(Icons.arrow_left),
                 onPressed: () {
                   _inputManager.enterDirection(Direction.left);
@@ -72,6 +73,7 @@ class Controller extends StatelessWidget {
                 interval: longPressInterval,
                 color: neutralBlackC,
                 textColor: Colors.white,
+                height: defaultCircleButtonSize,
                 child: const Icon(Icons.arrow_right),
                 onPressed: () {
                   _inputManager.enterDirection(Direction.right);
@@ -105,7 +107,7 @@ class Controller extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(
-                height: actionButtonSpace * 3,
+                height: actionButtonSpace * 5,
               ),
               buildCircleButton(
                 context,
@@ -124,7 +126,7 @@ class Controller extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(
-                height: actionButtonSpace,
+                height: actionButtonSpace * 3,
               ),
               buildCircleButton(
                 context,
@@ -142,14 +144,14 @@ class Controller extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const Divider(
+                height: actionButtonSpace,
+              ),
               buildCircleButton(context, onPressed: () {
                 _inputManager.enterButton(ButtonKey.c);
               },
                   child: const Icon(Icons.rotate_right),
                   size: defaultCircleButtonSize),
-              const Divider(
-                height: actionButtonSpace,
-              ),
             ],
           )
         ],
