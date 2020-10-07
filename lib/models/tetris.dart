@@ -293,9 +293,12 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       _playfield.remove(line);
     });
 
-    scoreUp(linesCanBroken);
-
-    if (isTetrisies(linesCanBroken)) {
+    if (isTetris(linesCanBroken)) {
+      _eventSubject.sink.add(TetrisEvent.tetris);
+      scoreUp(linesCanBroken.length);
+      levelUp();
+    } else if (isTSpin(_currentTetromino, linesCanBroken)) {
+      _eventSubject.sink.add(TetrisEvent.tetris);
       levelUp();
     }
 
@@ -303,12 +306,13 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         (index) => List<Block>.generate(playfieldWidth, (index) => null)));
   }
 
-  bool isTetrisies(List<List<Block>> brokenLines) => brokenLines.length == 4;
+  bool isTetris(List<List<Block>> brokenLines) => brokenLines.length == 4;
+  bool isTSpin(Tetromino tetromino, List<List<Block>> brokenLines) => false;
 
-  void scoreUp(List<List<Block>> brokenLines) {
-    if (brokenLines.length == 0) return;
+  void scoreUp(int brokenLinesLength) {
+    if (brokenLinesLength == 0) return;
 
-    switch (brokenLines.length) {
+    switch (brokenLinesLength) {
       case 1:
         _score += 40 * (_level + 1);
         break;
