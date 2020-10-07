@@ -33,6 +33,13 @@ enum OnHardDrop { instantLock, wait }
 class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   static const fps = 64;
   static const secondsPerFrame = 1 / fps;
+  static const tSpinTestOffsets = [
+    Point(-1, 1),
+    Point(1, 1),
+    Point(1, -1),
+    Point(-1, -1)
+  ];
+
   List<List<Block>> _playfield;
 
   Iterable<Iterable<Block>> get playfield => _playfield;
@@ -77,6 +84,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   bool _isGameOver = false;
 
   bool get canUpdate => !_paused;
+
+  int _brokenLinesCountInLevel = 0;
+
+  bool _rotationOccuredBeforeLock = false;
 
   Tetris() {
     InputManager.instance.register(this);
@@ -134,12 +145,16 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     _isGameOver = false;
     _eventSubject.sink.add(null);
+
+    _brokenLinesCountInLevel = 0;
   }
 
   void spawnNextMino() {
     spawn(_nextMinoQueue.removeFirst());
     _nextMinoQueue.add(_randomMinoGenerator.getNext());
     _nextMinoSubject.sink.add(_nextMinoQueue.first);
+
+    _rotationOccuredBeforeLock = false;
   }
 
   void spawn(TetrominoName tetrominoName) {
@@ -249,6 +264,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     if (move(_currentTetromino, _playfield, direction)) {
       if (direction.isHorizontal) {
         _setGhostPiece(_currentTetromino, _playfield);
+        _rotationOccuredBeforeLock = false;
       }
       notifyListeners();
 
@@ -283,6 +299,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   void rotateCurrentMino({bool clockwise: true}) {
     if (rotateBySrs(_currentTetromino, _playfield, clockwise: clockwise)) {
       _setGhostPiece(_currentTetromino, _playfield);
+      _rotationOccuredBeforeLock =
+          !canMove(_currentTetromino, _playfield, Direction.down);
       notifyListeners();
     }
   }
@@ -298,27 +316,28 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     TetrisEvent event;
 
-    final lastLevel = _level;
-
     if (linesCanBroken.isNotEmpty) {
       if (isTetris(linesCanBroken)) {
         event = TetrisEvent.tetris;
-        levelUp();
-      } else if (isTSpin(_currentTetromino, linesCanBroken)) {
-        switch (linesCanBroken.length) {
-          case 1:
-            event = TetrisEvent.tSpinSingle;
-            break;
-          case 2:
-            event = TetrisEvent.tSpinDouble;
-            break;
-          case 3:
-            event = TetrisEvent.tSpinTriple;
+      } else if (isTSpin(_currentTetromino, _playfield)) {
+        if (hasRoof(_currentTetromino, _playfield)) {
+          switch (linesCanBroken.length) {
+            case 1:
+              event = TetrisEvent.tSpinSingle;
+              break;
+            case 2:
+              event = TetrisEvent.tSpinDouble;
+              break;
+            case 3:
+              event = TetrisEvent.tSpinTriple;
+              break;
+          }
+        } else {
+          event = TetrisEvent.tSpinMini;
         }
-        levelUp();
       }
 
-      scoreUp(lastLevel, linesCanBroken.length, event);
+      scoreUp(_level, linesCanBroken.length, event);
       brakeLines(linesCanBroken);
     }
 
@@ -326,7 +345,35 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   }
 
   bool isTetris(List<List<Block>> brokenLines) => brokenLines.length == 4;
-  bool isTSpin(Tetromino tetromino, List<List<Block>> brokenLines) => false;
+  bool isTSpin(Tetromino tetromino, List<List<Block>> playfield) {
+    if (tetromino.name != TetrominoName.T || !_rotationOccuredBeforeLock)
+      return false;
+
+    int blockCountArountT = 0;
+
+    for (Point<int> testOffset in tSpinTestOffsets) {
+      final testPoint = tetromino.center + testOffset;
+
+      if (playfield.isWall(testPoint) || isBlocked(testPoint, playfield)) {
+        blockCountArountT++;
+
+        if (blockCountArountT >= 3) return true;
+      }
+    }
+
+    return false;
+  }
+
+  bool isBlocked(Point<int> point, List<List<Block>> playfield) =>
+      !isBlockNullOrGhost(playfield.getBlockAt(point));
+
+  bool hasRoof(Tetromino tetromino, List<List<Block>> playfield) {
+    final leftTop = tetromino.center + Point(-1, 1);
+    final rightTop = tetromino.center + Point(1, 1);
+
+    return !playfield.isWall(leftTop) && isBlocked(leftTop, playfield) ||
+        !playfield.isWall(rightTop) && isBlocked(rightTop, playfield);
+  }
 
   void brakeLines(List<List<Block>> linesCanBroken) {
     linesCanBroken.forEach((line) {
@@ -335,23 +382,46 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     _playfield.addAll(List.generate(linesCanBroken.length,
         (index) => List<Block>.generate(playfieldWidth, (index) => null)));
+
+    _brokenLinesCountInLevel += linesCanBroken.length;
+
+    if (_brokenLinesCountInLevel >= linesCountToLevelUp) {
+      levelUp();
+      _brokenLinesCountInLevel -= linesCountToLevelUp;
+    }
   }
 
   void scoreUp(int level, int brokenLinesLength, TetrisEvent event) {
     if (brokenLinesLength == 0) return;
 
-    switch (brokenLinesLength) {
-      case 1:
-        _score += 40 * (_level + 1);
+    switch (event) {
+      case TetrisEvent.tetris:
+        _score += 800 * level;
         break;
-      case 2:
-        _score += 100 * (_level + 1);
+      case TetrisEvent.tSpinMini:
+        _score += 200 * brokenLinesLength * level;
         break;
-      case 3:
-        _score += 300 * (_level + 1);
+      case TetrisEvent.tSpinSingle:
+        _score += 800 * level;
         break;
-      case 4:
-        _score += 1200 * (_level + 1);
+      case TetrisEvent.tSpinDouble:
+        _score += 1200 * level;
+        break;
+      case TetrisEvent.tSpinTriple:
+        _score += 1600 * level;
+        break;
+      default:
+        switch (brokenLinesLength) {
+          case 1:
+            _score += 100 * level;
+            break;
+          case 2:
+            _score += 300 * level;
+            break;
+          case 3:
+            _score += 500 * level;
+            break;
+        }
         break;
     }
 

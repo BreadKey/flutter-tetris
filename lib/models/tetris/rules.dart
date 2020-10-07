@@ -40,3 +40,5 @@ const gravities = {
   14: 1.46 * 60 / fps,
   15: 2.36 * 60 / fps
 };
+
+const linesCountToLevelUp = 10;

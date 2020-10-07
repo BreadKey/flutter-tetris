@@ -3,7 +3,7 @@ part of '../tetris.dart';
 enum TetrisEvent {
   hardDrop,
   tetris,
-  miniTSpin,
+  tSpinMini,
   tSpinSingle,
   tSpinDouble,
   tSpinTriple,

@@ -37,7 +37,15 @@ class EventRenderer extends StatelessWidget {
           ? "Game Over!"
           : event == TetrisEvent.tetris
               ? "Tetris!"
-              : "",
+              : event == TetrisEvent.tSpinSingle
+                  ? "T-Spin Single!"
+                  : event == TetrisEvent.tSpinDouble
+                      ? "T-Spin Double!"
+                      : event == TetrisEvent.tSpinTriple
+                          ? "T-Spin Triple!"
+                          : event == TetrisEvent.tSpinMini
+                              ? "T-Spin Mini!"
+                              : "",
       textAlign: TextAlign.center,
       style: textTheme,
     );
