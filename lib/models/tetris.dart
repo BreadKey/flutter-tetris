@@ -343,11 +343,12 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         }
       }
 
+      _eventSubject.sink.add(event);
       scoreUp(_level, linesCanBroken.length, event);
       await breakLines(linesCanBroken);
+    } else {
+      _eventSubject.sink.add(null);
     }
-
-    _eventSubject.sink.add(event);
   }
 
   bool isTetris(List<List<Block>> brokenLines) => brokenLines.length == 4;
