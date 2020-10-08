@@ -38,8 +38,8 @@ class _JoyStickState extends State<JoyStick> {
   @override
   Widget build(BuildContext context) {
     final ball = SizedBox(
-      width: totalSize * 0.618 * 0.9,
-      height: totalSize * 0.618 * 0.9,
+      width: totalSize * 0.618 * 0.85,
+      height: totalSize * 0.618 * 0.85,
       child: Material(
         elevation: 8,
         shape: CircleBorder(),
@@ -59,8 +59,7 @@ class _JoyStickState extends State<JoyStick> {
           child: Container(
             margin: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey)),
+                shape: BoxShape.circle, border: Border.all(color: Colors.grey)),
           ),
         ),
       ),
@@ -103,8 +102,8 @@ class _JoyStickState extends State<JoyStick> {
                           (directionLengh * capacityPerDirection / 2) *
                           (index + 1),
                       child: Container(
-                        width: totalSize * 0.618 * 0.618 * 0.9,
-                        height: totalSize * 0.618 * 0.618 * 0.9,
+                        width: totalSize * 0.618 * 0.618 * 0.8,
+                        height: totalSize * 0.618 * 0.618 * 0.8,
                         child: DragTarget(
                           builder: (context, candidateData, rejectedData) =>
                               const SizedBox(),
@@ -165,12 +164,14 @@ class _JoyStickState extends State<JoyStick> {
                       : const SizedBox(),
                   onMove: (_) {
                     if (tickProviders[direction]?.isActive != true) {
-                      _onDirectionEntered(direction);
-                      tickProviders.forEach((key, value) {
-                        if (key != direction) {
-                          value?.cancel();
-                        }
-                      });
+                      if (lastDirection != direction) {
+                        _onDirectionEntered(direction);
+                        tickProviders.forEach((key, provider) {
+                          if (key != direction) {
+                            provider.cancel();
+                          }
+                        });
+                      }
 
                       tickProviders[direction] =
                           Timer.periodic(widget.interval, (timer) {
