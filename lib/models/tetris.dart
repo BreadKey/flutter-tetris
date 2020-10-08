@@ -93,6 +93,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   Timer _gameOverAnimatior;
 
+  TetrominoName _holdingMino;
+  final BehaviorSubject<TetrominoName> _holdingMinoSubject = BehaviorSubject();
+  Stream<TetrominoName> get holdingMinoStream => _holdingMinoSubject.stream;
+
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
@@ -104,6 +108,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _levelSubject.close();
     _scoreSubject.close();
     _eventSubject.close();
+    _holdingMinoSubject.close();
     _gameOverAnimatior?.cancel();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance?.removeObserver(this);
@@ -154,6 +159,9 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _eventSubject.sink.add(null);
 
     _brokenLinesCountInLevel = 0;
+
+    _holdingMino = null;
+    _holdingMinoSubject.sink.add(_holdingMino);
   }
 
   void spawnNextMino() {
@@ -538,6 +546,22 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       case ButtonKey.c:
         commandRotate();
         break;
+    }
+  }
+
+  void hold() {
+    if (_holdingMino == null) {
+      _holdingMino = _nextMinoQueue.removeFirst();
+      _nextMinoQueue.add(_randomMinoGenerator.getNext());
+
+      _holdingMinoSubject.sink.add(_holdingMino);
+      _nextMinoSubject.sink.add(_nextMinoQueue.first);
+    } else {
+      _nextMinoQueue.addFirst(_holdingMino);
+      _holdingMino = null;
+
+      _holdingMinoSubject.sink.add(_holdingMino);
+      _nextMinoSubject.sink.add(_nextMinoQueue.first);
     }
   }
 

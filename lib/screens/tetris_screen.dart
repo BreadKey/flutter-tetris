@@ -6,7 +6,7 @@ import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
 import 'package:tetris/screens/metal.dart';
-import 'package:tetris/screens/next_mino_renderder.dart';
+import 'package:tetris/screens/mino_renderder.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 import 'package:tetris/screens/tetris_screen/event_renderer.dart';
 import 'package:tetris/screens/tetris_screen/scoreboard_renderer.dart';
@@ -18,7 +18,7 @@ class TetrisScreen extends StatefulWidget {
 
 class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
-  static const gameScreenRatio = 4 / 5;
+  static const gameScreenRatio = 3 / 4;
   static const controllerHeight = 280;
 
   Tetris tetris;
@@ -73,57 +73,116 @@ class _TetrisScreenState extends State<TetrisScreen>
         sizeOfScreen.height -
             (mediaQuery.orientation == Orientation.portrait
                 ? controllerHeight
-                : 30));
+                : 40));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      color: antiqueWhite,
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+            Colors.white,
+            antiqueWhite,
+            antiqueWhite,
+            Color(0xFFccc0af)
+          ])),
       child: Stack(
         children: [
           Align(
               alignment: Alignment.topCenter,
-              child: Metal(
-                width: height * gameScreenRatio,
-                height: height,
-                margin: EdgeInsets.symmetric(horizontal: 14),
-                padding: EdgeInsets.only(left: 24, right: 24, bottom: 38),
-                child: SafeArea(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SlideTransition(
-                        position: hardDropAnimation,
-                        child: PlayfieldRenderer(tetris),
-                      ),
-                      const VerticalDivider(
-                        color: Colors.transparent,
-                      ),
-                      Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Metal(
+                      width: height * gameScreenRatio,
+                      height: height,
+                      margin: EdgeInsets.symmetric(horizontal: 14),
+                      padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+                      child: SafeArea(
                           child: Column(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          NextMinoRenderer(tetris),
-                          const Divider(
-                            color: Colors.transparent,
-                          ),
-                          ScoreboardRenderer(tetris),
-                          const Divider(
-                            color: Colors.transparent,
-                          ),
-                          EventRenderer(tetris),
-                          const Divider(color: Colors.transparent),
                           Expanded(
-                            child: Material(
-                              color: neutralBlackC,
-                              elevation: 4,
-                              child: const SizedBox.expand(),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SlideTransition(
+                                  position: hardDropAnimation,
+                                  child: PlayfieldRenderer(tetris),
+                                ),
+                                const VerticalDivider(
+                                  color: Colors.transparent,
+                                ),
+                                Expanded(
+                                    child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    MinoRenderer(tetris.nextMinoStream, info: "Next"),
+                                    const Divider(
+                                      color: Colors.transparent,
+                                    ),
+                                    MinoRenderer(tetris.holdingMinoStream, info: "Hold"),
+                                    const Divider(
+                                      color: Colors.transparent,
+                                    ),
+                                    EventRenderer(tetris),
+                                    const Divider(color: Colors.transparent),
+                                    Expanded(
+                                      child: Material(
+                                        color: neutralBlackC,
+                                        elevation: 4,
+                                        child: const SizedBox.expand(),
+                                      ),
+                                    )
+                                  ],
+                                )),
+                              ],
                             ),
-                          )
+                          ),
+                          const Divider(),
+                          ScoreboardRenderer(tetris)
                         ],
                       )),
-                    ],
+                    ),
                   ),
-                ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: Align(
+                        alignment: Alignment.centerRight,
+                        child: const Icon(
+                          Icons.volume_off,
+                          color: Colors.grey,
+                        ),
+                      )),
+                      MaterialButton(
+                        onPressed: () {},
+                        color: roseViolet,
+                        minWidth: 24,
+                        height: 8,
+                      ),
+                      MaterialButton(
+                        onPressed: () {
+                          tetris.hold();
+                        },
+                        color: roseViolet,
+                        minWidth: 24,
+                        height: 8,
+                      ),
+                      Expanded(
+                        child: const Material(
+                          color: Colors.transparent,
+                          child: Text(
+                            "hold",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
               )),
           Align(
             alignment: Alignment.bottomCenter,

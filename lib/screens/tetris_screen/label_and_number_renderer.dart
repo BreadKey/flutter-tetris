@@ -4,17 +4,19 @@ import 'package:provider/provider.dart';
 class LabelAndNumberRenderer extends StatelessWidget {
   final String label;
   final Stream<int> numberStream;
+  final Axis direction;
 
-  const LabelAndNumberRenderer(this.label, this.numberStream, {Key key})
+  const LabelAndNumberRenderer(this.label, this.numberStream, {Key key, this.direction = Axis.horizontal})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Flex(
+      direction: direction,
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label,
+        Text("$label: ",
             style: Theme.of(context)
                 .textTheme
                 .subtitle2

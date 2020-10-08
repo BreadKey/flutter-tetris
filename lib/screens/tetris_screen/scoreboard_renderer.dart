@@ -5,23 +5,32 @@ import 'package:tetris/screens/tetris_screen/label_and_number_renderer.dart';
 
 class ScoreboardRenderer extends StatelessWidget {
   final Tetris tetris;
+  final Axis direction;
 
-  const ScoreboardRenderer(this.tetris, {Key key}) : super(key: key);
+  const ScoreboardRenderer(this.tetris,
+      {Key key, this.direction = Axis.horizontal})
+      : super(key: key);
 
   @override
-  Widget build(BuildContext context) => AspectRatio(
-        aspectRatio: 4/ 5,
-        child: Material(
-          color: neutralBlackC,
-          elevation: 4,
-          child: Column(
-            children: [
-              Expanded(
-                  child: LabelAndNumberRenderer("Level", tetris.levelStream)),
-              Expanded(
-                  child: LabelAndNumberRenderer("Score", tetris.scoreStream))
-            ],
-          ),
+  Widget build(BuildContext context) => Material(
+        color: neutralBlackC,
+        elevation: 4,
+        child: Flex(
+          direction: direction,
+          children: [
+            Expanded(
+                child: LabelAndNumberRenderer(
+              "Level",
+              tetris.levelStream,
+              direction: direction,
+            )),
+            Expanded(
+                child: LabelAndNumberRenderer(
+              "Score",
+              tetris.scoreStream,
+              direction: direction,
+            ))
+          ],
         ),
       );
 }
