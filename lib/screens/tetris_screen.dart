@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
+import 'package:tetris/screens/metal.dart';
 import 'package:tetris/screens/next_mino_renderder.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 import 'package:tetris/screens/tetris_screen/event_renderer.dart';
@@ -81,27 +82,11 @@ class _TetrisScreenState extends State<TetrisScreen>
         children: [
           Align(
               alignment: Alignment.topCenter,
-              child: Container(
+              child: Metal(
                 width: height * gameScreenRatio,
                 height: height,
                 margin: EdgeInsets.symmetric(horizontal: 14),
                 padding: EdgeInsets.only(left: 24, right: 24, bottom: 38),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24), bottom: Radius.circular(38)),
-                    gradient: LinearGradient(colors: [
-                      Colors.grey[400],
-                      Colors.grey[500],
-                      Colors.grey[600],
-                      Colors.grey[700],
-                    ], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                    boxShadow: [
-                      BoxShadow(color: Colors.grey[800], blurRadius: 14),
-                      BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 8,
-                      ),
-                    ]),
                 child: SafeArea(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

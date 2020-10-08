@@ -3,13 +3,14 @@ import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/action_icons.dart';
+import 'package:tetris/screens/controller/joystick.dart';
 import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
   static const double actionButtonSpace = 14 * 1.518;
+  static const double defaultCircleButtonSize = 52;
 
   final int longPressSensitivity;
-  final double defaultCircleButtonSize = 52;
   final Duration longPressInterval;
 
   final _inputManager = InputManager.instance;
@@ -26,7 +27,10 @@ class Controller extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: buildDirectionButtons(context),
+            child: JoyStick(
+              sensitivity: longPressSensitivity,
+              interval: longPressInterval,
+            ),
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -115,7 +119,9 @@ class Controller extends StatelessWidget {
                 onPressed: () {
                   _inputManager.enterButton(ButtonKey.a);
                 },
-                child: const RotateIcon(clockwise: false,),
+                child: const RotateIcon(
+                  clockwise: false,
+                ),
               ),
             ],
           ),
@@ -148,11 +154,13 @@ class Controller extends StatelessWidget {
               const Divider(
                 height: actionButtonSpace,
               ),
-              buildCircleButton(context, onPressed: () {
-                _inputManager.enterButton(ButtonKey.c);
-              },
-                  child: const RotateIcon(),
-                  size: defaultCircleButtonSize),
+              buildCircleButton(
+                context,
+                onPressed: () {
+                  _inputManager.enterButton(ButtonKey.c);
+                },
+                child: const RotateIcon(),
+              ),
             ],
           )
         ],
@@ -161,16 +169,46 @@ class Controller extends StatelessWidget {
   Widget buildCircleButton(BuildContext context,
           {@required VoidCallback onPressed,
           @required Widget child,
-          double size}) =>
-      LongPressButton(
-        sensitivity: longPressSensitivity,
-        interval: longPressInterval,
-        onPressed: onPressed,
-        child: child,
-        minWidth: size ?? defaultCircleButtonSize,
-        height: size ?? defaultCircleButtonSize,
-        color: roseViolet,
-        textColor: Colors.white,
-        shape: const CircleBorder(),
-      );
+          double size = defaultCircleButtonSize,
+          MaterialColor color = roseViolet}) =>
+      Stack(alignment: Alignment.center, children: [
+        Material(
+          color: color.shade600,
+          shape: const CircleBorder(),
+          elevation: 4,
+          child: SizedBox(
+              width: size,
+              height: size,
+              child: Center(
+                child: Container(
+                  width: size - 12,
+                  height: size - 12,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          color.shade50,
+                          color.shade200,
+                          color,
+                          color,
+                          color.shade600,
+                          color.shade800
+                        ]),
+                  ),
+                ),
+              )),
+        ),
+        LongPressButton(
+          sensitivity: longPressSensitivity,
+          interval: longPressInterval,
+          onPressed: onPressed,
+          child: child,
+          minWidth: size,
+          height: size,
+          shape: const CircleBorder(),
+          textColor: Colors.white,
+        )
+      ]);
 }

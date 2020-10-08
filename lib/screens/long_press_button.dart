@@ -12,6 +12,7 @@ class LongPressButton extends StatefulWidget {
   final Color color;
   final Color textColor;
   final Duration interval;
+  final EdgeInsets padding;
 
   const LongPressButton(
       {Key key,
@@ -23,6 +24,7 @@ class LongPressButton extends StatefulWidget {
       this.shape,
       this.color,
       this.textColor,
+      this.padding,
       @required this.interval})
       : super(key: key);
 
@@ -44,6 +46,7 @@ class _LongPressButtonState extends State<LongPressButton> {
     return MaterialButton(
       shape: widget.shape,
       color: widget.color,
+      padding: widget.padding,
       elevation: 4,
       textColor: widget.textColor,
       minWidth: widget.minWidth,
