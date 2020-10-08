@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/retro_colors.dart';
+import 'package:tetris/screens/button_icons.dart';
 import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
@@ -114,7 +115,7 @@ class Controller extends StatelessWidget {
                 onPressed: () {
                   _inputManager.enterButton(ButtonKey.a);
                 },
-                child: const Icon(Icons.rotate_left),
+                child: const RotateIcon(clockwise: false,),
               ),
             ],
           ),
@@ -133,7 +134,7 @@ class Controller extends StatelessWidget {
                 onPressed: () {
                   _inputManager.enterButton(ButtonKey.b);
                 },
-                child: const Icon(Icons.file_download),
+                child: const HardDropIcon(),
               ),
             ],
           ),
@@ -150,7 +151,7 @@ class Controller extends StatelessWidget {
               buildCircleButton(context, onPressed: () {
                 _inputManager.enterButton(ButtonKey.c);
               },
-                  child: const Icon(Icons.rotate_right),
+                  child: const RotateIcon(),
                   size: defaultCircleButtonSize),
             ],
           )

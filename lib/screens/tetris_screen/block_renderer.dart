@@ -5,15 +5,16 @@ import 'package:tetris/models/tetris.dart';
 
 class BlockRenderer extends StatelessWidget {
   final Block block;
+  final bool drawShadow;
 
-  const BlockRenderer(this.block, {Key key})
+  const BlockRenderer(this.block, {Key key, this.drawShadow: true})
       : assert(block != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
-        elevation: block.isGhost ? 0 : 4 ,
+        elevation: block.isGhost || !drawShadow ? 0 : 4,
         child: SizedBox.expand(
           child: CustomPaint(
             painter: _BlockPainter(block),
@@ -49,13 +50,13 @@ class _BlockPainter extends CustomPainter {
       canvas.drawPath(
           shadowPath,
           paint
-            ..color = block.color[200]
+            ..color = block.color.shade200
             ..style = PaintingStyle.fill);
 
       canvas.save();
       canvas.translate(blockRect.center.dx * 2, blockRect.center.dy * 2);
       canvas.rotate(pi);
-      canvas.drawPath(shadowPath, paint..color = block.color[800]);
+      canvas.drawPath(shadowPath, paint..color = block.color.shade800);
       canvas.restore();
 
       canvas.drawRect(
@@ -69,9 +70,9 @@ class _BlockPainter extends CustomPainter {
 
   Color getBlockBackgroundColor() {
     if (block.isGhost) {
-      return block.color[300].withOpacity(0.3);
+      return block.color.shade300.withOpacity(0.3);
     } else {
-      return block.color[600];
+      return block.color.shade600;
     }
   }
 
