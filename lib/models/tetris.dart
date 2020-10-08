@@ -91,6 +91,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   bool _isOnBreakLine = false;
 
+  Timer _gameOverAnimatior;
+
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
@@ -102,12 +104,15 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _levelSubject.close();
     _scoreSubject.close();
     _eventSubject.close();
+    _gameOverAnimatior?.cancel();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
   void startGame() {
+    _gameOverAnimatior?.cancel();
+
     initPlayfield();
 
     _stuckedSeconds = 0;
@@ -386,7 +391,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _isOnBreakLine = true;
 
     for (int x = 0; x < _playfield.width; x++) {
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 15));
       linesCanBroken.forEach((line) {
         line[x].isGhost = true;
 
@@ -398,7 +403,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     }
 
     for (List<Block> line in linesCanBroken) {
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 15));
       _playfield.remove(line);
       _playfield.add(List<Block>.generate(_playfield.width, (index) => null));
       notifyListeners();
@@ -487,6 +492,23 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _isGameOver = true;
     _frameGenerator.cancel();
     _eventSubject.sink.add(TetrisEvent.gameOver);
+
+    int y = _currentTetromino.center.y;
+
+    _gameOverAnimatior =
+        Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      _playfield[y].forEach((block) {
+        block?.color = Colors.grey;
+      });
+
+      notifyListeners();
+
+      y--;
+
+      if (y < 0) {
+        timer.cancel();
+      }
+    });
   }
 
   @override
