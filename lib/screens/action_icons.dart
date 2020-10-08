@@ -46,14 +46,54 @@ class RotateIcon extends StatelessWidget {
           drawShadow: false,
         ));
 
+    final effectLong = Container(
+      width: size / 3,
+      height: size / 3,
+      child: Container(
+        margin: EdgeInsets.only(
+            top: size / 12, bottom: size / 12, right: size / 12),
+        color: iconColor,
+      ),
+    );
+    final effectMiddle = Container(
+      width: size / 3,
+      height: size / 3,
+      child: Container(
+        margin: EdgeInsets.only(
+            top: size / 12,
+            bottom: size / 12,
+            right: size / 12,
+            left: size / 12),
+        color: iconColor,
+      ),
+    );
+    final effectShort = Container(
+      width: size / 3,
+      height: size / 3,
+      child: Container(
+        margin: EdgeInsets.only(
+            top: size / 12,
+            bottom: size / 12,
+            right: size / 12,
+            left: size / 6),
+        color: iconColor,
+      ),
+    );
+
     return Transform.rotate(
       angle: clockwise ? 0 : pi,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [halfSpace, block, space]),
-          Row(mainAxisSize: MainAxisSize.min, children: [halfSpace, block, block]),
-          Row(mainAxisSize: MainAxisSize.min, children: [halfSpace, block, space])
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [clockwise ? effectLong : effectShort, block, space]),
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [effectMiddle, block, block]),
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [clockwise ? effectShort : effectLong, block, space])
         ],
       ),
     );

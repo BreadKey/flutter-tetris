@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/retro_colors.dart';
-import 'package:tetris/screens/button_icons.dart';
+import 'package:tetris/screens/action_icons.dart';
 import 'package:tetris/screens/long_press_button.dart';
 
 class Controller extends StatelessWidget {
