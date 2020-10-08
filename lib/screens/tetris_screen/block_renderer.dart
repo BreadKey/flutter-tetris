@@ -25,8 +25,11 @@ class BlockRenderer extends StatelessWidget {
 
 class _BlockPainter extends CustomPainter {
   final Block block;
-  Color lastColor;
-  _BlockPainter(this.block) : lastColor = block.color;
+  final Color lastColor;
+  final bool isGhost;
+  _BlockPainter(this.block)
+      : lastColor = block.color,
+        isGhost = block.isGhost;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -69,7 +72,7 @@ class _BlockPainter extends CustomPainter {
   }
 
   Color getBlockBackgroundColor() {
-    if (block.isGhost) {
+    if (isGhost) {
       return block.color.shade300.withOpacity(0.3);
     } else {
       return block.color.shade600;
@@ -78,5 +81,6 @@ class _BlockPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _BlockPainter oldDelegate) =>
-      oldDelegate.lastColor != block.color;
+      oldDelegate.lastColor != block.color ||
+      oldDelegate.isGhost != block.isGhost;
 }

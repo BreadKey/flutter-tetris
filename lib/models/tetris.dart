@@ -83,11 +83,13 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   bool _isGameOver = false;
 
-  bool get canUpdate => !_paused;
+  bool get canUpdate => !_paused && !_isOnBreakLine;
 
   int _brokenLinesCountInLevel = 0;
 
   bool _rotationOccuredBeforeLock = false;
+
+  bool _isOnBreakLine = false;
 
   Tetris() {
     InputManager.instance.register(this);
@@ -240,23 +242,27 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     }
   }
 
-  void lock() {
+  Future<void> lock() async {
     _isStucked = false;
     _stuckedSeconds = 0;
     _accumulatedPower = 0;
-    checkLines();
+    await checkLines();
     spawnNextMino();
   }
 
   void commandMove(Direction direction) {
-    if (_currentDropMode != DropMode.hard) {
-      moveCurrentMino(direction);
+    if (canUpdate) {
+      if (_currentDropMode != DropMode.hard) {
+        moveCurrentMino(direction);
+      }
     }
   }
 
   void commandRotate({bool clockwise: true}) {
-    if (_currentDropMode != DropMode.hard) {
-      rotateCurrentMino(clockwise: clockwise);
+    if (canUpdate) {
+      if (_currentDropMode != DropMode.hard) {
+        rotateCurrentMino(clockwise: clockwise);
+      }
     }
   }
 
@@ -309,7 +315,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _currentDropMode = DropMode.hard;
   }
 
-  void checkLines() {
+  Future<void> checkLines() async {
     final linesCanBroken = _playfield
         .where((line) => line.every((block) => block != null && !block.isGhost))
         .toList();
@@ -338,7 +344,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       }
 
       scoreUp(_level, linesCanBroken.length, event);
-      brakeLines(linesCanBroken);
+      await breakLines(linesCanBroken);
     }
 
     _eventSubject.sink.add(event);
@@ -375,13 +381,27 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         !playfield.isWall(rightTop) && isBlocked(rightTop, playfield);
   }
 
-  void brakeLines(List<List<Block>> linesCanBroken) {
-    linesCanBroken.forEach((line) {
-      _playfield.remove(line);
-    });
+  Future<void> breakLines(List<List<Block>> linesCanBroken) async {
+    _isOnBreakLine = true;
 
-    _playfield.addAll(List.generate(linesCanBroken.length,
-        (index) => List<Block>.generate(playfieldWidth, (index) => null)));
+    for (int x = 0; x < _playfield.width; x++) {
+      await Future.delayed(const Duration(milliseconds: 10));
+      linesCanBroken.forEach((line) {
+        line[x].isGhost = true;
+
+        if (x > 0) {
+          line[x - 1] = null;
+        }
+        notifyListeners();
+      });
+    }
+
+    for (List<Block> line in linesCanBroken) {
+      await Future.delayed(const Duration(milliseconds: 10));
+      _playfield.remove(line);
+      _playfield.add(List<Block>.generate(_playfield.width, (index) => null));
+      notifyListeners();
+    }
 
     _brokenLinesCountInLevel += linesCanBroken.length;
 
@@ -389,6 +409,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       levelUp();
       _brokenLinesCountInLevel -= linesCountToLevelUp;
     }
+
+    _isOnBreakLine = false;
   }
 
   void scoreUp(int level, int brokenLinesLength, TetrisEvent event) {

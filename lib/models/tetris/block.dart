@@ -3,7 +3,7 @@ part of '../tetris.dart';
 class Block {
   Point<int> point;
   MaterialColor color;
-  final bool isGhost;
+  bool isGhost;
 
   Block({@required this.color, this.point, this.isGhost: false})
       : assert(color != null);
