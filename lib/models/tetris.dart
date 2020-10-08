@@ -493,10 +493,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _frameGenerator.cancel();
     _eventSubject.sink.add(TetrisEvent.gameOver);
 
-    int y = _currentTetromino.center.y;
+    int y = _currentTetromino.center.y + 1;
 
     _gameOverAnimatior =
-        Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        Timer.periodic(const Duration(milliseconds: 50), (timer) {
       _playfield[y].forEach((block) {
         block?.color = Colors.grey;
       });
