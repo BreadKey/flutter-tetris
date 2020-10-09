@@ -35,7 +35,7 @@ class _JoystickState extends State<Joystick> {
   int tick = 0;
 
   static final int directionLengh = JoystickDirection.values.length;
-  static const int capacityPerDirection = 3;
+  static const int capacityPerDirection = 4;
 
   JoystickDirection lastDirection;
 
@@ -142,8 +142,8 @@ class _JoystickState extends State<Joystick> {
             angle:
                 pi / (directionLengh * capacityPerDirection / 2) * (index + 1),
             child: Container(
-              width: totalSize * 0.618 * 0.618 * 0.8,
-              height: totalSize * 0.618 * 0.618 * 0.8,
+              width: totalSize * 0.618 * 0.618 * 0.9,
+              height: totalSize * 0.618 * 0.618 * 0.9,
               child: DragTarget(
                 builder: (context, candidateData, rejectedData) =>
                     const SizedBox(),
