@@ -7,6 +7,7 @@ class HoldButton extends StatelessWidget {
   const HoldButton(this.tetris, {Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           MaterialButton(
             onPressed: () {
@@ -16,15 +17,13 @@ class HoldButton extends StatelessWidget {
             minWidth: 24,
             height: 8,
           ),
-          Expanded(
-            child: Material(
-              color: Colors.transparent,
-              child: Text(
-                "hold",
-                style: TextStyle(color: Theme.of(context).iconTheme.color),
-              ),
+          Material(
+            color: Colors.transparent,
+            child: Text(
+              "hold",
+              style: TextStyle(color: Theme.of(context).iconTheme.color),
             ),
-          )
+          ),
         ],
       );
 }

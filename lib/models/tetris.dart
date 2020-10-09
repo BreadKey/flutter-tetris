@@ -564,6 +564,11 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       case ButtonKey.c:
         commandRotate();
         break;
+      case ButtonKey.special1:
+        break;
+      case ButtonKey.special2:
+        hold();
+        break;
     }
   }
 

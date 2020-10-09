@@ -80,7 +80,7 @@ class _TetrisScreenState extends State<TetrisScreen>
         sizeOfScreen.height -
             (mediaQuery.orientation == Orientation.portrait
                 ? controllerHeight
-                : 40));
+                : 36));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -97,101 +97,70 @@ class _TetrisScreenState extends State<TetrisScreen>
       child: Stack(
         children: [
           Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+            alignment: Alignment.topCenter,
+            child: Metal(
+              width: height * gameScreenRatio,
+              height: height,
+              margin: EdgeInsets.symmetric(horizontal: 14),
+              padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+              child: SafeArea(
+                  child: Column(
                 children: [
-                  Flexible(
-                    child: Metal(
-                      width: height * gameScreenRatio,
-                      height: height,
-                      margin: EdgeInsets.symmetric(horizontal: 14),
-                      padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
-                      child: SafeArea(
-                          child: Column(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SlideTransition(
-                                  position: fastDropAnimation,
-                                  child: PlayfieldRenderer(tetris),
-                                ),
-                                const VerticalDivider(
-                                  color: Colors.transparent,
-                                ),
-                                Expanded(
-                                    child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    MinoRenderer(tetris.nextMinoStream,
-                                        info: "Next"),
-                                    const Divider(
-                                      color: Colors.transparent,
-                                    ),
-                                    MinoRenderer(tetris.holdingMinoStream,
-                                        info: "Hold"),
-                                    const Divider(
-                                      color: Colors.transparent,
-                                    ),
-                                    EventRenderer(tetris),
-                                    const Divider(color: Colors.transparent),
-                                    Expanded(
-                                      child: Material(
-                                        color: neutralBlackC,
-                                        elevation: 4,
-                                        child: const SizedBox.expand(),
-                                      ),
-                                    )
-                                  ],
-                                )),
-                              ],
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SlideTransition(
+                          position: fastDropAnimation,
+                          child: PlayfieldRenderer(tetris),
+                        ),
+                        const VerticalDivider(
+                          color: Colors.transparent,
+                        ),
+                        Expanded(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            MinoRenderer(tetris.nextMinoStream, info: "Next"),
+                            const Divider(
+                              color: Colors.transparent,
                             ),
-                          ),
-                          const Divider(),
-                          ScoreboardRenderer(tetris)
-                        ],
-                      )),
+                            MinoRenderer(tetris.holdingMinoStream,
+                                info: "Hold"),
+                            const Divider(
+                              color: Colors.transparent,
+                            ),
+                            EventRenderer(tetris),
+                            const Divider(color: Colors.transparent),
+                            Expanded(
+                              child: Material(
+                                color: neutralBlackC,
+                                elevation: 4,
+                                child: const SizedBox.expand(),
+                              ),
+                            )
+                          ],
+                        )),
+                      ],
                     ),
                   ),
-                  buildSpecialButtons(context)
+                  const Divider(),
+                  ScoreboardRenderer(tetris)
                 ],
               )),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: controllerHeight - MediaQuery.of(context).padding.bottom,
-              child: Controller(
-                longPressInterval:
-                    const Duration(milliseconds: 1000 ~/ delayedAutoShiftHz),
-              ),
             ),
-          )
+          ),
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height:
+                    controllerHeight - MediaQuery.of(context).padding.bottom,
+                child: Controller(
+                    longPressInterval: const Duration(
+                        milliseconds: 1000 ~/ delayedAutoShiftHz)),
+              ))
         ],
       ),
     );
   }
-
-  Widget buildSpecialButtons(BuildContext context) => Theme(
-        data: Theme.of(context).copyWith(
-          iconTheme: IconThemeData(color: Colors.grey),
-          buttonColor: roseViolet,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-                child: Align(
-              alignment: Alignment.centerRight,
-              child: MuteButton(),
-            )),
-            Expanded(
-                child: Align(
-              alignment: Alignment.centerLeft,
-              child: HoldButton(tetris),
-            ))
-          ],
-        ),
-      );
 }

@@ -1,6 +1,6 @@
 import 'package:tetris/models/direction.dart';
 
-enum ButtonKey { a, b, c }
+enum ButtonKey { a, b, c, special1, special2 }
 
 class InputManager {
   static final InputManager _instance = InputManager._();

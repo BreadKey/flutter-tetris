@@ -15,6 +15,8 @@ class AudioManager {
   AudioManager._();
 
   void startBgm(Bgm bgm) async {
+    if (_isMuted) return;
+
     if (_bgmPlayers[bgm] == null) {
       switch (bgm) {
         case Bgm.play:

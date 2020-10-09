@@ -1,10 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/action_icons.dart';
 import 'package:tetris/screens/controller/joystick.dart';
 import 'package:tetris/screens/long_press_button.dart';
+import 'package:tetris/screens/tetris_screen/hold_button.dart';
+import 'package:tetris/screens/tetris_screen/mute_button.dart';
 
 class Controller extends StatelessWidget {
   static const double actionButtonSpace = 14 * 1.518;
@@ -34,7 +39,15 @@ class Controller extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: buildActionButtons(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: buildSpecialButtons(context),
+                ),
+                buildActionButtons(context)
+              ],
+            ),
           )
         ],
       ));
@@ -111,9 +124,6 @@ class Controller extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Divider(
-                height: actionButtonSpace * 5,
-              ),
               buildCircleButton(
                 context,
                 onPressed: () {
@@ -132,15 +142,15 @@ class Controller extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Divider(
-                height: actionButtonSpace * 3,
-              ),
               buildCircleButton(
                 context,
                 onPressed: () {
                   _inputManager.enterButton(ButtonKey.b);
                 },
                 child: const HardDropIcon(),
+              ),
+              const Divider(
+                height: actionButtonSpace * 2,
               ),
             ],
           ),
@@ -151,15 +161,15 @@ class Controller extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Divider(
-                height: actionButtonSpace,
-              ),
               buildCircleButton(
                 context,
                 onPressed: () {
                   _inputManager.enterButton(ButtonKey.c);
                 },
                 child: const RotateIcon(),
+              ),
+              const Divider(
+                height: actionButtonSpace * 4,
               ),
             ],
           )
@@ -211,4 +221,67 @@ class Controller extends StatelessWidget {
           textColor: Colors.white,
         )
       ]);
+
+  Widget buildSpecialButtons(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Transform.translate(
+            offset: Offset(0, actionButtonSpace),
+            child: StatefulBuilder(
+                builder: (context, setState) => _buildSpecialButton(
+                      context,
+                      onPressed: () {
+                        AudioManager.instance.toggleMute();
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        AudioManager.instance.isMuted
+                            ? Icons.volume_up
+                            : Icons.volume_off,
+                        color: Colors.grey.shade600,
+                      ),
+                    )),
+          ),
+          _buildSpecialButton(context, onPressed: () {
+            InputManager.instance.enterButton(ButtonKey.special2);
+          },
+              icon: Text(
+                "Hold",
+                style: TextStyle(color: Colors.grey.shade600),
+              )),
+          const VerticalDivider(
+            color: Colors.transparent,
+            width: actionButtonSpace,
+          )
+        ],
+      );
+
+  Widget _buildSpecialButton(BuildContext context,
+          {@required VoidCallback onPressed, Widget icon}) =>
+      Transform.rotate(
+        angle: -pi / 6,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MaterialButton(
+              onPressed: onPressed,
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+              color: roseViolet,
+              minWidth: 24,
+              height: 8,
+            ),
+            Transform.translate(
+                offset: Offset(0, -15),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: 24),
+                  child: Material(
+                    child: icon,
+                    color: Colors.transparent,
+                  ),
+                ))
+          ],
+        ),
+      );
 }
