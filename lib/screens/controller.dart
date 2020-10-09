@@ -27,7 +27,7 @@ class Controller extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: JoyStick(
+            child: Joystick(
               sensitivity: longPressSensitivity,
               interval: longPressInterval,
             ),

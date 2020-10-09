@@ -31,6 +31,7 @@ dependencies:
 
   provider: ^4.3.2+2
   rxdart: ^0.24.1
+  screen: ^0.0.5
 
 dev_dependencies:
   flutter_test:

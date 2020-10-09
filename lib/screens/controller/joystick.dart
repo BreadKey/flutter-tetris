@@ -8,25 +8,36 @@ import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/long_press_button.dart';
 import 'package:tetris/screens/metal.dart';
 
-class JoyStick extends StatefulWidget {
+enum JoystickDirection {
+  centerLeft,
+  topLeft,
+  topCenter,
+  topRight,
+  centerRight,
+  bottomRight,
+  bottomCenter,
+  bottomLeft,
+}
+
+class Joystick extends StatefulWidget {
   final int sensitivity;
   final Duration interval;
-  JoyStick({Key key, @required this.sensitivity, @required this.interval})
+  Joystick({Key key, @required this.sensitivity, @required this.interval})
       : super(key: key);
 
   @override
-  _JoyStickState createState() => _JoyStickState();
+  _JoystickState createState() => _JoystickState();
 }
 
-class _JoyStickState extends State<JoyStick> {
-  final tickProviders = <int, Timer>{};
+class _JoystickState extends State<Joystick> {
+  final tickProviders = <JoystickDirection, Timer>{};
   final totalSize = 160.0;
   int tick = 0;
 
-  static const int directionLengh = 8;
+  static final int directionLengh = JoystickDirection.values.length;
   static const int capacityPerDirection = 3;
 
-  int lastDirection;
+  JoystickDirection lastDirection;
 
   void dispose() {
     tickProviders.values.forEach((provider) {
@@ -37,105 +48,30 @@ class _JoyStickState extends State<JoyStick> {
 
   @override
   Widget build(BuildContext context) {
-    final ball = SizedBox(
-      width: totalSize * 0.618 * 0.8,
-      height: totalSize * 0.618 * 0.8,
-      child: Material(
-        elevation: 8,
-        shape: CircleBorder(),
-        color: Colors.grey,
-        clipBehavior: Clip.antiAlias,
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                Colors.black12,
-                neutralBlackC,
-                Colors.black87,
-                Colors.black
-              ])),
-          child: Container(
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle, border: Border.all(color: Colors.grey)),
-          ),
-        ),
-      ),
-    );
+    final cross = 0;
+    final diagonal = 1;
 
     return SizedBox(
-      width: totalSize,
-      height: totalSize,
-      child: Stack(
-          children: [
-        Metal(
-          width: totalSize,
-          height: totalSize,
-          shape: BoxShape.circle,
-          child: SizedBox.expand(),
-        )
-      ]
-            ..addAll(List.generate(
-              directionLengh * capacityPerDirection ~/ 2,
-              (index) {
-                final diagonalIndex = index +
-                    ((index ~/ capacityPerDirection) + 1) *
-                        capacityPerDirection;
-                return _buildInputArea(context, diagonalIndex);
-              },
-            ))
-            ..addAll(List.generate(
-              directionLengh * capacityPerDirection ~/ 2,
-              (index) {
-                final crossIndex = index +
-                    (index ~/ capacityPerDirection) * capacityPerDirection;
-                return _buildInputArea(context, crossIndex);
-              },
-            ))
-            ..addAll(List.generate(
-                directionLengh * capacityPerDirection,
-                (index) => Center(
-                        child: Transform.rotate(
-                      angle: pi /
-                          (directionLengh * capacityPerDirection / 2) *
-                          (index + 1),
-                      child: Container(
-                        width: totalSize * 0.618 * 0.618 * 0.8,
-                        height: totalSize * 0.618 * 0.618 * 0.8,
-                        child: DragTarget(
-                          builder: (context, candidateData, rejectedData) =>
-                              const SizedBox(),
-                          onMove: (_) {
-                            tickProviders[lastDirection]?.cancel();
-                          },
-                        ),
-                      ),
-                    ))))
-            ..add(Center(
-              child: Draggable(
-                child: ball,
-                feedback: ball,
-                childWhenDragging: Container(
-                  width: totalSize * 0.618 * 0.618,
-                  height: totalSize * 0.618 * 0.618,
-                  child: Material(
-                    shape: CircleBorder(),
-                    color: Colors.black,
-                  ),
-                ),
-                onDragEnd: (_) {
-                  tickProviders[lastDirection]?.cancel();
-                  tick = 0;
-                },
-              ),
-            ))),
-    );
+        width: totalSize,
+        height: totalSize,
+        child: Stack(
+            children: [
+          Metal(
+            width: totalSize,
+            height: totalSize,
+            shape: BoxShape.circle,
+            child: SizedBox.expand(),
+          )
+        ]
+              ..addAll(buildDirectionsArea(context, diagonal))
+              ..addAll(buildDirectionsArea(context, cross))
+              ..addAll(buildNeutralArea(context))
+              ..add(buildStick(context))));
   }
 
-  Widget _buildInputArea(BuildContext context, int index) {
-    final direction = index ~/ capacityPerDirection;
+  Widget _buildDetectDirectionArea(BuildContext context, int index) {
+    final direction = JoystickDirection.values[index ~/ capacityPerDirection];
+
     return Transform.rotate(
       angle: pi / (directionLengh * capacityPerDirection / 2) * (index + 1) -
           2 * pi / (directionLengh * capacityPerDirection),
@@ -184,42 +120,118 @@ class _JoyStickState extends State<JoyStick> {
                       });
                     }
                   },
-                  onLeave: (_) {
-                    print("leave");
-                  },
                 ))),
       ),
     );
   }
 
-  void _onDirectionEntered(int direction) {
+  List<Widget> buildDirectionsArea(BuildContext context, int offset) =>
+      List.generate(
+        (directionLengh * capacityPerDirection) ~/ 2,
+        (index) {
+          final diagonalIndex = index +
+              ((index ~/ capacityPerDirection) + offset) * capacityPerDirection;
+          return _buildDetectDirectionArea(context, diagonalIndex);
+        },
+      );
+
+  List<Widget> buildNeutralArea(BuildContext context) => List.generate(
+      directionLengh * capacityPerDirection,
+      (index) => Center(
+              child: Transform.rotate(
+            angle:
+                pi / (directionLengh * capacityPerDirection / 2) * (index + 1),
+            child: Container(
+              width: totalSize * 0.618 * 0.618 * 0.8,
+              height: totalSize * 0.618 * 0.618 * 0.8,
+              child: DragTarget(
+                builder: (context, candidateData, rejectedData) =>
+                    const SizedBox(),
+                onMove: (_) {
+                  tickProviders[lastDirection]?.cancel();
+                },
+              ),
+            ),
+          )));
+
+  Widget buildStick(BuildContext) {
+    final lever = SizedBox(
+      width: totalSize * 0.618 * 0.8,
+      height: totalSize * 0.618 * 0.8,
+      child: Material(
+        elevation: 8,
+        shape: CircleBorder(),
+        color: Colors.grey,
+        clipBehavior: Clip.antiAlias,
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                Colors.black12,
+                neutralBlackC,
+                Colors.black87,
+                Colors.black
+              ])),
+          child: Container(
+            margin: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+                shape: BoxShape.circle, border: Border.all(color: Colors.grey)),
+          ),
+        ),
+      ),
+    );
+
+    return Center(
+      child: Draggable(
+        child: lever,
+        feedback: lever,
+        childWhenDragging: Container(
+          width: totalSize * 0.618 * 0.618,
+          height: totalSize * 0.618 * 0.618,
+          child: Material(
+            shape: CircleBorder(),
+            color: Colors.black,
+          ),
+        ),
+        onDragEnd: (_) {
+          tickProviders[lastDirection]?.cancel();
+          tick = 0;
+          lastDirection = null;
+        },
+      ),
+    );
+  }
+
+  void _onDirectionEntered(JoystickDirection direction) {
     lastDirection = direction;
     switch (direction) {
-      case 0:
+      case JoystickDirection.centerLeft:
         InputManager.instance.enterDirection(Direction.left);
         break;
-      case 1:
+      case JoystickDirection.topLeft:
         InputManager.instance.enterDirection(Direction.left);
         InputManager.instance.enterDirection(Direction.up);
         break;
-      case 2:
+      case JoystickDirection.topCenter:
         InputManager.instance.enterDirection(Direction.up);
         break;
-      case 3:
+      case JoystickDirection.topRight:
         InputManager.instance.enterDirection(Direction.up);
         InputManager.instance.enterDirection(Direction.right);
         break;
-      case 4:
+      case JoystickDirection.centerRight:
         InputManager.instance.enterDirection(Direction.right);
         break;
-      case 5:
+      case JoystickDirection.bottomRight:
         InputManager.instance.enterDirection(Direction.right);
         InputManager.instance.enterDirection(Direction.down);
         break;
-      case 6:
+      case JoystickDirection.bottomCenter:
         InputManager.instance.enterDirection(Direction.down);
         break;
-      case 7:
+      case JoystickDirection.bottomLeft:
         InputManager.instance.enterDirection(Direction.down);
         InputManager.instance.enterDirection(Direction.left);
         break;

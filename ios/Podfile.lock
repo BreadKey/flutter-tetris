@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - screen (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - screen (from `.symlinks/plugins/screen/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  screen:
+    :path: ".symlinks/plugins/screen/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  screen: abd91ca7bf3426e1cc3646d27e9b2358d6bf07b0
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.9.3
