@@ -38,8 +38,8 @@ class _JoyStickState extends State<JoyStick> {
   @override
   Widget build(BuildContext context) {
     final ball = SizedBox(
-      width: totalSize * 0.618 * 0.85,
-      height: totalSize * 0.618 * 0.85,
+      width: totalSize * 0.618 * 0.8,
+      height: totalSize * 0.618 * 0.8,
       child: Material(
         elevation: 8,
         shape: CircleBorder(),
@@ -158,6 +158,7 @@ class _JoyStickState extends State<JoyStick> {
                             child: const Icon(Icons.arrow_left),
                             onPressed: () {
                               _onDirectionEntered(direction);
+                              lastDirection = null;
                             },
                           ),
                         )
