@@ -19,6 +19,29 @@ enum JoystickDirection {
   bottomLeft,
 }
 
+extension on JoystickDirection {
+  Alignment get alignment {
+    switch (this) {
+      case JoystickDirection.centerLeft:
+        return Alignment.centerLeft;
+      case JoystickDirection.topLeft:
+        return Alignment.topLeft;
+      case JoystickDirection.topCenter:
+        return Alignment.topCenter;
+      case JoystickDirection.topRight:
+        return Alignment.topRight;
+      case JoystickDirection.centerRight:
+        return Alignment.centerRight;
+      case JoystickDirection.bottomRight:
+        return Alignment.bottomRight;
+      case JoystickDirection.bottomCenter:
+        return Alignment.bottomCenter;
+      case JoystickDirection.bottomLeft:
+        return Alignment.bottomLeft;
+    }
+  }
+}
+
 class Joystick extends StatefulWidget {
   final int sensitivity;
   final Duration interval;
@@ -31,7 +54,7 @@ class Joystick extends StatefulWidget {
 
 class _JoystickState extends State<Joystick> {
   final tickProviders = <JoystickDirection, Timer>{};
-  final totalSize = 160.0;
+  final totalSize = 170.0;
   int tick = 0;
 
   static final int directionLengh = JoystickDirection.values.length;
@@ -76,25 +99,25 @@ class _JoystickState extends State<Joystick> {
       angle: pi / (directionLengh * capacityPerDirection / 2) * (index + 1) -
           2 * pi / (directionLengh * capacityPerDirection),
       child: Transform.translate(
-        offset: (Offset(-totalSize / 2 / 1.618, 0)),
+        offset: (Offset(-totalSize / 2 / 1.618 * 0.8, 0)),
         child: Align(
             alignment: Alignment.centerLeft,
             child: Container(
-                width: totalSize / 1.618,
-                height: totalSize / capacityPerDirection,
+                width: totalSize / 1.618 * 0.95,
+                height: totalSize / capacityPerDirection * 1.1,
                 child: DragTarget(
                   builder: (context, _, __) => index % capacityPerDirection == 0
                       ? Align(
                           alignment: Alignment.centerRight,
                           child: LongPressButton(
-                            minWidth: 24,
-                            height: 48,
+                            padding: const EdgeInsets.all(0),
+                            minWidth: totalSize / 3 + 8,
+                            height: 60,
                             sensitivity: widget.sensitivity,
                             interval: widget.interval,
                             child: const Icon(Icons.arrow_left),
                             onPressed: () {
-                              _onDirectionEntered(direction);
-                              lastDirection = null;
+                              _onDirectionButtonPressed(direction);
                             },
                           ),
                         )
@@ -142,8 +165,8 @@ class _JoystickState extends State<Joystick> {
             angle:
                 pi / (directionLengh * capacityPerDirection / 2) * (index + 1),
             child: Container(
-              width: totalSize * 0.618 * 0.618 * 0.9,
-              height: totalSize * 0.618 * 0.618 * 0.9,
+              width: totalSize * 0.618 * 0.618 * 0.8,
+              height: totalSize * 0.618 * 0.618 * 0.8,
               child: DragTarget(
                 builder: (context, candidateData, rejectedData) =>
                     const SizedBox(),
@@ -154,34 +177,59 @@ class _JoystickState extends State<Joystick> {
             ),
           )));
 
-  Widget buildStick(BuildContext) {
+  Widget buildStick(BuildContext context) {
     final lever = SizedBox(
-      width: totalSize * 0.618 * 0.8,
-      height: totalSize * 0.618 * 0.8,
-      child: Material(
-        elevation: 8,
-        shape: CircleBorder(),
-        color: Colors.grey,
-        clipBehavior: Clip.antiAlias,
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                Colors.black12,
-                neutralBlackC,
-                Colors.black87,
-                Colors.black
-              ])),
-          child: Container(
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle, border: Border.all(color: Colors.grey)),
+        width: totalSize * 0.618,
+        height: totalSize * 0.618,
+        child: Material(
+          elevation: 8,
+          shape: CircleBorder(),
+          color: Colors.grey,
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                      Colors.black12,
+                      neutralBlackC,
+                      Colors.black87,
+                      Colors.black
+                    ])),
+                child: Container(
+                  margin: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.grey)),
+                ),
+              ),
+            ]..addAll(List.generate(4, (index) {
+                final direction = JoystickDirection.values[index * 2];
+
+                return Transform.rotate(
+                    angle: pi / 2 * index,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: LongPressButton(
+                        minWidth: 24,
+                        height: 48,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: const SizedBox(),
+                        padding: const EdgeInsets.all(0),
+                        sensitivity: widget.sensitivity,
+                        interval: widget.interval,
+                        onPressed: () {
+                          _onDirectionButtonPressed(direction);
+                        },
+                      ),
+                    ));
+              })),
           ),
-        ),
-      ),
-    );
+        ));
 
     return Center(
       child: Draggable(
@@ -202,6 +250,11 @@ class _JoystickState extends State<Joystick> {
         },
       ),
     );
+  }
+
+  void _onDirectionButtonPressed(JoystickDirection direction) {
+    _onDirectionEntered(direction);
+    lastDirection = null;
   }
 
   void _onDirectionEntered(JoystickDirection direction) {

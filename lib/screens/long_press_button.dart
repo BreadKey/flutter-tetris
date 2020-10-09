@@ -10,6 +10,8 @@ class LongPressButton extends StatefulWidget {
   final double height;
   final ShapeBorder shape;
   final Color color;
+  final Color splashColor;
+  final Color highlightColor;
   final Color textColor;
   final Duration interval;
   final EdgeInsets padding;
@@ -23,6 +25,8 @@ class LongPressButton extends StatefulWidget {
       this.height,
       this.shape,
       this.color,
+      this.splashColor,
+      this.highlightColor,
       this.textColor,
       this.padding,
       @required this.interval})
@@ -46,6 +50,8 @@ class _LongPressButtonState extends State<LongPressButton> {
     return MaterialButton(
       shape: widget.shape,
       color: widget.color,
+      splashColor: widget.splashColor,
+      highlightColor: widget.highlightColor,
       padding: widget.padding,
       elevation: 4,
       textColor: widget.textColor,

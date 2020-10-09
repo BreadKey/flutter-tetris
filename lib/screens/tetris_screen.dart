@@ -10,6 +10,8 @@ import 'package:tetris/screens/metal.dart';
 import 'package:tetris/screens/mino_renderder.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 import 'package:tetris/screens/tetris_screen/event_renderer.dart';
+import 'package:tetris/screens/tetris_screen/hold_button.dart';
+import 'package:tetris/screens/tetris_screen/mute_button.dart';
 import 'package:tetris/screens/tetris_screen/scoreboard_renderer.dart';
 
 class TetrisScreen extends StatefulWidget {
@@ -153,42 +155,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                       )),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                          child: Align(
-                        alignment: Alignment.centerRight,
-                        child: const Icon(
-                          Icons.volume_off,
-                          color: Colors.grey,
-                        ),
-                      )),
-                      MaterialButton(
-                        onPressed: () {},
-                        color: roseViolet,
-                        minWidth: 24,
-                        height: 8,
-                      ),
-                      MaterialButton(
-                        onPressed: () {
-                          tetris.hold();
-                        },
-                        color: roseViolet,
-                        minWidth: 24,
-                        height: 8,
-                      ),
-                      Expanded(
-                        child: const Material(
-                          color: Colors.transparent,
-                          child: Text(
-                            "hold",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
+                  buildSpecialButtons(context)
                 ],
               )),
           Align(
@@ -205,4 +172,26 @@ class _TetrisScreenState extends State<TetrisScreen>
       ),
     );
   }
+
+  Widget buildSpecialButtons(BuildContext context) => Theme(
+        data: Theme.of(context).copyWith(
+          iconTheme: IconThemeData(color: Colors.grey),
+          buttonColor: roseViolet,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+                child: Align(
+              alignment: Alignment.centerRight,
+              child: MuteButton(),
+            )),
+            Expanded(
+                child: Align(
+              alignment: Alignment.centerLeft,
+              child: HoldButton(tetris),
+            ))
+          ],
+        ),
+      );
 }

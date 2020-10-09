@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
 
@@ -97,6 +98,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   final BehaviorSubject<TetrominoName> _holdingMinoSubject = BehaviorSubject();
   Stream<TetrominoName> get holdingMinoStream => _holdingMinoSubject.stream;
 
+  final AudioManager audioManager = AudioManager.instance;
+
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
@@ -139,6 +142,9 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         [_randomMinoGenerator.getNext(), _randomMinoGenerator.getNext()]);
 
     spawnNextMino();
+
+    AudioManager.instance.stopBgm(Bgm.gameOver);
+    AudioManager.instance.startBgm(Bgm.play);
   }
 
   void initPlayfield() {
@@ -517,6 +523,9 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         timer.cancel();
       }
     });
+
+    AudioManager.instance.stopBgm(Bgm.play);
+    AudioManager.instance.startBgm(Bgm.gameOver);
   }
 
   @override
