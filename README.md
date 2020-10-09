@@ -16,7 +16,10 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## Demo
-### Android
-![ezgif com-video-to-gif-3](https://user-images.githubusercontent.com/37973204/95225919-4f348e80-0837-11eb-9f67-c382e6352b5a.gif)
-### iOS(iPad)
-![IMG_0097](https://user-images.githubusercontent.com/37973204/95226733-42646a80-0838-11eb-9848-58e799683f92.PNG)
+Videos were recorded in iPad.
+
+### Joystick
+![joystick](https://user-images.githubusercontent.com/37973204/95551377-a3ad5900-0a45-11eb-8002-7a05fa33d25c.gif)
+
+### T-Spin
+![t-spin](https://user-images.githubusercontent.com/37973204/95551990-d3109580-0a46-11eb-9acc-fbb529386e33.gif)
