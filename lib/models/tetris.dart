@@ -117,6 +117,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _gameOverAnimatior?.cancel();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance?.removeObserver(this);
+    audioManager.dispose();
     super.dispose();
   }
 
@@ -414,7 +415,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _isOnBreakLine = true;
 
     for (int x = 0; x < _playfield.width; x++) {
-      await Future.delayed(const Duration(milliseconds: 15));
+      await Future.delayed(const Duration(milliseconds: 20));
       linesCanBroken.forEach((line) {
         line[x].isGhost = true;
 
@@ -426,7 +427,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     }
 
     for (List<Block> line in linesCanBroken) {
-      await Future.delayed(const Duration(milliseconds: 15));
+      await Future.delayed(const Duration(milliseconds: 20));
       _playfield.remove(line);
       _playfield.add(List<Block>.generate(_playfield.width, (index) => null));
       notifyListeners();
@@ -594,8 +595,10 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     if (state == AppLifecycleState.paused) {
       _paused = true;
+      audioManager.pause();
     } else if (state == AppLifecycleState.resumed) {
       _paused = false;
+      audioManager.resume();
     }
   }
 }

@@ -10,8 +10,6 @@ import 'package:tetris/screens/metal.dart';
 import 'package:tetris/screens/mino_renderder.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 import 'package:tetris/screens/tetris_screen/event_renderer.dart';
-import 'package:tetris/screens/tetris_screen/hold_button.dart';
-import 'package:tetris/screens/tetris_screen/mute_button.dart';
 import 'package:tetris/screens/tetris_screen/scoreboard_renderer.dart';
 
 class TetrisScreen extends StatefulWidget {

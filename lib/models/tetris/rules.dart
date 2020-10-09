@@ -4,7 +4,7 @@ const playfieldWidth = 10;
 const playfieldHeight = 22;
 const visibleHeight = 20;
 const fps = 64;
-const delayedAutoShiftHz = 20;
+const delayedAutoShiftHz = 15;
 
 const tetriminoColors = {
   TetrominoName.I: Colors.cyan,

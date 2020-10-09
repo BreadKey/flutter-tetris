@@ -15,8 +15,6 @@ class AudioManager {
   AudioManager._();
 
   void startBgm(Bgm bgm) async {
-    if (_isMuted) return;
-
     if (_bgmPlayers[bgm] == null) {
       switch (bgm) {
         case Bgm.play:
@@ -28,11 +26,13 @@ class AudioManager {
         default:
           break;
       }
-    } else {
-      final bgmPlayer = await _bgmPlayers[bgm];
-
-      bgmPlayer.resume();
     }
+
+    final bgmPlayer = await _bgmPlayers[bgm];
+    if (_isMuted) {
+      bgmPlayer.setVolume(0);
+    }
+    bgmPlayer.resume();
   }
 
   void stopBgm(Bgm bgm) async {
@@ -53,5 +53,27 @@ class AudioManager {
         bgmPlayer.setVolume(1);
       }
     }
+  }
+
+  void dispose() {
+    _bgmPlayers.values.forEach((future) {
+      future.then((player) => player.dispose());
+    });
+  }
+
+  void pause() {
+    _bgmPlayers.values.forEach((future) {
+      future.then((player) => player.setVolume(0));
+    });
+  }
+
+  void resume() {
+    _bgmPlayers.values.forEach((future) {
+      future.then((player) {
+        if (!isMuted) {
+          player.setVolume(1);
+        }
+      });
+    });
   }
 }

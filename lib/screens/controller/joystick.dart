@@ -54,11 +54,11 @@ class Joystick extends StatefulWidget {
 
 class _JoystickState extends State<Joystick> {
   final tickProviders = <JoystickDirection, Timer>{};
-  final totalSize = 170.0;
+  final totalSize = 160.0;
   int tick = 0;
 
   static final int directionLengh = JoystickDirection.values.length;
-  static const int capacityPerDirection = 4;
+  static const int capacityPerDirection = 3;
 
   JoystickDirection lastDirection;
 
@@ -254,6 +254,7 @@ class _JoystickState extends State<Joystick> {
 
   void _onDirectionButtonPressed(JoystickDirection direction) {
     _onDirectionEntered(direction);
+    tick++;
     lastDirection = null;
   }
 

@@ -8,8 +8,6 @@ import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/action_icons.dart';
 import 'package:tetris/screens/controller/joystick.dart';
 import 'package:tetris/screens/long_press_button.dart';
-import 'package:tetris/screens/tetris_screen/hold_button.dart';
-import 'package:tetris/screens/tetris_screen/mute_button.dart';
 
 class Controller extends StatelessWidget {
   static const double actionButtonSpace = 14 * 1.518;
@@ -21,7 +19,7 @@ class Controller extends StatelessWidget {
   final _inputManager = InputManager.instance;
 
   Controller(
-      {Key key, @required this.longPressInterval, this.longPressSensitivity: 5})
+      {Key key, @required this.longPressInterval, this.longPressSensitivity: 3})
       : assert(longPressInterval != null),
         super(key: key);
 
@@ -42,9 +40,7 @@ class Controller extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: buildSpecialButtons(context),
-                ),
+                buildSpecialButtons(context),
                 buildActionButtons(context)
               ],
             ),
@@ -172,7 +168,7 @@ class Controller extends StatelessWidget {
                 height: actionButtonSpace * 4,
               ),
             ],
-          )
+          ),
         ],
       );
 
@@ -219,7 +215,7 @@ class Controller extends StatelessWidget {
           height: size,
           shape: const CircleBorder(),
           textColor: Colors.white,
-        )
+        ),
       ]);
 
   Widget buildSpecialButtons(BuildContext context) => Row(
