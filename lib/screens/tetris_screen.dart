@@ -27,7 +27,7 @@ class _TetrisScreenState extends State<TetrisScreen>
   Tetris tetris;
 
   AnimationController hardDropAnimController;
-  Animation<Offset> hardDropAnimation;
+  Animation<Offset> fastDropAnimation;
 
   StreamSubscription tetrisEventSubscriber;
 
@@ -41,7 +41,7 @@ class _TetrisScreenState extends State<TetrisScreen>
     hardDropAnimController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 100));
 
-    hardDropAnimation = Tween(begin: Offset(0, 0), end: Offset(0, 0.01))
+    fastDropAnimation = Tween(begin: Offset(0, 0), end: Offset(0, 0.01))
         .animate(CurvedAnimation(
             parent: hardDropAnimController, curve: Curves.bounceOut));
 
@@ -52,7 +52,7 @@ class _TetrisScreenState extends State<TetrisScreen>
     });
 
     tetrisEventSubscriber = tetris.eventStream.listen((event) {
-      if (event == TetrisEvent.hardDrop) {
+      if (event == TetrisEvent.hardDrop || event == TetrisEvent.softDrop) {
         hardDropAnimController.forward();
       }
     });
@@ -115,7 +115,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SlideTransition(
-                                  position: hardDropAnimation,
+                                  position: fastDropAnimation,
                                   child: PlayfieldRenderer(tetris),
                                 ),
                                 const VerticalDivider(

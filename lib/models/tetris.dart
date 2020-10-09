@@ -92,6 +92,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   bool _isOnBreakLine = false;
 
+  bool _softDropDoccured = false;
+
   Timer _gameOverAnimatior;
 
   TetrominoName _holdingMino;
@@ -263,6 +265,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   Future<void> lock() async {
     _isStucked = false;
+    _softDropDoccured = false;
     _stuckedSeconds = 0;
     _accumulatedPower = 0;
     await checkLines();
@@ -272,7 +275,13 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
   void commandMove(Direction direction) {
     if (canUpdate) {
       if (_currentDropMode != DropMode.hard) {
-        moveCurrentMino(direction);
+        final isMoved = moveCurrentMino(direction);
+
+        if (direction == Direction.down && !isMoved && !_softDropDoccured) {
+          _softDropDoccured = true;
+
+          _eventSubject.sink.add(TetrisEvent.softDrop);
+        }
       }
     }
   }

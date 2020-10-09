@@ -17,7 +17,8 @@ class EventRenderer extends StatelessWidget {
           child: Center(
             child: StreamProvider<TetrisEvent>.value(
               value: tetris.eventStream,
-              updateShouldNotify: (previous, current) => true,
+              updateShouldNotify: (previous, current) =>
+                  current != TetrisEvent.softDrop,
               child: Consumer<TetrisEvent>(
                 builder: (context, event, child) {
                   return _buildTetrisEvent(context, event);

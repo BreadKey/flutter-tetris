@@ -259,34 +259,39 @@ class _JoystickState extends State<Joystick> {
 
   void _onDirectionEntered(JoystickDirection direction) {
     lastDirection = direction;
+
     switch (direction) {
+      case JoystickDirection.bottomLeft:
       case JoystickDirection.centerLeft:
-        InputManager.instance.enterDirection(Direction.left);
-        break;
       case JoystickDirection.topLeft:
         InputManager.instance.enterDirection(Direction.left);
-        InputManager.instance.enterDirection(Direction.up);
         break;
+      default:
+        break;
+    }
+    switch (direction) {
+      case JoystickDirection.topLeft:
       case JoystickDirection.topCenter:
-        InputManager.instance.enterDirection(Direction.up);
-        break;
       case JoystickDirection.topRight:
         InputManager.instance.enterDirection(Direction.up);
-        InputManager.instance.enterDirection(Direction.right);
         break;
+      default:
+        break;
+    }
+    switch (direction) {
+      case JoystickDirection.topRight:
       case JoystickDirection.centerRight:
-        InputManager.instance.enterDirection(Direction.right);
-        break;
       case JoystickDirection.bottomRight:
         InputManager.instance.enterDirection(Direction.right);
-        InputManager.instance.enterDirection(Direction.down);
         break;
+      default:
+        break;
+    }
+    switch (direction) {
+      case JoystickDirection.bottomRight:
       case JoystickDirection.bottomCenter:
-        InputManager.instance.enterDirection(Direction.down);
-        break;
       case JoystickDirection.bottomLeft:
         InputManager.instance.enterDirection(Direction.down);
-        InputManager.instance.enterDirection(Direction.left);
         break;
       default:
         break;
