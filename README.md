@@ -19,4 +19,7 @@ samples, guidance on mobile development, and a full API reference.
 Videos were recorded in iPad.
 
 ### Joystick
-![Joystick](https://user-images.githubusercontent.com/37973204/95551377-a3ad5900-0a45-11eb-8002-7a05fa33d25c.gif)
+![joystick](https://user-images.githubusercontent.com/37973204/95551377-a3ad5900-0a45-11eb-8002-7a05fa33d25c.gif)
+
+### T-Spin
+![t-spin](https://user-images.githubusercontent.com/37973204/95551990-d3109580-0a46-11eb-9acc-fbb529386e33.gif)
