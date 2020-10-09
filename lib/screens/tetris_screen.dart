@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:screen/screen.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
@@ -53,6 +54,8 @@ class _TetrisScreenState extends State<TetrisScreen>
         hardDropAnimController.forward();
       }
     });
+
+    Screen.keepOn(true);
   }
 
   @override
@@ -60,6 +63,8 @@ class _TetrisScreenState extends State<TetrisScreen>
     tetris.dispose();
     hardDropAnimController.dispose();
     tetrisEventSubscriber.cancel();
+
+    Screen.keepOn(false);
     super.dispose();
   }
 
@@ -118,11 +123,13 @@ class _TetrisScreenState extends State<TetrisScreen>
                                     child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    MinoRenderer(tetris.nextMinoStream, info: "Next"),
+                                    MinoRenderer(tetris.nextMinoStream,
+                                        info: "Next"),
                                     const Divider(
                                       color: Colors.transparent,
                                     ),
-                                    MinoRenderer(tetris.holdingMinoStream, info: "Hold"),
+                                    MinoRenderer(tetris.holdingMinoStream,
+                                        info: "Hold"),
                                     const Divider(
                                       color: Colors.transparent,
                                     ),
