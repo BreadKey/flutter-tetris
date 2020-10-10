@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
+import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/long_press_button.dart';
 import 'package:tetris/screens/metal.dart';
@@ -39,10 +41,26 @@ class _JoystickState extends State<Joystick> {
 
   JoystickDirection lastDirection;
 
+  final tickSubject = PublishSubject<JoystickDirection>();
+  StreamSubscription tickResetDebouncer;
+
+  @override
+  void initState() {
+    super.initState();
+    tickResetDebouncer = tickSubject
+        .debounceTime(const Duration(milliseconds: 1000 * 3 ~/ delayedAutoShiftHz))
+        .listen((_) {
+      tick = 0;
+    });
+  }
+
+  @override
   void dispose() {
     tickProviders.values.forEach((provider) {
       provider.cancel();
     });
+    tickSubject.close();
+    tickResetDebouncer.cancel();
     super.dispose();
   }
 
@@ -113,6 +131,7 @@ class _JoystickState extends State<Joystick> {
                       tickProviders[direction] =
                           Timer.periodic(widget.interval, (timer) {
                         tick++;
+                        tickSubject.sink.add(direction);
 
                         if (tick > widget.sensitivity) {
                           _onDirectionEntered(direction);
@@ -232,6 +251,7 @@ class _JoystickState extends State<Joystick> {
   void _onDirectionButtonPressed(JoystickDirection direction) {
     _onDirectionEntered(direction);
     tick++;
+    tickSubject.sink.add(direction);
     lastDirection = null;
   }
 

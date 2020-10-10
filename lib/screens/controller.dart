@@ -132,7 +132,7 @@ class Controller extends StatelessWidget {
             ],
           ),
           const VerticalDivider(
-            width: 4,
+            width: 8,
             color: Colors.transparent,
           ),
           Column(
@@ -151,7 +151,7 @@ class Controller extends StatelessWidget {
             ],
           ),
           const VerticalDivider(
-            width: 4,
+            width: 8,
             color: Colors.transparent,
           ),
           Column(
