@@ -34,8 +34,6 @@ class LocalRankDao extends RankDao {
 
     final json = rankData.toJson();
 
-    json["key"] = 0;
-
-    await db.insert("rank", json, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert("rank", json);
   }
 }
