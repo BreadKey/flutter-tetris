@@ -3,24 +3,23 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
-import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
-class MinoRenderer extends StatelessWidget {
+import 'board.dart';
+
+class TetrominoBoard extends StatelessWidget {
   static final tetrominoes = Map<TetrominoName, Tetromino>.fromEntries(
       TetrominoName.values
           .map((name) => MapEntry(name, Tetromino.spawn(name, Point(2, 2)))));
   final Stream<TetrominoName> minoStream;
   final String info;
 
-  MinoRenderer(this.minoStream, {Key key, this.info}) : super(key: key);
+  TetrominoBoard(this.minoStream, {Key key, this.info}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => AspectRatio(
       aspectRatio: 5 / 4,
-      child: Material(
-          color: neutralBlackC,
-          elevation: 4,
+      child: Board(
           child: Stack(
             children: [
               LayoutBuilder(

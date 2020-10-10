@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
-import 'package:tetris/retro_colors.dart';
+import 'package:tetris/screens/tetris_screen/board.dart';
 
-class EventRenderer extends StatelessWidget {
+class EventBoard extends StatelessWidget {
   final Tetris tetris;
 
-  const EventRenderer(this.tetris, {Key key}) : super(key: key);
+  const EventBoard(this.tetris, {Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => AspectRatio(
+  Widget build(BuildContext context) => Board(
+          child: AspectRatio(
         aspectRatio: 5 / 4,
-        child: Material(
-          color: neutralBlackC,
-          elevation: 4,
-          child: Center(
-            child: StreamProvider<TetrisEvent>.value(
-              value: tetris.eventStream,
-              updateShouldNotify: (previous, current) =>
-                  current != TetrisEvent.softDrop,
-              child: Consumer<TetrisEvent>(
-                builder: (context, event, child) {
-                  return _buildTetrisEvent(context, event);
-                },
-              ),
+        child: Center(
+          child: StreamProvider<TetrisEvent>.value(
+            value: tetris.eventStream,
+            updateShouldNotify: (previous, current) =>
+                current != TetrisEvent.softDrop,
+            child: Consumer<TetrisEvent>(
+              builder: (context, event, child) {
+                return _buildTetrisEvent(context, event);
+              },
             ),
           ),
         ),
-      );
+      ));
 
   Widget _buildTetrisEvent(BuildContext context, TetrisEvent event) {
     final textTheme =

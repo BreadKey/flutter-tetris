@@ -7,10 +7,11 @@ import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
 import 'package:tetris/screens/metal.dart';
-import 'package:tetris/screens/mino_renderder.dart';
+import 'package:tetris/screens/tetris_screen/rank_board.dart';
+import 'package:tetris/screens/tetris_screen/tetromino_board.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
-import 'package:tetris/screens/tetris_screen/event_renderer.dart';
-import 'package:tetris/screens/tetris_screen/scoreboard_renderer.dart';
+import 'package:tetris/screens/tetris_screen/event_board.dart';
+import 'package:tetris/screens/tetris_screen/scoreboard.dart';
 
 class TetrisScreen extends StatefulWidget {
   @override
@@ -122,24 +123,20 @@ class _TetrisScreenState extends State<TetrisScreen>
                                 child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                MinoRenderer(tetris.nextMinoStream,
+                                TetrominoBoard(tetris.nextMinoStream,
                                     info: "Next"),
                                 const Divider(
                                   color: Colors.transparent,
                                 ),
-                                MinoRenderer(tetris.holdingMinoStream,
+                                TetrominoBoard(tetris.holdingMinoStream,
                                     info: "Hold"),
                                 const Divider(
                                   color: Colors.transparent,
                                 ),
-                                EventRenderer(tetris),
+                                EventBoard(tetris),
                                 const Divider(color: Colors.transparent),
                                 Expanded(
-                                  child: Material(
-                                    color: neutralBlackC,
-                                    elevation: 4,
-                                    child: const SizedBox.expand(),
-                                  ),
+                                  child: RankBoard(tetris)
                                 )
                               ],
                             )),
@@ -147,7 +144,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                         ),
                       ),
                       const Divider(),
-                      ScoreboardRenderer(tetris)
+                      Scoreboard(tetris)
                     ],
                   )),
                 ),

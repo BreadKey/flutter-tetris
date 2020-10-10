@@ -15,6 +15,7 @@ part 'tetris/rules.dart';
 part 'tetris/super_rotation_system.dart';
 part 'tetris/tetromino.dart';
 part 'tetris/event.dart';
+part 'tetris/animator.dart';
 
 extension Playfield on List<List<Block>> {
   Block getBlockAt(Point<int> point) => this[point.y][point.x];
@@ -32,7 +33,8 @@ extension Playfield on List<List<Block>> {
 enum DropMode { gravity, soft, hard }
 enum OnHardDrop { instantLock, wait }
 
-class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
+class Tetris extends ChangeNotifier
+    with InputListener, WidgetsBindingObserver, AnimationListener {
   static const fps = 64;
   static const secondsPerFrame = 1 / fps;
   static const tSpinTestOffsets = [
@@ -95,17 +97,18 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
   bool _softDropDoccured = false;
 
-  Timer _gameOverAnimatior;
-
   TetrominoName _holdingMino;
   final BehaviorSubject<TetrominoName> _holdingMinoSubject = BehaviorSubject();
   Stream<TetrominoName> get holdingMinoStream => _holdingMinoSubject.stream;
 
-  final AudioManager audioManager = AudioManager.instance;
+  final AudioManager _audioManager = AudioManager.instance;
+
+  final Animator _animator = Animator();
 
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
+    _animator.listener = this;
   }
 
   void dispose() {
@@ -115,15 +118,15 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _scoreSubject.close();
     _eventSubject.close();
     _holdingMinoSubject.close();
-    _gameOverAnimatior?.cancel();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance?.removeObserver(this);
-    audioManager.dispose();
+    _audioManager.dispose();
+    _animator.dispose();
     super.dispose();
   }
 
   void startGame() {
-    _gameOverAnimatior?.cancel();
+    _animator.stopGameOver();
 
     initPlayfield();
 
@@ -228,6 +231,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
         if (!canMove(_currentTetromino, _playfield, Direction.down)) {
+          _audioManager.playEffect(Effect.lock);
           lock();
         }
       }
@@ -247,6 +251,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
           _isStucked = false;
         } else {
           if (_currentDropMode == DropMode.hard) {
+            _audioManager.playEffect(Effect.hardDrop);
             _currentDropMode = DropMode.gravity;
             _eventSubject.sink.add(TetrisEvent.hardDrop);
 
@@ -279,19 +284,38 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       if (_currentDropMode != DropMode.hard) {
         final isMoved = moveCurrentMino(direction);
 
-        if (direction == Direction.down && !isMoved && !_softDropDoccured) {
-          _softDropDoccured = true;
+        if (isMoved) {
+          _audioManager.playEffect(Effect.move);
+        }
 
-          _eventSubject.sink.add(TetrisEvent.softDrop);
+        if (direction == Direction.down) {
+          if (!isMoved) {
+            if (!_softDropDoccured) {
+              _onSoftDrop();
+            }
+          } else {
+            _softDropDoccured = false;
+          }
         }
       }
     }
   }
 
+  void _onSoftDrop() {
+    _audioManager.playEffect(Effect.softDrop);
+    _softDropDoccured = true;
+
+    _eventSubject.sink.add(TetrisEvent.softDrop);
+  }
+
   void commandRotate({bool clockwise: true}) {
     if (canUpdate) {
       if (_currentDropMode != DropMode.hard) {
-        rotateCurrentMino(clockwise: clockwise);
+        final isRotated = rotateCurrentMino(clockwise: clockwise);
+
+        if (isRotated) {
+          _audioManager.playEffect(Effect.rotate);
+        }
       }
     }
   }
@@ -332,13 +356,16 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     return false;
   }
 
-  void rotateCurrentMino({bool clockwise: true}) {
+  bool rotateCurrentMino({bool clockwise: true}) {
     if (rotateBySrs(_currentTetromino, _playfield, clockwise: clockwise)) {
       _setGhostPiece(_currentTetromino, _playfield);
       _rotationOccuredBeforeLock =
           !canMove(_currentTetromino, _playfield, Direction.down);
       notifyListeners();
+      return true;
     }
+
+    return false;
   }
 
   void dropHard() {
@@ -355,7 +382,9 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     if (linesCanBroken.isNotEmpty) {
       if (isTetris(linesCanBroken)) {
         event = TetrisEvent.tetris;
+        _audioManager.playEffect(Effect.event);
       } else if (isTSpin(_currentTetromino, _playfield)) {
+        _audioManager.playEffect(Effect.event);
         if (hasRoof(_currentTetromino, _playfield)) {
           switch (linesCanBroken.length) {
             case 1:
@@ -371,6 +400,8 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         } else {
           event = TetrisEvent.tSpinMini;
         }
+      } else {
+        _audioManager.playEffect(Effect.breakLine);
       }
 
       _eventSubject.sink.add(event);
@@ -416,63 +447,14 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
       List<List<Block>> linesCanBroken, TetrisEvent event) async {
     _isOnBreakLine = true;
 
-    switch (event) {
-      case TetrisEvent.tetris:
-        for (List<Block> line in linesCanBroken) {
-          for (Block block in line) {
-            block.color = justWhite;
-          }
-        }
-        break;
-      case TetrisEvent.tSpinMini:
-      case TetrisEvent.tSpinSingle:
-      case TetrisEvent.tSpinDouble:
-      case TetrisEvent.tSpinTriple:
-        _currentTetromino.blocks.forEach((block) {
-          block.color = justWhite;
-        });
-        break;
-      default:
-        break;
-    }
-
-    for (int x = 0; x < _playfield.width; x++) {
-      await Future.delayed(const Duration(milliseconds: 20));
-      linesCanBroken.forEach((line) {
-        line[x].isGhost = true;
-
-        if (x > 0) {
-          line[x - 1] = null;
-        }
-        notifyListeners();
-      });
-    }
-
-    for (List<Block> line in linesCanBroken) {
-      await Future.delayed(const Duration(milliseconds: 20));
-      _playfield.remove(line);
-      _playfield.add(List<Block>.generate(_playfield.width, (index) => null));
-      notifyListeners();
-    }
+    await _animator.breakLines(
+        _currentTetromino, _playfield, linesCanBroken, event);
 
     _brokenLinesCountInLevel += linesCanBroken.length;
 
     if (_brokenLinesCountInLevel >= linesCountToLevelUp) {
       levelUp();
       _brokenLinesCountInLevel -= linesCountToLevelUp;
-    }
-
-    switch (event) {
-      case TetrisEvent.tSpinMini:
-      case TetrisEvent.tSpinSingle:
-      case TetrisEvent.tSpinDouble:
-      case TetrisEvent.tSpinTriple:
-        _currentTetromino.blocks.forEach((block) {
-          block.color = Colors.purple;
-        });
-        break;
-      default:
-        break;
     }
 
     _isOnBreakLine = false;
@@ -552,22 +534,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     _frameGenerator.cancel();
     _eventSubject.sink.add(TetrisEvent.gameOver);
 
-    int y = _currentTetromino.center.y + 1;
-
-    _gameOverAnimatior =
-        Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      _playfield[y].forEach((block) {
-        block?.color = Colors.grey;
-      });
-
-      notifyListeners();
-
-      y--;
-
-      if (y < 0) {
-        timer.cancel();
-      }
-    });
+    _animator.startGameOver(_currentTetromino, _playfield);
 
     AudioManager.instance.stopBgm(Bgm.play);
     AudioManager.instance.startBgm(Bgm.gameOver);
@@ -630,10 +597,15 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
     if (state == AppLifecycleState.paused) {
       _paused = true;
-      audioManager.pause();
+      _audioManager.pause();
     } else if (state == AppLifecycleState.resumed) {
       _paused = false;
-      audioManager.resume();
+      _audioManager.resume();
     }
+  }
+
+  @override
+  void onAnimationUpdated() {
+    notifyListeners();
   }
 }

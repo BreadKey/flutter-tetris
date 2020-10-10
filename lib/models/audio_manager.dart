@@ -2,6 +2,16 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 enum Bgm { play, gameOver }
+enum Effect {
+  lock,
+  move,
+  rotate,
+  hardDrop,
+  softDrop,
+  breakLine,
+  event,
+  levelUp
+}
 
 class AudioManager {
   static final instance = AudioManager._();
@@ -75,5 +85,34 @@ class AudioManager {
         }
       });
     });
+  }
+
+  void playEffect(Effect effect) {
+    if (_isMuted) return;
+
+    switch (effect) {
+      case Effect.lock:
+        _bgmCache.play("audios/lock.wav");
+        break;
+      case Effect.move:
+        _bgmCache.play("audios/move.wav");
+        break;
+      case Effect.rotate:
+        _bgmCache.play("audios/rotate.wav");
+        break;
+      case Effect.hardDrop:
+      case Effect.softDrop:
+        _bgmCache.play("audios/hard_drop.wav");
+        break;
+      case Effect.breakLine:
+        _bgmCache.play("audios/break_line.wav");
+        break;
+      case Effect.event:
+        _bgmCache.play("audios/event.wav");
+        break;
+      case Effect.levelUp:
+        _bgmCache.play("audios/level_up.wav");
+        break;
+    }
   }
 }

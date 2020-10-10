@@ -26,6 +26,8 @@ extension SuperRotationSystem on Tetris {
 
   bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,
       {bool clockwise: true}) {
+    if (tetromino.name == TetrominoName.O) return false;
+
     tetromino.blocks.forEach((block) {
       playfield.setBlockAt(block.point, null);
     });
