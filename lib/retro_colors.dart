@@ -15,3 +15,16 @@ const roseViolet = MaterialColor(0xFFC0428A, {
   900: Color(0xFF3F2130)
 });
 const neutralBlackC = Color(0xFF232222);
+
+const justWhite = MaterialColor(0xFFFFFF, {
+  50: Colors.white,
+  100: Colors.white,
+  200: Colors.white,
+  300: Colors.white,
+  400: Colors.white,
+  500: Colors.white,
+  600: Colors.white,
+  700: Colors.white,
+  800: Colors.white,
+  900: Colors.white
+});

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:tetris/models/tetris.dart';
+import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
 const _shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
@@ -29,20 +30,12 @@ class RotateIcon extends StatelessWidget {
       width: size / 3,
       height: size / 3,
     );
-    final halfSpace = SizedBox(
-      width: size / 6,
-      height: size / 3,
-    );
 
     final block = Container(
         width: size / 3,
         height: size / 3,
         child: BlockRenderer(
-          Block(
-              color: MaterialColor(
-                  iconColor.value,
-                  Map.fromEntries(
-                      _shades.map((shade) => MapEntry(shade, iconColor))))),
+          Block(color: justWhite),
           drawShadow: false,
         ));
 
@@ -121,11 +114,7 @@ class HardDropIcon extends StatelessWidget {
         width: size / 3,
         height: size / 3,
         child: BlockRenderer(
-          Block(
-              color: MaterialColor(
-                  iconColor.value,
-                  Map.fromEntries(
-                      _shades.map((shade) => MapEntry(shade, iconColor))))),
+          Block(color: justWhite),
           drawShadow: false,
         ));
 

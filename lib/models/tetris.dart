@@ -7,6 +7,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
+import 'package:tetris/retro_colors.dart';
 
 part 'tetris/block.dart';
 part 'tetris/random_mino_generator.dart';
@@ -374,7 +375,7 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
 
       _eventSubject.sink.add(event);
       scoreUp(_level, linesCanBroken.length, event);
-      await breakLines(linesCanBroken);
+      await breakLines(linesCanBroken, event);
     } else {
       _eventSubject.sink.add(null);
     }
@@ -411,8 +412,29 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
         !playfield.isWall(rightTop) && isBlocked(rightTop, playfield);
   }
 
-  Future<void> breakLines(List<List<Block>> linesCanBroken) async {
+  Future<void> breakLines(
+      List<List<Block>> linesCanBroken, TetrisEvent event) async {
     _isOnBreakLine = true;
+
+    switch (event) {
+      case TetrisEvent.tetris:
+        for (List<Block> line in linesCanBroken) {
+          for (Block block in line) {
+            block.color = justWhite;
+          }
+        }
+        break;
+      case TetrisEvent.tSpinMini:
+      case TetrisEvent.tSpinSingle:
+      case TetrisEvent.tSpinDouble:
+      case TetrisEvent.tSpinTriple:
+        _currentTetromino.blocks.forEach((block) {
+          block.color = justWhite;
+        });
+        break;
+      default:
+        break;
+    }
 
     for (int x = 0; x < _playfield.width; x++) {
       await Future.delayed(const Duration(milliseconds: 20));
@@ -438,6 +460,19 @@ class Tetris extends ChangeNotifier with InputListener, WidgetsBindingObserver {
     if (_brokenLinesCountInLevel >= linesCountToLevelUp) {
       levelUp();
       _brokenLinesCountInLevel -= linesCountToLevelUp;
+    }
+
+    switch (event) {
+      case TetrisEvent.tSpinMini:
+      case TetrisEvent.tSpinSingle:
+      case TetrisEvent.tSpinDouble:
+      case TetrisEvent.tSpinTriple:
+        _currentTetromino.blocks.forEach((block) {
+          block.color = Colors.purple;
+        });
+        break;
+      default:
+        break;
     }
 
     _isOnBreakLine = false;
