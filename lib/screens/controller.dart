@@ -269,7 +269,7 @@ class Controller extends StatelessWidget {
               materialTapTargetSize: MaterialTapTargetSize.padded,
               color: roseViolet,
               minWidth: 24,
-              height: 8,
+              height: 10,
             ),
             Transform.translate(
                 offset: Offset(0, -15),

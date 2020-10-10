@@ -12,7 +12,7 @@ class TetrisApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
-          fontFamily: "Pixel"),
+          fontFamily: "Pixel",),
       home: TetrisScreen(),
     );
   }

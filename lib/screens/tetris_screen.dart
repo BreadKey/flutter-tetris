@@ -20,7 +20,7 @@ class TetrisScreen extends StatefulWidget {
 
 class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
-  static const gameScreenRatio = 3 / 4;
+  static const gameScreenRatio = 3/ 4;
   static const controllerHeight = 280;
 
   Tetris tetris;
@@ -33,7 +33,6 @@ class _TetrisScreenState extends State<TetrisScreen>
   @override
   void initState() {
     super.initState();
-    print("init");
     tetris = Tetris();
 
     tetris.startGame();
@@ -62,7 +61,6 @@ class _TetrisScreenState extends State<TetrisScreen>
 
   @override
   void dispose() {
-    print("dispose");
     tetris.dispose();
     hardDropAnimController.dispose();
     tetrisEventSubscriber.cancel();

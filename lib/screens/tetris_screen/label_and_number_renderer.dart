@@ -19,8 +19,7 @@ class LabelAndNumberRenderer extends StatelessWidget {
         Text("$label: ",
             style: Theme.of(context)
                 .textTheme
-                .subtitle2
-                .copyWith(color: Colors.white)),
+                .subtitle2),
         StreamProvider<int>.value(
           value: numberStream,
           child: Consumer<int>(
@@ -29,8 +28,7 @@ class LabelAndNumberRenderer extends StatelessWidget {
                 "$number",
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle1
-                    .copyWith(color: Colors.white),
+                    .subtitle1,
               ),
             ),
           ),

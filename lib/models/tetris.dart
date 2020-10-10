@@ -4,9 +4,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tetris/dao/local/local_rank_dao.dart';
+import 'package:tetris/dao/rank_dao.dart';
 import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
+import 'package:tetris/models/rank.dart';
 import 'package:tetris/retro_colors.dart';
 
 part 'tetris/block.dart';
@@ -105,10 +108,17 @@ class Tetris extends ChangeNotifier
 
   final Animator _animator = Animator();
 
+  final _playerId = 0;
+  final RankDao _rankDao = LocalRankDao();
+  final BehaviorSubject<Rank> _rankSubject = BehaviorSubject();
+  Stream<Rank> get rankStream => _rankSubject.stream;
+
   Tetris() {
     InputManager.instance.register(this);
     WidgetsBinding.instance?.addObserver(this);
     _animator.listener = this;
+
+    _loadRank();
   }
 
   void dispose() {
@@ -117,6 +127,7 @@ class Tetris extends ChangeNotifier
     _levelSubject.close();
     _scoreSubject.close();
     _eventSubject.close();
+    _rankSubject.close();
     _holdingMinoSubject.close();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance?.removeObserver(this);
@@ -538,6 +549,12 @@ class Tetris extends ChangeNotifier
 
     AudioManager.instance.stopBgm(Bgm.play);
     AudioManager.instance.startBgm(Bgm.gameOver);
+
+    if (_score > 0) {
+      _rankDao.insert(RankData(_playerId, _score)).then((_) {
+        _loadRank();
+      });
+    }
   }
 
   @override
@@ -607,5 +624,13 @@ class Tetris extends ChangeNotifier
   @override
   void onAnimationUpdated() {
     notifyListeners();
+  }
+
+  Future<void> _loadRank() async {
+    final ranks = await _rankDao.getRankOrderByDesc(10);
+    final playerRank = await _rankDao.getRankByPlayerId(_playerId);
+
+    _rankSubject.sink
+        .add(Rank(MapEntry(playerRank, ranks.indexOf(playerRank) + 1), ranks));
   }
 }

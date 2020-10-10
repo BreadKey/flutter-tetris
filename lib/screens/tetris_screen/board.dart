@@ -7,9 +7,14 @@ class Board extends StatelessWidget {
   const Board({Key key, this.child}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Material(
-        color: neutralBlackC,
-        elevation: 4,
-        child: child,
+  Widget build(BuildContext context) => Theme(
+        data: Theme.of(context).copyWith(
+            textTheme:
+                Theme.of(context).textTheme.apply(bodyColor: Colors.white)),
+        child: Material(
+          elevation: 4,
+          color: neutralBlackC,
+          child: child,
+        ),
       );
 }
