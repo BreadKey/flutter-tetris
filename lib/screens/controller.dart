@@ -218,40 +218,43 @@ class Controller extends StatelessWidget {
         ),
       ]);
 
-  Widget buildSpecialButtons(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Transform.translate(
-            offset: Offset(0, actionButtonSpace),
-            child: StatefulBuilder(
-                builder: (context, setState) => _buildSpecialButton(
-                      context,
-                      onPressed: () {
-                        AudioManager.instance.toggleMute();
-                        setState(() {});
-                      },
-                      icon: Icon(
-                        AudioManager.instance.isMuted
-                            ? Icons.volume_up
-                            : Icons.volume_off,
-                        color: Colors.grey.shade600,
-                      ),
-                    )),
-          ),
-          _buildSpecialButton(context, onPressed: () {
-            InputManager.instance.enterButton(ButtonKey.special2);
-          },
-              icon: Text(
-                "Hold",
-                style: TextStyle(color: Colors.grey.shade600),
-              )),
-          const VerticalDivider(
-            color: Colors.transparent,
-            width: actionButtonSpace,
-          )
-        ],
+  Widget buildSpecialButtons(BuildContext context) => Transform.translate(
+        offset: Offset(0, actionButtonSpace),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Transform.translate(
+              offset: Offset(0, actionButtonSpace / 2),
+              child: StatefulBuilder(
+                  builder: (context, setState) => _buildSpecialButton(
+                        context,
+                        onPressed: () {
+                          AudioManager.instance.toggleMute();
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          AudioManager.instance.isMuted
+                              ? Icons.volume_up
+                              : Icons.volume_off,
+                          color: Colors.grey.shade600,
+                        ),
+                      )),
+            ),
+            _buildSpecialButton(context, onPressed: () {
+              InputManager.instance.enterButton(ButtonKey.special2);
+            },
+                icon: Text(
+                  "Hold",
+                  style: TextStyle(color: Colors.grey.shade600),
+                )),
+            const VerticalDivider(
+              color: Colors.transparent,
+              width: actionButtonSpace,
+            )
+          ],
+        ),
       );
 
   Widget _buildSpecialButton(BuildContext context,
