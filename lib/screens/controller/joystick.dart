@@ -19,29 +19,6 @@ enum JoystickDirection {
   bottomLeft,
 }
 
-extension on JoystickDirection {
-  Alignment get alignment {
-    switch (this) {
-      case JoystickDirection.centerLeft:
-        return Alignment.centerLeft;
-      case JoystickDirection.topLeft:
-        return Alignment.topLeft;
-      case JoystickDirection.topCenter:
-        return Alignment.topCenter;
-      case JoystickDirection.topRight:
-        return Alignment.topRight;
-      case JoystickDirection.centerRight:
-        return Alignment.centerRight;
-      case JoystickDirection.bottomRight:
-        return Alignment.bottomRight;
-      case JoystickDirection.bottomCenter:
-        return Alignment.bottomCenter;
-      case JoystickDirection.bottomLeft:
-        return Alignment.bottomLeft;
-    }
-  }
-}
-
 class Joystick extends StatefulWidget {
   final int sensitivity;
   final Duration interval;
@@ -54,7 +31,7 @@ class Joystick extends StatefulWidget {
 
 class _JoystickState extends State<Joystick> {
   final tickProviders = <JoystickDirection, Timer>{};
-  final totalSize = 160.0;
+  final totalSize = 150.0;
   int tick = 0;
 
   static final int directionLengh = JoystickDirection.values.length;

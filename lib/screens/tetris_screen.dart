@@ -32,6 +32,7 @@ class _TetrisScreenState extends State<TetrisScreen>
   @override
   void initState() {
     super.initState();
+    print("init");
     tetris = Tetris();
 
     tetris.startGame();
@@ -60,6 +61,7 @@ class _TetrisScreenState extends State<TetrisScreen>
 
   @override
   void dispose() {
+    print("dispose");
     tetris.dispose();
     hardDropAnimController.dispose();
     tetrisEventSubscriber.cancel();
@@ -80,85 +82,91 @@ class _TetrisScreenState extends State<TetrisScreen>
                 ? controllerHeight
                 : 36));
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-            Colors.white,
-            antiqueWhite,
-            antiqueWhite,
-            Color(0xFFccc0af)
-          ])),
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Metal(
-              width: height * gameScreenRatio,
-              height: height,
-              margin: EdgeInsets.symmetric(horizontal: 14),
-              padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
-              child: SafeArea(
-                  child: Column(
-                children: [
-                  Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SlideTransition(
-                          position: fastDropAnimation,
-                          child: PlayfieldRenderer(tetris),
-                        ),
-                        const VerticalDivider(
-                          color: Colors.transparent,
-                        ),
-                        Expanded(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
+    return WillPopScope(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                Colors.white,
+                antiqueWhite,
+                antiqueWhite,
+                Color(0xFFccc0af)
+              ])),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Metal(
+                  width: height * gameScreenRatio,
+                  height: height,
+                  margin: EdgeInsets.symmetric(horizontal: 14),
+                  padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+                  child: SafeArea(
+                      child: Column(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            MinoRenderer(tetris.nextMinoStream, info: "Next"),
-                            const Divider(
+                            SlideTransition(
+                              position: fastDropAnimation,
+                              child: PlayfieldRenderer(tetris),
+                            ),
+                            const VerticalDivider(
                               color: Colors.transparent,
                             ),
-                            MinoRenderer(tetris.holdingMinoStream,
-                                info: "Hold"),
-                            const Divider(
-                              color: Colors.transparent,
-                            ),
-                            EventRenderer(tetris),
-                            const Divider(color: Colors.transparent),
                             Expanded(
-                              child: Material(
-                                color: neutralBlackC,
-                                elevation: 4,
-                                child: const SizedBox.expand(),
-                              ),
-                            )
+                                child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                MinoRenderer(tetris.nextMinoStream,
+                                    info: "Next"),
+                                const Divider(
+                                  color: Colors.transparent,
+                                ),
+                                MinoRenderer(tetris.holdingMinoStream,
+                                    info: "Hold"),
+                                const Divider(
+                                  color: Colors.transparent,
+                                ),
+                                EventRenderer(tetris),
+                                const Divider(color: Colors.transparent),
+                                Expanded(
+                                  child: Material(
+                                    color: neutralBlackC,
+                                    elevation: 4,
+                                    child: const SizedBox.expand(),
+                                  ),
+                                )
+                              ],
+                            )),
                           ],
-                        )),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  ScoreboardRenderer(tetris)
-                ],
-              )),
-            ),
+                        ),
+                      ),
+                      const Divider(),
+                      ScoreboardRenderer(tetris)
+                    ],
+                  )),
+                ),
+              ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: controllerHeight -
+                        MediaQuery.of(context).padding.bottom,
+                    child: Controller(
+                        longPressInterval: const Duration(
+                            milliseconds: 1000 ~/ delayedAutoShiftHz)),
+                  ))
+            ],
           ),
-          Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height:
-                    controllerHeight - MediaQuery.of(context).padding.bottom,
-                child: Controller(
-                    longPressInterval: const Duration(
-                        milliseconds: 1000 ~/ delayedAutoShiftHz)),
-              ))
-        ],
-      ),
-    );
+        ),
+        onWillPop: () async {
+          dispose();
+          return true;
+        });
   }
 }

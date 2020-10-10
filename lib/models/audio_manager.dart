@@ -38,7 +38,7 @@ class AudioManager {
   void stopBgm(Bgm bgm) async {
     final bgmPlayer = await _bgmPlayers[bgm];
 
-    bgmPlayer.stop();
+    bgmPlayer?.stop();
   }
 
   void toggleMute() async {
