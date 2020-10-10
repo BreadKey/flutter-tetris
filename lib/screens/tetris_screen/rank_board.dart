@@ -25,6 +25,7 @@ class RankBoard extends StatelessWidget {
                       children: List.generate(
                           4,
                           (index) => Expanded(
+                            key: ValueKey(rank.ranks[index]),
                                 child: AspectRatio(
                                     aspectRatio: 1,
                                     child: BlockRenderer(
