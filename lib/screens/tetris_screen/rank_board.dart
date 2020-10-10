@@ -20,12 +20,14 @@ class RankBoard extends StatelessWidget {
               return Column(
                 children: [
                   Text("You"),
-                  rank == null ? const SizedBox() :_buildRank(rank.playerRank.key, rank.playerRank.value),
+                  rank == null
+                      ? const SizedBox()
+                      : _buildRank(rank.playerRank.key, rank.playerRank.value),
                   Row(
                       children: List.generate(
                           4,
                           (index) => Expanded(
-                            key: ValueKey(rank.ranks[index]),
+                                key: ValueKey(rank.ranks[index]),
                                 child: AspectRatio(
                                     aspectRatio: 1,
                                     child: BlockRenderer(
@@ -34,10 +36,10 @@ class RankBoard extends StatelessWidget {
                               ))),
                   Expanded(
                       child: ListView(
-                    children: List.generate(rank?.ranks?.length ?? 0, (index) => 
-                      _buildRank(rank.ranks[index], index +1)
-                    )
-                  ))
+                          children: List.generate(
+                              rank?.ranks?.length ?? 0,
+                              (index) =>
+                                  _buildRank(rank.ranks[index], index + 1))))
                 ],
               );
             },
