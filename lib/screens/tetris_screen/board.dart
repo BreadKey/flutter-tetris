@@ -14,6 +14,7 @@ class Board extends StatelessWidget {
         child: Material(
           elevation: 4,
           color: neutralBlackC,
+          borderRadius: BorderRadius.circular(6),
           child: child,
         ),
       );

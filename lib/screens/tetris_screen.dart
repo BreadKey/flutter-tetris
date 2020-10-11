@@ -7,11 +7,13 @@ import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
 import 'package:tetris/screens/metal.dart';
-import 'package:tetris/screens/tetris_screen/rank_board.dart';
-import 'package:tetris/screens/tetris_screen/tetromino_board.dart';
 import 'package:tetris/screens/playfield_renderer.dart';
 import 'package:tetris/screens/tetris_screen/event_board.dart';
+import 'package:tetris/screens/tetris_screen/hold_board.dart';
+import 'package:tetris/screens/tetris_screen/logo.dart';
+import 'package:tetris/screens/tetris_screen/rank_board.dart';
 import 'package:tetris/screens/tetris_screen/scoreboard.dart';
+import 'package:tetris/screens/tetris_screen/next_tetromino_board.dart';
 
 class TetrisScreen extends StatefulWidget {
   @override
@@ -20,8 +22,9 @@ class TetrisScreen extends StatefulWidget {
 
 class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
-  static const gameScreenRatio = 3/ 4;
+  static const gameScreenRatio = 8 / 9;
   static const controllerHeight = 280;
+  static const dividerSize = 6.0;
 
   Tetris tetris;
 
@@ -79,7 +82,7 @@ class _TetrisScreenState extends State<TetrisScreen>
         sizeOfScreen.height -
             (mediaQuery.orientation == Orientation.portrait
                 ? controllerHeight
-                : 36));
+                : 14));
 
     return WillPopScope(
         child: Container(
@@ -102,7 +105,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                   width: height * gameScreenRatio,
                   height: height,
                   margin: EdgeInsets.symmetric(horizontal: 14),
-                  padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+                  padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
                   child: SafeArea(
                       child: Column(
                     children: [
@@ -110,39 +113,55 @@ class _TetrisScreenState extends State<TetrisScreen>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Expanded(
+                                child: Column(
+                              children: [
+                                HoldBoard(tetris),
+                                const Divider(
+                                  color: Colors.transparent,
+                                  height: dividerSize,
+                                ),
+                                EventBoard(tetris),
+                                const Divider(
+                                  color: Colors.transparent,
+                                  height: dividerSize,
+                                ),
+                                Expanded(child: RankBoard(tetris))
+                              ],
+                            )),
+                            const VerticalDivider(
+                              color: Colors.transparent,
+                              width: dividerSize,
+                            ),
                             SlideTransition(
                               position: fastDropAnimation,
                               child: PlayfieldRenderer(tetris),
                             ),
                             const VerticalDivider(
-                              color: Colors.transparent,
-                            ),
+                                color: Colors.transparent, width: dividerSize),
                             Expanded(
                                 child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                TetrominoBoard(tetris.nextMinoStream,
-                                    info: "Next"),
+                                NextTetrominoBoard(tetris),
                                 const Divider(
                                   color: Colors.transparent,
                                 ),
-                                TetrominoBoard(tetris.holdingMinoStream,
-                                    info: "Hold"),
-                                const Divider(
-                                  color: Colors.transparent,
-                                ),
-                                EventBoard(tetris),
-                                const Divider(color: Colors.transparent),
-                                Expanded(
-                                  child: RankBoard(tetris)
-                                )
                               ],
                             )),
                           ],
                         ),
                       ),
-                      const Divider(),
-                      Scoreboard(tetris)
+                      const Divider(
+                        color: Colors.transparent,
+                        height: dividerSize,
+                      ),
+                      Scoreboard(tetris),
+                      const Divider(
+                        color: Colors.transparent,
+                        height: dividerSize,
+                      ),
+                      const Logo()
                     ],
                   )),
                 ),

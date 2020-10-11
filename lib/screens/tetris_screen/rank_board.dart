@@ -27,7 +27,6 @@ class RankBoard extends StatelessWidget {
                       children: List.generate(
                           4,
                           (index) => Expanded(
-                                key: ValueKey(rank.ranks[index]),
                                 child: AspectRatio(
                                     aspectRatio: 1,
                                     child: BlockRenderer(
@@ -47,15 +46,17 @@ class RankBoard extends StatelessWidget {
         ),
       ));
 
-  Widget _buildRank(RankData rankData, int ranking) =>
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _buildMedal(ranking),
-        Flexible(child: Text("${rankData?.score ?? ""}")),
-      ]);
+  Widget _buildRank(RankData rankData, int ranking) => Row(
+          key: ValueKey(rankData),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildMedal(ranking),
+            Flexible(child: Text("${rankData?.score ?? ""}")),
+          ]);
 
   Widget _buildMedal(int ranking) => SizedBox(
-        width: 16,
-        height: 16,
+        width: 14,
+        height: 14,
         child: ranking <= 3 && ranking > 0
             ? BlockRenderer(Block(
                 color: ranking == 1

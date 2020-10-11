@@ -68,10 +68,12 @@ class Tetris extends ChangeNotifier
 
   final Tetromino _ghostPiece = Tetromino.ghost();
 
-  final Queue<TetrominoName> _nextMinoQueue = Queue<TetrominoName>();
+  final Queue<TetrominoName> _nextMinoBag = Queue<TetrominoName>();
 
-  final BehaviorSubject<TetrominoName> _nextMinoSubject = BehaviorSubject();
-  Stream<TetrominoName> get nextMinoStream => _nextMinoSubject.stream;
+  final BehaviorSubject<List<TetrominoName>> _nextMinoBagSubject =
+      BehaviorSubject();
+  Stream<List<TetrominoName>> get nextMinoBagStream =>
+      _nextMinoBagSubject.stream;
 
   bool _isStucked = false;
 
@@ -123,7 +125,7 @@ class Tetris extends ChangeNotifier
 
   void dispose() {
     _frameGenerator?.cancel();
-    _nextMinoSubject.close();
+    _nextMinoBagSubject.close();
     _levelSubject.close();
     _scoreSubject.close();
     _eventSubject.close();
@@ -154,10 +156,10 @@ class Tetris extends ChangeNotifier
 
     _randomMinoGenerator = RandomMinoGenerator();
 
-    _nextMinoQueue.clear();
+    _nextMinoBag.clear();
 
-    _nextMinoQueue.addAll(
-        [_randomMinoGenerator.getNext(), _randomMinoGenerator.getNext()]);
+    _nextMinoBag.addAll(List.generate(TetrominoName.values.length,
+        (index) => _randomMinoGenerator.getNext()));
 
     spawnNextMino();
 
@@ -189,9 +191,9 @@ class Tetris extends ChangeNotifier
   }
 
   void spawnNextMino() {
-    spawn(_nextMinoQueue.removeFirst());
-    _nextMinoQueue.add(_randomMinoGenerator.getNext());
-    _nextMinoSubject.sink.add(_nextMinoQueue.first);
+    spawn(_nextMinoBag.removeFirst());
+    _nextMinoBag.add(_randomMinoGenerator.getNext());
+    _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
 
     _rotationOccuredBeforeLock = false;
   }
@@ -510,6 +512,7 @@ class Tetris extends ChangeNotifier
 
   void levelUp() {
     if (_level != maxLevel) {
+      _audioManager.playEffect(Effect.levelUp);
       _level++;
       _levelSubject.sink.add(_level);
     }
@@ -594,17 +597,17 @@ class Tetris extends ChangeNotifier
 
   void hold() {
     if (_holdingMino == null) {
-      _holdingMino = _nextMinoQueue.removeFirst();
-      _nextMinoQueue.add(_randomMinoGenerator.getNext());
+      _holdingMino = _nextMinoBag.removeFirst();
+      _nextMinoBag.add(_randomMinoGenerator.getNext());
 
       _holdingMinoSubject.sink.add(_holdingMino);
-      _nextMinoSubject.sink.add(_nextMinoQueue.first);
+      _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
     } else {
-      _nextMinoQueue.addFirst(_holdingMino);
+      _nextMinoBag.addFirst(_holdingMino);
       _holdingMino = null;
 
       _holdingMinoSubject.sink.add(_holdingMino);
-      _nextMinoSubject.sink.add(_nextMinoQueue.first);
+      _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
     }
   }
 
