@@ -1,3 +1,4 @@
+![icon](https://github.com/BreadKey/flutter-tetris/blob/main/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-60.png?raw=true)
 # Just Tetris
 
 A new Flutter Tetris game.
