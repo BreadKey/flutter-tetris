@@ -16,7 +16,7 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## Demo
-![demo](https://user-images.githubusercontent.com/37973204/95654834-b99e4500-0b3d-11eb-8edd-d543037f4be7.png)
+![tetris](https://user-images.githubusercontent.com/37973204/95670844-5824b780-0bcb-11eb-95cc-f08dba846b2e.png)
 
 
 Videos were recorded in iPad.
