@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:rxdart/rxdart.dart';
 
 enum Bgm { play, gameOver }
 enum Effect {
@@ -22,9 +25,12 @@ class AudioManager {
   static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
-  final _bgmCache = AudioCache(respectSilence: true);
+  final _bgmCache = AudioCache();
 
-  final _effectCache = AudioCache(respectSilence: true);
+  final _effectCache = AudioCache();
+
+  final _effectSubject = PublishSubject<Effect>();
+  Map<Effect, StreamSubscription> _effectThrotllers;
 
   bool _isMuted = false;
   bool get isMuted => _isMuted;
@@ -32,6 +38,14 @@ class AudioManager {
   AudioManager._() {
     _bgmPlayer.monitorNotificationStateChanges(_callback);
     _bgmCache.fixedPlayer = _bgmPlayer;
+    _effectThrotllers = Map.fromEntries(Effect.values.map((e) => MapEntry(
+        e,
+        _effectSubject
+            .where((event) => event == e)
+            .throttleTime(const Duration(milliseconds: 100))
+            .listen((effect) {
+          _playEffect(effect);
+        }))));
   }
 
   void startBgm(Bgm bgm) async {
@@ -62,6 +76,10 @@ class AudioManager {
 
   void dispose() {
     _bgmPlayer.dispose();
+    _effectSubject.close();
+    _effectThrotllers.values.forEach((throtller) {
+      throtller.cancel();
+    });
   }
 
   void pause() {
@@ -75,6 +93,10 @@ class AudioManager {
   void playEffect(Effect effect) {
     if (_isMuted) return;
 
+    _effectSubject.sink.add(effect);
+  }
+
+  void _playEffect(Effect effect) {
     String effectFile;
 
     switch (effect) {
