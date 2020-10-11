@@ -51,10 +51,12 @@ class AudioManager {
   void startBgm(Bgm bgm) async {
     switch (bgm) {
       case Bgm.play:
-        _bgmCache.loop("audios/tetris-gameboy-02.mp3", volume: bgmVolume);
+        _bgmCache.loop("audios/tetris-gameboy-02.mp3",
+            volume: _isMuted ? 0 : bgmVolume);
         break;
       case Bgm.gameOver:
-        _bgmCache.loop("audios/tetris-gameboy-01.mp3", volume: bgmVolume);
+        _bgmCache.loop("audios/tetris-gameboy-01.mp3",
+            volume: _isMuted ? 0 : bgmVolume);
         break;
       default:
         break;
