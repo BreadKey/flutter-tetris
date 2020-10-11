@@ -9,8 +9,10 @@ class TetrominoRenderer extends StatelessWidget {
   final TetrominoName name;
   final String info;
   final int rotateCount;
+  final List<Direction> kicks;
 
-  const TetrominoRenderer(this.name, {Key key, this.info, this.rotateCount: 0})
+  const TetrominoRenderer(this.name,
+      {Key key, this.info, this.rotateCount: 0, this.kicks})
       : super(key: key);
 
   @override
@@ -22,12 +24,12 @@ class TetrominoRenderer extends StatelessWidget {
                 name == null ? null : Tetromino.spawn(name, Point(2, 2));
             for (int i = 0; i < rotateCount; i++) {
               tetromino?.rotate();
-              if (i == 1) {
-                tetromino?.move(Direction.up);
-              } else if (i == 2) {
-                tetromino?.move(Direction.right);
-              }
             }
+
+            for (Direction kick in kicks ?? []) {
+              tetromino?.move(kick);
+            }
+
             final blockMap = Map<Point<int>, Block>.fromEntries(
                 (tetromino?.blocks ?? [])
                     .map((block) => MapEntry(block.point, block)));

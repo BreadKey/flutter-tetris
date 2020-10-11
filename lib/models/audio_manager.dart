@@ -15,6 +15,7 @@ enum Effect {
 
 class AudioManager {
   static final instance = AudioManager._();
+  static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
   final _bgmCache = AudioCache();
@@ -31,10 +32,10 @@ class AudioManager {
   void startBgm(Bgm bgm) async {
     switch (bgm) {
       case Bgm.play:
-        _bgmCache.loop("audios/tetris-gameboy-02.mp3");
+        _bgmCache.loop("audios/tetris-gameboy-02.mp3", volume: bgmVolume);
         break;
       case Bgm.gameOver:
-        _bgmCache.loop("audios/tetris-gameboy-01.mp3");
+        _bgmCache.loop("audios/tetris-gameboy-01.mp3", volume: bgmVolume);
         break;
       default:
         break;
@@ -50,7 +51,7 @@ class AudioManager {
     if (_isMuted) {
       _bgmPlayer.setVolume(0);
     } else {
-      _bgmPlayer.setVolume(1);
+      _bgmPlayer.setVolume(bgmVolume);
     }
   }
 
@@ -79,20 +80,20 @@ class AudioManager {
         effectFile = "audios/move.wav";
         break;
       case Effect.rotate:
-        effectFile = ("audios/rotate.wav");
+        effectFile = "audios/rotate.wav";
         break;
       case Effect.hardDrop:
       case Effect.softDrop:
-        effectFile = ("audios/hard_drop.wav");
+        effectFile = "audios/hard_drop.wav";
         break;
       case Effect.breakLine:
-        effectFile = ("audios/break_line.wav");
+        effectFile = "audios/break_line.wav";
         break;
       case Effect.event:
         effectFile = "audios/event.wav";
         break;
       case Effect.levelUp:
-        effectFile = ("audios/level_up.wav");
+        effectFile = "audios/level_up.wav";
         break;
     }
 

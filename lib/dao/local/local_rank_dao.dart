@@ -1,4 +1,3 @@
-import 'package:sqflite/sql.dart';
 import 'package:tetris/dao/local/database.dart';
 import 'package:tetris/dao/rank_dao.dart';
 import 'package:tetris/models/rank.dart';
