@@ -107,11 +107,11 @@ class AppIcon extends StatelessWidget {
   AppIcon({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) => Container(
-      width: 256,
-      height: 256,
+      width: 250,
+      height: 250,
       color: Colors.white,
       child: Transform.translate(
-        offset: Offset(-32, 48),
+        offset: Offset(-25, 50),
         child: Stack(
           children: [
             TetrominoRenderer(TetrominoName.J,
