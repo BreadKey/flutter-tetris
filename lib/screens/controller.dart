@@ -19,7 +19,7 @@ class Controller extends StatelessWidget {
   final _inputManager = InputManager.instance;
 
   Controller(
-      {Key key, @required this.longPressInterval, this.longPressSensitivity: 3})
+      {Key key, @required this.longPressInterval, this.longPressSensitivity: 5})
       : assert(longPressInterval != null),
         super(key: key);
 
