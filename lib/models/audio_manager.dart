@@ -13,19 +13,24 @@ enum Effect {
   levelUp
 }
 
+void _callback(AudioPlayerState value) {
+  print("state => $value");
+}
+
 class AudioManager {
   static final instance = AudioManager._();
   static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
-  final _bgmCache = AudioCache();
+  final _bgmCache = AudioCache(respectSilence: true);
 
-  final _effectCache = AudioCache();
+  final _effectCache = AudioCache(respectSilence: true);
 
   bool _isMuted = false;
   bool get isMuted => _isMuted;
 
   AudioManager._() {
+    _bgmPlayer.monitorNotificationStateChanges(_callback);
     _bgmCache.fixedPlayer = _bgmPlayer;
   }
 
@@ -97,7 +102,8 @@ class AudioManager {
         break;
     }
 
-    _effectCache.play(effectFile,
-        mode: PlayerMode.LOW_LATENCY, isNotification: false);
+    _effectCache
+        .play(effectFile, mode: PlayerMode.LOW_LATENCY, isNotification: false)
+        .then((player) => player.monitorNotificationStateChanges(_callback));
   }
 }

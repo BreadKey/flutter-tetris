@@ -11,9 +11,11 @@ packages:
   audioplayers:
     dependency: "direct main"
     description:
-      name: audioplayers
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: "1ac0ff013bdb09b4a2f0113a57fcf9efbd0d956f"
+      url: "https://github.com/luanpotter/audioplayers.git"
+    source: git
     version: "0.16.1"
   boolean_selector:
     dependency: transitive
