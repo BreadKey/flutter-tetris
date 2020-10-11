@@ -38,7 +38,6 @@ enum OnHardDrop { instantLock, wait }
 
 class Tetris extends ChangeNotifier
     with InputListener, WidgetsBindingObserver, AnimationListener {
-  static const fps = 64;
   static const secondsPerFrame = 1 / fps;
   static const tSpinTestOffsets = [
     Point(-1, 1),

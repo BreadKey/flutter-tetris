@@ -99,7 +99,7 @@ class _JoystickState extends State<Joystick> {
             alignment: Alignment.centerLeft,
             child: Container(
                 width: totalSize / 1.618 * 0.95,
-                height: totalSize / capacityPerDirection * 1.1,
+                height: totalSize / capacityPerDirection * 1.2,
                 child: DragTarget(
                   builder: (context, _, __) => index % capacityPerDirection == 0
                       ? Align(

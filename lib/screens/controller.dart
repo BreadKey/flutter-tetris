@@ -36,15 +36,17 @@ class Controller extends StatelessWidget {
             ),
           ),
           Align(
-            alignment: Alignment.centerRight,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                buildSpecialButtons(context),
-                buildActionButtons(context)
-              ],
-            ),
-          )
+              alignment: Alignment.centerRight,
+              child: Transform.translate(
+                offset: Offset(0, actionButtonSpace / 2),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildSpecialButtons(context),
+                    buildActionButtons(context)
+                  ],
+                ),
+              ))
         ],
       ));
 
@@ -218,52 +220,58 @@ class Controller extends StatelessWidget {
         ),
       ]);
 
-  Widget buildSpecialButtons(BuildContext context) => Transform.translate(
-        offset: Offset(0, actionButtonSpace),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Transform.translate(
-              offset: Offset(0, actionButtonSpace / 2),
-              child: StatefulBuilder(
-                  builder: (context, setState) => _buildSpecialButton(
-                        context,
-                        onPressed: () {
-                          AudioManager.instance.toggleMute();
-                          setState(() {});
-                        },
-                        icon: Icon(
-                          AudioManager.instance.isMuted
-                              ? Icons.volume_up
-                              : Icons.volume_off,
-                          color: Colors.grey.shade600,
-                        ),
-                      )),
-            ),
-            _buildSpecialButton(context, onPressed: () {
-              InputManager.instance.enterButton(ButtonKey.special2);
-            },
-                icon: Text(
-                  "Hold",
-                  style: TextStyle(color: Colors.grey.shade600),
-                )),
-            const VerticalDivider(
-              color: Colors.transparent,
-              width: actionButtonSpace,
-            )
-          ],
-        ),
+  Widget buildSpecialButtons(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Transform.translate(
+            offset: Offset(0, actionButtonSpace / 2),
+            child: StatefulBuilder(
+                builder: (context, setState) => _buildSpecialButton(
+                      context,
+                      onPressed: () {
+                        AudioManager.instance.toggleMute();
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        AudioManager.instance.isMuted
+                            ? Icons.volume_up
+                            : Icons.volume_off,
+                        color: Colors.grey.shade600,
+                      ),
+                    )),
+          ),
+          _buildSpecialButton(context, onPressed: () {
+            InputManager.instance.enterButton(ButtonKey.special2);
+          },
+              icon: Text(
+                "Hold",
+                style: TextStyle(color: Colors.grey.shade600),
+              )),
+          const VerticalDivider(
+            color: Colors.transparent,
+            width: actionButtonSpace,
+          )
+        ],
       );
 
   Widget _buildSpecialButton(BuildContext context,
           {@required VoidCallback onPressed, Widget icon}) =>
       Transform.rotate(
         angle: -pi / 6,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
+            Transform.translate(
+                offset: Offset(0, 18),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: 24),
+                  child: Material(
+                    child: icon,
+                    color: Colors.transparent,
+                  ),
+                )),
             MaterialButton(
               onPressed: onPressed,
               materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -271,15 +279,6 @@ class Controller extends StatelessWidget {
               minWidth: 24,
               height: 10,
             ),
-            Transform.translate(
-                offset: Offset(0, -15),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 24),
-                  child: Material(
-                    child: icon,
-                    color: Colors.transparent,
-                  ),
-                ))
           ],
         ),
       );
