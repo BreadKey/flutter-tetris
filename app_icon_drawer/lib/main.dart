@@ -106,9 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
 class AppIcon extends StatelessWidget {
   AppIcon({Key key}) : super(key: key);
   @override
-  Widget build(BuildContext context) => SizedBox(
+  Widget build(BuildContext context) => Container(
       width: 256,
       height: 256,
+      color: Colors.white,
       child: Transform.translate(
         offset: Offset(-32, 48),
         child: Stack(
