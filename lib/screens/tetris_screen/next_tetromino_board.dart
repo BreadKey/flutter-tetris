@@ -1,9 +1,7 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
-import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 import 'package:tetris/screens/tetris_screen/tetromino_renderer.dart';
 
 import 'board.dart';

@@ -5,8 +5,6 @@ import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
-const _shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-
 class RotateIcon extends StatelessWidget {
   final double size;
   final Color color;
