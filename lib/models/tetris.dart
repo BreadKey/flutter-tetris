@@ -99,7 +99,7 @@ class Tetris extends ChangeNotifier
 
   bool _isOnBreakLine = false;
 
-  bool _softDropDoccured = false;
+  bool _softDropOccured = false;
 
   TetrominoName _holdingMino;
   final BehaviorSubject<TetrominoName> _holdingMinoSubject = BehaviorSubject();
@@ -284,7 +284,7 @@ class Tetris extends ChangeNotifier
 
   Future<void> lock() async {
     _isStucked = false;
-    _softDropDoccured = false;
+    _softDropOccured = false;
     _stuckedSeconds = 0;
     _accumulatedPower = 0;
     await checkLines();
@@ -302,11 +302,11 @@ class Tetris extends ChangeNotifier
 
         if (direction == Direction.down) {
           if (!isMoved) {
-            if (!_softDropDoccured) {
+            if (!_softDropOccured) {
               _onSoftDrop();
             }
           } else {
-            _softDropDoccured = false;
+            _softDropOccured = false;
           }
         }
       }
@@ -315,7 +315,7 @@ class Tetris extends ChangeNotifier
 
   void _onSoftDrop() {
     _audioManager.playEffect(Effect.softDrop);
-    _softDropDoccured = true;
+    _softDropOccured = true;
 
     _eventSubject.sink.add(TetrisEvent.softDrop);
   }
