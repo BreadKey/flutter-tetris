@@ -13,4 +13,8 @@ class RandomMinoGenerator {
 
     return _bag.removeFirst();
   }
+
+  void clear() {
+    _bag.clear();
+  }
 }
