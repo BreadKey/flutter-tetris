@@ -3,8 +3,8 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:injector/injector.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tetris/dao/local/local_rank_dao.dart';
 import 'package:tetris/dao/rank_dao.dart';
 import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
@@ -12,13 +12,13 @@ import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/models/rank.dart';
 import 'package:tetris/retro_colors.dart';
 
+part 'tetris/animator.dart';
 part 'tetris/block.dart';
+part 'tetris/event.dart';
 part 'tetris/random_mino_generator.dart';
 part 'tetris/rules.dart';
 part 'tetris/super_rotation_system.dart';
 part 'tetris/tetromino.dart';
-part 'tetris/event.dart';
-part 'tetris/animator.dart';
 
 extension Playfield on List<List<Block>> {
   Block getBlockAt(Point<int> point) => this[point.y][point.x];
@@ -57,7 +57,7 @@ class Tetris extends ChangeNotifier
 
   Timer _frameGenerator;
 
-  RandomMinoGenerator _randomMinoGenerator;
+  final RandomMinoGenerator _randomMinoGenerator = RandomMinoGenerator();
 
   DropMode _currentDropMode = DropMode.gravity;
 
@@ -101,16 +101,18 @@ class Tetris extends ChangeNotifier
 
   bool _softDropOccured = false;
 
+  bool _canHold = true;
   TetrominoName _holdingMino;
+  TetrominoName get holdingMino => _holdingMino;
   final BehaviorSubject<TetrominoName> _holdingMinoSubject = BehaviorSubject();
   Stream<TetrominoName> get holdingMinoStream => _holdingMinoSubject.stream;
 
-  final AudioManager _audioManager = AudioManager.instance;
+  final AudioManager _audioManager = Injector.appInstance.get<AudioManager>();
 
   final Animator _animator = Animator();
 
   final _playerId = 0;
-  final RankDao _rankDao = LocalRankDao();
+  final RankDao _rankDao = Injector.appInstance.get<RankDao>();
   final BehaviorSubject<Rank> _rankSubject = BehaviorSubject();
   Stream<Rank> get rankStream => _rankSubject.stream;
 
@@ -153,7 +155,7 @@ class Tetris extends ChangeNotifier
       }
     });
 
-    _randomMinoGenerator = RandomMinoGenerator();
+    _randomMinoGenerator.clear();
 
     _nextMinoBag.clear();
 
@@ -162,8 +164,8 @@ class Tetris extends ChangeNotifier
 
     spawnNextMino();
 
-    AudioManager.instance.stopBgm(Bgm.gameOver);
-    AudioManager.instance.startBgm(Bgm.play);
+    _audioManager.stopBgm(Bgm.gameOver);
+    _audioManager.startBgm(Bgm.play);
   }
 
   void initPlayfield() {
@@ -185,16 +187,21 @@ class Tetris extends ChangeNotifier
 
     _brokenLinesCountInLevel = 0;
 
+    _canHold = true;
     _holdingMino = null;
     _holdingMinoSubject.sink.add(_holdingMino);
   }
 
   void spawnNextMino() {
     spawn(_nextMinoBag.removeFirst());
-    _nextMinoBag.add(_randomMinoGenerator.getNext());
-    _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
+    addMinoToBag(_randomMinoGenerator.getNext());
 
     _rotationOccuredBeforeLock = false;
+  }
+
+  void addMinoToBag(TetrominoName tetrominoName) {
+    _nextMinoBag.add(tetrominoName);
+    _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
   }
 
   void spawn(TetrominoName tetrominoName) {
@@ -287,6 +294,7 @@ class Tetris extends ChangeNotifier
     _softDropOccured = false;
     _stuckedSeconds = 0;
     _accumulatedPower = 0;
+    _canHold = true;
     await checkLines();
     spawnNextMino();
   }
@@ -549,8 +557,8 @@ class Tetris extends ChangeNotifier
 
     _animator.startGameOver(_currentTetromino, _playfield);
 
-    AudioManager.instance.stopBgm(Bgm.play);
-    AudioManager.instance.startBgm(Bgm.gameOver);
+    _audioManager.stopBgm(Bgm.play);
+    _audioManager.startBgm(Bgm.gameOver);
 
     if (_score > 0) {
       _rankDao.insert(RankData(_playerId, _score)).then((_) {
@@ -595,19 +603,36 @@ class Tetris extends ChangeNotifier
   }
 
   void hold() {
-    if (_holdingMino == null) {
-      _holdingMino = _nextMinoBag.removeFirst();
-      _nextMinoBag.add(_randomMinoGenerator.getNext());
+    if (_canHold) {
+      if (_holdingMino == null) {
+        _holdingMino = _currentTetromino.name;
 
-      _holdingMinoSubject.sink.add(_holdingMino);
-      _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
-    } else {
-      _nextMinoBag.addFirst(_holdingMino);
-      _holdingMino = null;
+        _clearCurrentMino();
+        spawnNextMino();
 
-      _holdingMinoSubject.sink.add(_holdingMino);
-      _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
+        _holdingMinoSubject.sink.add(_holdingMino);
+        _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
+      } else {
+        final holding = _holdingMino;
+        _holdingMino = _currentTetromino.name;
+
+        _clearCurrentMino();
+        spawn(holding);
+
+        _holdingMinoSubject.sink.add(_holdingMino);
+      }
+
+      _canHold = false;
     }
+  }
+
+  void _clearCurrentMino() {
+    _currentTetromino.blocks.forEach((block) {
+      _playfield.setBlockAt(block.point, null);
+    });
+    _ghostPiece.blocks.forEach((ghostBlock) {
+      _playfield.setBlockAt(ghostBlock.point, null);
+    });
   }
 
   @override

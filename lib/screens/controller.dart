@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:injector/injector.dart';
 import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
@@ -17,6 +18,7 @@ class Controller extends StatelessWidget {
   final Duration longPressInterval;
 
   final _inputManager = InputManager.instance;
+  final _audioManager = Injector.appInstance.get<AudioManager>();
 
   Controller(
       {Key key, @required this.longPressInterval, this.longPressSensitivity: 5})
@@ -231,11 +233,11 @@ class Controller extends StatelessWidget {
                 builder: (context, setState) => _buildSpecialButton(
                       context,
                       onPressed: () {
-                        AudioManager.instance.toggleMute();
+                        _audioManager.toggleMute();
                         setState(() {});
                       },
                       icon: Icon(
-                        AudioManager.instance.isMuted
+                        _audioManager.isMuted
                             ? Icons.volume_up
                             : Icons.volume_off,
                         color: Colors.grey.shade600,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -20,11 +21,21 @@ void _callback(AudioPlayerState value) {
   print("state => $value");
 }
 
-class AudioManager {
-  static final instance = AudioManager._();
+abstract class AudioManager {
+  bool get isMuted;
+  void startBgm(Bgm bgm);
+  void stopBgm(Bgm bgm);
+  void toggleMute();
+  void dispose();
+  void pause();
+  void resume();
+  void playEffect(Effect effect);
+}
+
+class AudioManagerImpl extends AudioManager {
   static const bgmVolume = 0.618;
 
-  final _bgmPlayer = AudioPlayer();
+  final _bgmPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
   final _bgmCache = AudioCache();
 
   final _effectCache = AudioCache();
@@ -33,10 +44,13 @@ class AudioManager {
   Map<Effect, StreamSubscription> _effectThrotllers;
 
   bool _isMuted = false;
+  @override
   bool get isMuted => _isMuted;
 
-  AudioManager._() {
-    _bgmPlayer.monitorNotificationStateChanges(_callback);
+  AudioManagerImpl() {
+    if (Platform.isIOS) {
+      _bgmPlayer.monitorNotificationStateChanges(_callback);
+    }
     _bgmCache.fixedPlayer = _bgmPlayer;
     _effectThrotllers = Map.fromEntries(Effect.values.map((e) => MapEntry(
         e,
@@ -48,7 +62,8 @@ class AudioManager {
         }))));
   }
 
-  void startBgm(Bgm bgm) async {
+  @override
+  void startBgm(Bgm bgm) {
     switch (bgm) {
       case Bgm.play:
         _bgmCache.loop("audios/tetris-gameboy-02.mp3",
@@ -63,10 +78,12 @@ class AudioManager {
     }
   }
 
+  @override
   void stopBgm(Bgm bgm) async {
     _bgmPlayer.stop();
   }
 
+  @override
   void toggleMute() async {
     _isMuted = !_isMuted;
     if (_isMuted) {
@@ -76,6 +93,7 @@ class AudioManager {
     }
   }
 
+  @override
   void dispose() {
     _bgmPlayer.dispose();
     _effectSubject.close();
@@ -84,14 +102,17 @@ class AudioManager {
     });
   }
 
+  @override
   void pause() {
     _bgmPlayer.pause();
   }
 
+  @override
   void resume() {
     _bgmPlayer.resume();
   }
 
+  @override
   void playEffect(Effect effect) {
     if (_isMuted) return;
 
@@ -128,6 +149,10 @@ class AudioManager {
 
     _effectCache
         .play(effectFile, mode: PlayerMode.LOW_LATENCY, isNotification: false)
-        .then((player) => player.monitorNotificationStateChanges(_callback));
+        .then((player) {
+      if (Platform.isIOS) {
+        player.monitorNotificationStateChanges(_callback);
+      }
+    });
   }
 }

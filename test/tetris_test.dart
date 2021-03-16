@@ -2,13 +2,22 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:injector/injector.dart';
+import 'package:tetris/dao/rank_dao.dart';
+import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/tetris.dart';
 
+import 'mocks/mock_audio_manager.dart';
+import 'mocks/mock_rank_dao.dart';
 import 'tetromino_test.dart';
 
 void main() {
   Tetris tetris;
+  Injector.appInstance
+      .registerSingleton<AudioManager>(() => MockAudioManager());
+  Injector.appInstance.registerSingleton<RankDao>(() => MockRankDao());
+
   setUp(() {
     tetris = Tetris();
     tetris.initPlayfield();
@@ -19,8 +28,7 @@ void main() {
   });
   test("spawn I mino", () {
     tetris.spawn(TetrominoName.I);
-    expectPoints(tetris.currentTetromino,
-        [Point(3, 19), Point(4, 19), Point(5, 19), Point(6, 19)]);
+    expectIMinoSpawned(tetris);
   });
 
   test("spawn T mino", () {
@@ -124,4 +132,30 @@ void main() {
 
     expectPoints(tMino, [Point(1, 1), Point(2, 2), Point(2, 1), Point(2, 0)]);
   });
+
+  test("hold test", () {
+    tetris.spawn(TetrominoName.T);
+    tetris.addMinoToBag(TetrominoName.I);
+    tetris.moveCurrentMino(Direction.down);
+    tetris.moveCurrentMino(Direction.down);
+
+    final lastBlocks = tetris.currentTetromino.blocks;
+
+    tetris.hold();
+    expect(tetris.currentTetromino.name, TetrominoName.I);
+    expect(tetris.holdingMino, TetrominoName.T);
+
+    tetris.playfield.forEach((line) {
+      lastBlocks.forEach((block) {
+        expect(line.contains(block), false);
+      });
+    });
+
+    expectIMinoSpawned(tetris);
+  });
+}
+
+void expectIMinoSpawned(Tetris tetris) {
+  expectPoints(tetris.currentTetromino,
+      [Point(3, 19), Point(4, 19), Point(5, 19), Point(6, 19)]);
 }
