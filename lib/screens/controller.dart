@@ -21,7 +21,7 @@ class Controller extends StatelessWidget {
   final _audioManager = Injector.appInstance.get<AudioManager>();
 
   Controller(
-      {Key key, @required this.longPressInterval, this.longPressSensitivity: 5})
+      {Key key, @required this.longPressInterval, this.longPressSensitivity: 4})
       : assert(longPressInterval != null),
         super(key: key);
 
