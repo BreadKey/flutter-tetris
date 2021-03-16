@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -47,7 +48,9 @@ class AudioManagerImpl extends AudioManager {
   bool get isMuted => _isMuted;
 
   AudioManagerImpl() {
-    _bgmPlayer.monitorNotificationStateChanges(_callback);
+    if (Platform.isIOS) {
+      _bgmPlayer.monitorNotificationStateChanges(_callback);
+    }
     _bgmCache.fixedPlayer = _bgmPlayer;
     _effectThrotllers = Map.fromEntries(Effect.values.map((e) => MapEntry(
         e,
@@ -146,6 +149,10 @@ class AudioManagerImpl extends AudioManager {
 
     _effectCache
         .play(effectFile, mode: PlayerMode.LOW_LATENCY, isNotification: false)
-        .then((player) => player.monitorNotificationStateChanges(_callback));
+        .then((player) {
+      if (Platform.isIOS) {
+        player.monitorNotificationStateChanges(_callback);
+      }
+    });
   }
 }
