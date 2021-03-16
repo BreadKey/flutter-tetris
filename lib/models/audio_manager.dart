@@ -35,7 +35,7 @@ abstract class AudioManager {
 class AudioManagerImpl extends AudioManager {
   static const bgmVolume = 0.618;
 
-  final _bgmPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
+  final _bgmPlayer = AudioPlayer();
   final _bgmCache = AudioCache();
 
   final _effectCache = AudioCache();
