@@ -19,13 +19,13 @@ class Scoreboard extends StatelessWidget {
             Expanded(
                 child: LabelAndNumberRenderer(
               "Level",
-              tetris.levelStream,
+              (tetris) => tetris.level,
               direction: direction,
             )),
             Expanded(
                 child: LabelAndNumberRenderer(
               "Score",
-              tetris.scoreStream,
+              (tetris) => tetris.score,
               direction: direction,
             ))
           ],

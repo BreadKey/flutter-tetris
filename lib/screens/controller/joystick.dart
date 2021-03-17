@@ -77,6 +77,7 @@ class _JoystickState extends State<Joystick> {
           Metal(
             width: totalSize,
             height: totalSize,
+            color: bitOfBlue,
             shape: BoxShape.circle,
             child: SizedBox.expand(),
           )
@@ -190,10 +191,10 @@ class _JoystickState extends State<Joystick> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                      Colors.black12,
+                      neutralBlackC.shade400,
                       neutralBlackC,
-                      Colors.black87,
-                      Colors.black
+                      neutralBlackC.shade600,
+                      neutralBlackC.shade800
                     ])),
                 child: Container(
                   margin: const EdgeInsets.all(12),

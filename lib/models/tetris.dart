@@ -47,7 +47,6 @@ class Tetris extends ChangeNotifier
   ];
 
   List<List<Block>> _playfield;
-
   Iterable<Iterable<Block>> get playfield => _playfield;
 
   Tetromino _currentTetromino;
@@ -68,23 +67,17 @@ class Tetris extends ChangeNotifier
   final Tetromino _ghostPiece = Tetromino.ghost();
 
   final Queue<TetrominoName> _nextMinoBag = Queue<TetrominoName>();
-
-  final BehaviorSubject<List<TetrominoName>> _nextMinoBagSubject =
-      BehaviorSubject();
-  Stream<List<TetrominoName>> get nextMinoBagStream =>
-      _nextMinoBagSubject.stream;
+  List<TetrominoName> get nextMinoBag => _nextMinoBag.toList();
 
   bool _isStucked = false;
 
   bool _paused = false;
 
   int _level = 1;
-  final BehaviorSubject<int> _levelSubject = BehaviorSubject();
-  Stream<int> get levelStream => _levelSubject.stream;
+  int get level => _level;
 
   int _score = 0;
-  final BehaviorSubject<int> _scoreSubject = BehaviorSubject();
-  Stream<int> get scoreStream => _scoreSubject.stream;
+  int get score => _score;
 
   final PublishSubject<TetrisEvent> _eventSubject = PublishSubject();
   Stream<TetrisEvent> get eventStream => _eventSubject.stream;
@@ -102,10 +95,9 @@ class Tetris extends ChangeNotifier
   bool _softDropOccured = false;
 
   bool _canHold = true;
+  bool get canHold => _canHold;
   TetrominoName _holdingMino;
   TetrominoName get holdingMino => _holdingMino;
-  final BehaviorSubject<TetrominoName> _holdingMinoSubject = BehaviorSubject();
-  Stream<TetrominoName> get holdingMinoStream => _holdingMinoSubject.stream;
 
   final AudioManager _audioManager = Injector.appInstance.get<AudioManager>();
 
@@ -126,12 +118,8 @@ class Tetris extends ChangeNotifier
 
   void dispose() {
     _frameGenerator?.cancel();
-    _nextMinoBagSubject.close();
-    _levelSubject.close();
-    _scoreSubject.close();
-    _eventSubject.close();
     _rankSubject.close();
-    _holdingMinoSubject.close();
+    _eventSubject.close();
     InputManager.instance.unregister(this);
     WidgetsBinding.instance?.removeObserver(this);
     _audioManager.dispose();
@@ -177,10 +165,8 @@ class Tetris extends ChangeNotifier
 
   void initStatus() {
     _level = 1;
-    _levelSubject.sink.add(_level);
 
     _score = 0;
-    _scoreSubject.sink.add(_score);
 
     _isGameOver = false;
     _eventSubject.sink.add(null);
@@ -189,7 +175,6 @@ class Tetris extends ChangeNotifier
 
     _canHold = true;
     _holdingMino = null;
-    _holdingMinoSubject.sink.add(_holdingMino);
   }
 
   void spawnNextMino() {
@@ -201,7 +186,7 @@ class Tetris extends ChangeNotifier
 
   void addMinoToBag(TetrominoName tetrominoName) {
     _nextMinoBag.add(tetrominoName);
-    _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
+    notifyListeners();
   }
 
   void spawn(TetrominoName tetrominoName) {
@@ -514,14 +499,14 @@ class Tetris extends ChangeNotifier
         break;
     }
 
-    _scoreSubject.sink.add(_score);
+    notifyListeners();
   }
 
   void levelUp() {
     if (_level != maxLevel) {
       _audioManager.playEffect(Effect.levelUp);
       _level++;
-      _levelSubject.sink.add(_level);
+      notifyListeners();
     }
   }
 
@@ -609,17 +594,12 @@ class Tetris extends ChangeNotifier
 
         _clearCurrentMino();
         spawnNextMino();
-
-        _holdingMinoSubject.sink.add(_holdingMino);
-        _nextMinoBagSubject.sink.add(_nextMinoBag.toList());
       } else {
         final holding = _holdingMino;
         _holdingMino = _currentTetromino.name;
 
         _clearCurrentMino();
         spawn(holding);
-
-        _holdingMinoSubject.sink.add(_holdingMino);
       }
 
       _canHold = false;

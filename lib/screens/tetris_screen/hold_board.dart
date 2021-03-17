@@ -13,17 +13,20 @@ class HoldBoard extends StatelessWidget {
   Widget build(BuildContext context) => Board(
         child: Stack(
           children: [
-            StreamProvider.value(
-                value: tetris.holdingMinoStream,
-                child: Consumer<TetrominoName>(
-                    builder: (context, holdingTetrominoName, _) =>
-                        TetrominoRenderer(
-                          holdingTetrominoName,
-                          key: ValueKey(holdingTetrominoName),
-                        ))),
+            Selector<Tetris, bool>(
+                selector: (_, tetris) => tetris.canHold,
+                builder: (_, canHold, __) => Selector<Tetris, TetrominoName>(
+                      selector: (_, tetris) => tetris.holdingMino,
+                      builder: (_, holdingMino, __) => TetrominoRenderer(
+                        holdingMino,
+                        color: canHold ? null : Colors.grey,
+                      ),
+                    )),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(" Hold"),
+              child: Text(
+                " Hold",
+              ),
             ),
           ],
         ),

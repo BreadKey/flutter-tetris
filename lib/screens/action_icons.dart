@@ -33,7 +33,7 @@ class RotateIcon extends StatelessWidget {
         width: size / 3,
         height: size / 3,
         child: BlockRenderer(
-          Block(color: justWhite),
+          Block(color: justGrey),
           drawShadow: false,
         ));
 
@@ -112,7 +112,7 @@ class HardDropIcon extends StatelessWidget {
         width: size / 3,
         height: size / 3,
         child: BlockRenderer(
-          Block(color: justWhite),
+          Block(color: justGrey),
           drawShadow: false,
         ));
 

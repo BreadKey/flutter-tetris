@@ -73,7 +73,7 @@ class _BlockPainter extends CustomPainter {
 
   Color getBlockBackgroundColor() {
     if (isGhost) {
-      return block.color.shade300.withOpacity(0.3);
+      return block.color.shade800.withOpacity(0.54);
     } else {
       return block.color.shade600;
     }

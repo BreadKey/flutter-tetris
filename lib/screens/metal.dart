@@ -7,6 +7,7 @@ class Metal extends StatelessWidget {
   final EdgeInsets margin;
   final EdgeInsets padding;
   final BoxShape shape;
+  final MaterialColor color;
 
   const Metal(
       {Key key,
@@ -15,7 +16,8 @@ class Metal extends StatelessWidget {
       @required this.child,
       this.margin,
       this.padding,
-      this.shape})
+      this.shape,
+      this.color = Colors.grey})
       : super(key: key);
   @override
   Widget build(BuildContext context) => Container(
@@ -30,15 +32,15 @@ class Metal extends StatelessWidget {
               : BorderRadius.vertical(
                   top: Radius.circular(24), bottom: Radius.circular(38)),
           gradient: LinearGradient(colors: [
-            Colors.grey[400],
-            Colors.grey[500],
-            Colors.grey[600],
-            Colors.grey[700],
+            color.shade400,
+            color.shade500,
+            color.shade600,
+            color.shade700,
           ], begin: Alignment.topLeft, end: Alignment.bottomRight),
           boxShadow: [
-            BoxShadow(color: Colors.grey[800], blurRadius: 14),
+            BoxShadow(color: color.shade800, blurRadius: 14),
             BoxShadow(
-              color: Colors.grey,
+              color: color,
               spreadRadius: 8,
             ),
           ]),

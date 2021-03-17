@@ -180,7 +180,7 @@ class Controller extends StatelessWidget {
           {@required VoidCallback onPressed,
           @required Widget child,
           double size = defaultCircleButtonSize,
-          MaterialColor color = roseViolet}) =>
+          MaterialColor color = bitOfBlue}) =>
       Stack(alignment: Alignment.center, children: [
         Material(
           color: color.shade600,
@@ -218,7 +218,7 @@ class Controller extends StatelessWidget {
           minWidth: size,
           height: size,
           shape: const CircleBorder(),
-          textColor: Colors.white,
+          textColor: Colors.grey,
         ),
       ]);
 
@@ -240,7 +240,7 @@ class Controller extends StatelessWidget {
                         _audioManager.isMuted
                             ? Icons.volume_up
                             : Icons.volume_off,
-                        color: Colors.grey.shade600,
+                        color: Colors.white54,
                       ),
                     )),
           ),
@@ -249,7 +249,7 @@ class Controller extends StatelessWidget {
           },
               icon: Text(
                 "Hold",
-                style: TextStyle(color: Colors.grey.shade600),
+                style: TextStyle(color: Colors.white54),
               )),
           const VerticalDivider(
             color: Colors.transparent,
@@ -277,7 +277,7 @@ class Controller extends StatelessWidget {
             MaterialButton(
               onPressed: onPressed,
               materialTapTargetSize: MaterialTapTargetSize.padded,
-              color: roseViolet,
+              color: bitOfBlue,
               minWidth: 24,
               height: 10,
             ),

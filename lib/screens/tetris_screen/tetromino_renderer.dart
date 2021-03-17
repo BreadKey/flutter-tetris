@@ -10,9 +10,10 @@ class TetrominoRenderer extends StatelessWidget {
   final String info;
   final int rotateCount;
   final List<Direction> kicks;
+  final MaterialColor color;
 
   const TetrominoRenderer(this.name,
-      {Key key, this.info, this.rotateCount: 0, this.kicks})
+      {Key key, this.info, this.rotateCount: 0, this.kicks, this.color})
       : super(key: key);
 
   @override
@@ -52,6 +53,7 @@ class TetrominoRenderer extends StatelessWidget {
                     .expand((element) => element)
                     .map((point) {
                   final block = blockMap[point];
+                  block?.color = color ?? block.color;
 
                   return block == null
                       ? const SizedBox()
