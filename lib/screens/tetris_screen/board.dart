@@ -13,7 +13,7 @@ class Board extends StatelessWidget {
                 Theme.of(context).textTheme.apply(bodyColor: Colors.black54)),
         child: Material(
           elevation: 4,
-          color: antiqueWhite,
+          color: retroWhite,
           borderRadius: BorderRadius.circular(6),
           child: child,
         ),
