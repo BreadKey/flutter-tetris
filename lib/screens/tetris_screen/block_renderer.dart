@@ -14,7 +14,7 @@ class BlockRenderer extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
         color: Colors.transparent,
-        elevation: block.isGhost || !drawShadow ? 0 : 4,
+        elevation: block.isGhost || !drawShadow ? 0 : 2,
         child: SizedBox.expand(
           child: CustomPaint(
             painter: _BlockPainter(block),
@@ -33,7 +33,8 @@ class _BlockPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final strokeWidth = size.height / 6;
+    final strokeWidth = size.height / 8;
+    final shadowWidth = size.height / 6;
     final paint = Paint()..strokeWidth = strokeWidth;
 
     final blockRect = Rect.fromLTWH(
@@ -41,7 +42,8 @@ class _BlockPainter extends CustomPainter {
 
     canvas.drawRect(blockRect, paint..color = getBlockBackgroundColor());
 
-    final shadowRect = blockRect;
+    final shadowRect = Rect.fromLTWH(
+        0, 0, size.width - shadowWidth / 2, size.height - shadowWidth / 2);
 
     if (!block.isGhost) {
       // canvas.drawRect(blockRect, paint..style = PaintingStyle.stroke);
