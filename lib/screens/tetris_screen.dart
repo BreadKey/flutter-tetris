@@ -176,6 +176,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                       height: controllerHeight -
                           MediaQuery.of(context).padding.bottom,
                       child: Controller(
+                          longPressDelay: const Duration(milliseconds: 200),
                           longPressInterval: const Duration(
                               milliseconds: 1000 ~/ delayedAutoShiftHz)),
                     ))

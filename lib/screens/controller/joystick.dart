@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/input_manager.dart';
-import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/long_press_button.dart';
 import 'package:tetris/screens/metal.dart';
@@ -22,45 +20,32 @@ enum JoystickDirection {
 }
 
 class Joystick extends StatefulWidget {
-  final int sensitivity;
+  final Duration delay;
   final Duration interval;
-  Joystick({Key key, @required this.sensitivity, @required this.interval})
-      : super(key: key);
+  Joystick({Key key, @required this.delay, @required this.interval})
+      : assert(delay != null),
+        assert(interval != null),
+        super(key: key);
 
   @override
   _JoystickState createState() => _JoystickState();
 }
 
 class _JoystickState extends State<Joystick> {
-  final tickProviders = <JoystickDirection, Timer>{};
   final totalSize = 150.0;
-  int tick = 0;
 
   static final int directionLengh = JoystickDirection.values.length;
   static const int capacityPerDirection = 3;
 
   JoystickDirection lastDirection;
 
-  final tickSubject = PublishSubject<JoystickDirection>();
-  StreamSubscription tickResetDebouncer;
-
-  @override
-  void initState() {
-    super.initState();
-    tickResetDebouncer = tickSubject
-        .debounceTime(const Duration(milliseconds: 1000 * 3 ~/ delayedAutoShiftHz))
-        .listen((_) {
-      tick = 0;
-    });
-  }
+  Timer delayTimer;
+  Timer intervalTimer;
 
   @override
   void dispose() {
-    tickProviders.values.forEach((provider) {
-      provider.cancel();
-    });
-    tickSubject.close();
-    tickResetDebouncer.cancel();
+    delayTimer?.cancel();
+    intervalTimer?.cancel();
     super.dispose();
   }
 
@@ -102,42 +87,26 @@ class _JoystickState extends State<Joystick> {
                 width: totalSize / 1.618 * 0.95,
                 height: totalSize / capacityPerDirection * 1.2,
                 child: DragTarget(
-                  builder: (context, _, __) => (index / 2) % capacityPerDirection == 0
-                      ? Align(
-                          alignment: Alignment.centerRight,
-                          child: LongPressButton(
-                            padding: const EdgeInsets.all(0),
-                            minWidth: totalSize / 3 + 8,
-                            height: 60,
-                            sensitivity: widget.sensitivity,
-                            interval: widget.interval,
-                            child: const Icon(Icons.arrow_left),
-                            onPressed: () {
-                              _onDirectionButtonPressed(direction);
-                            },
-                          ),
-                        )
-                      : const SizedBox(),
+                  builder: (context, _, __) =>
+                      (index / 2) % capacityPerDirection == 0
+                          ? Align(
+                              alignment: Alignment.centerRight,
+                              child: LongPressButton(
+                                padding: const EdgeInsets.all(0),
+                                minWidth: totalSize / 3 + 8,
+                                height: 60,
+                                delay: widget.delay,
+                                interval: widget.interval,
+                                child: const Icon(Icons.arrow_left),
+                                onPressed: () {
+                                  _onDirectionButtonPressed(direction);
+                                },
+                              ),
+                            )
+                          : const SizedBox(),
                   onMove: (_) {
-                    if (tickProviders[direction]?.isActive != true) {
-                      if (lastDirection != direction) {
-                        _onDirectionEntered(direction);
-                        tickProviders.forEach((key, provider) {
-                          if (key != direction) {
-                            provider.cancel();
-                          }
-                        });
-                      }
-
-                      tickProviders[direction] =
-                          Timer.periodic(widget.interval, (timer) {
-                        tick++;
-                        tickSubject.sink.add(direction);
-
-                        if (tick > widget.sensitivity) {
-                          _onDirectionEntered(direction);
-                        }
-                      });
+                    if (lastDirection != direction) {
+                      _onDirectionEntered(direction);
                     }
                   },
                 ))),
@@ -168,7 +137,7 @@ class _JoystickState extends State<Joystick> {
                 builder: (context, candidateData, rejectedData) =>
                     const SizedBox(),
                 onMove: (_) {
-                  tickProviders[lastDirection]?.cancel();
+                  lastDirection = null;
                 },
               ),
             ),
@@ -217,7 +186,7 @@ class _JoystickState extends State<Joystick> {
                         highlightColor: Colors.transparent,
                         child: const SizedBox(),
                         padding: const EdgeInsets.all(0),
-                        sensitivity: widget.sensitivity,
+                        delay: widget.delay,
                         interval: widget.interval,
                         onPressed: () {
                           _onDirectionButtonPressed(direction);
@@ -240,9 +209,16 @@ class _JoystickState extends State<Joystick> {
             color: Colors.black,
           ),
         ),
+        onDragStarted: () {
+          delayTimer = Timer(widget.delay, () {
+            intervalTimer = Timer.periodic(widget.interval, (_) {
+              _onDirectionEntered(lastDirection);
+            });
+          });
+        },
         onDragEnd: (_) {
-          tickProviders[lastDirection]?.cancel();
-          tick = 0;
+          delayTimer.cancel();
+          intervalTimer?.cancel();
           lastDirection = null;
         },
       ),
@@ -251,8 +227,6 @@ class _JoystickState extends State<Joystick> {
 
   void _onDirectionButtonPressed(JoystickDirection direction) {
     _onDirectionEntered(direction);
-    tick++;
-    tickSubject.sink.add(direction);
     lastDirection = null;
   }
 

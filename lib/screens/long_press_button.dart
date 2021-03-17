@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LongPressButton extends StatefulWidget {
-  final int sensitivity;
   final VoidCallback onPressed;
   final Widget child;
   final double minWidth;
@@ -13,12 +12,12 @@ class LongPressButton extends StatefulWidget {
   final Color splashColor;
   final Color highlightColor;
   final Color textColor;
+  final Duration delay;
   final Duration interval;
   final EdgeInsets padding;
 
   const LongPressButton(
       {Key key,
-      @required this.sensitivity,
       @required this.onPressed,
       @required this.child,
       this.minWidth,
@@ -29,19 +28,24 @@ class LongPressButton extends StatefulWidget {
       this.highlightColor,
       this.textColor,
       this.padding,
+      @required this.delay,
       @required this.interval})
-      : super(key: key);
+      : assert(delay != null),
+        assert(interval != null),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LongPressButtonState();
 }
 
 class _LongPressButtonState extends State<LongPressButton> {
-  Timer _longPressTimer;
+  Timer _delayTimer;
+  Timer _intervalTimer;
 
   @override
   void dispose() {
-    _longPressTimer?.cancel();
+    _delayTimer?.cancel();
+    _intervalTimer?.cancel();
     super.dispose();
   }
 
@@ -62,17 +66,14 @@ class _LongPressButtonState extends State<LongPressButton> {
         if (pressed) {
           widget.onPressed?.call();
 
-          int pressTick = 0;
-          _longPressTimer?.cancel();
-          _longPressTimer = Timer.periodic(widget.interval, (timer) {
-            pressTick++;
-
-            if (pressTick > widget.sensitivity) {
+          _delayTimer = Timer(widget.delay, () {
+            _intervalTimer = Timer.periodic(widget.interval, (timer) {
               widget.onPressed?.call();
-            }
+            });
           });
         } else {
-          _longPressTimer?.cancel();
+          _delayTimer.cancel();
+          _intervalTimer?.cancel();
         }
       },
       child: widget.child,

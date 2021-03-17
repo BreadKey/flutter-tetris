@@ -14,15 +14,18 @@ class Controller extends StatelessWidget {
   static const double actionButtonSpace = 14 * 1.518;
   static const double defaultCircleButtonSize = 52;
 
-  final int longPressSensitivity;
+  final Duration longPressDelay;
   final Duration longPressInterval;
 
   final _inputManager = InputManager.instance;
   final _audioManager = Injector.appInstance.get<AudioManager>();
 
   Controller(
-      {Key key, @required this.longPressInterval, this.longPressSensitivity: 4})
-      : assert(longPressInterval != null),
+      {Key key,
+      @required this.longPressDelay,
+      @required this.longPressInterval})
+      : assert(longPressDelay != null),
+        assert(longPressInterval != null),
         super(key: key);
 
   @override
@@ -33,7 +36,7 @@ class Controller extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Joystick(
-              sensitivity: longPressSensitivity,
+              delay: longPressDelay,
               interval: longPressInterval,
             ),
           ),
@@ -57,7 +60,7 @@ class Controller extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           LongPressButton(
-            sensitivity: longPressSensitivity,
+            delay: longPressDelay,
             interval: longPressInterval,
             onPressed: () {
               _inputManager.enterDirection(Direction.up);
@@ -73,7 +76,7 @@ class Controller extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               LongPressButton(
-                sensitivity: longPressSensitivity,
+                delay: longPressDelay,
                 interval: longPressInterval,
                 color: neutralBlackC,
                 textColor: Colors.white,
@@ -87,7 +90,7 @@ class Controller extends StatelessWidget {
                         left: Radius.circular(24), right: Radius.circular(8))),
               ),
               LongPressButton(
-                sensitivity: longPressSensitivity,
+                delay: longPressDelay,
                 interval: longPressInterval,
                 color: neutralBlackC,
                 textColor: Colors.white,
@@ -103,7 +106,7 @@ class Controller extends StatelessWidget {
             ],
           ),
           LongPressButton(
-            sensitivity: longPressSensitivity,
+            delay: longPressDelay,
             interval: longPressInterval,
             onPressed: () {
               _inputManager.enterDirection(Direction.down);
@@ -211,7 +214,7 @@ class Controller extends StatelessWidget {
               )),
         ),
         LongPressButton(
-          sensitivity: longPressSensitivity,
+          delay: longPressDelay,
           interval: longPressInterval,
           onPressed: onPressed,
           child: child,
