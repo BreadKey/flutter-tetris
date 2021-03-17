@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Metal extends StatelessWidget {
+  static const spreadWidth = 8.0;
   final Widget child;
   final double width;
   final double height;
@@ -41,7 +42,7 @@ class Metal extends StatelessWidget {
             BoxShadow(color: color.shade800, blurRadius: 14),
             BoxShadow(
               color: color,
-              spreadRadius: 8,
+              spreadRadius: spreadWidth,
             ),
           ]),
       child: child);
