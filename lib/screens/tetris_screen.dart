@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:screen/screen.dart';
+import 'package:tetris/models/direction.dart';
+import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/controller.dart';
@@ -59,8 +61,6 @@ class _TetrisScreenState extends State<TetrisScreen>
         hardDropAnimController.forward();
       }
     });
-
-    Screen.keepOn(true);
   }
 
   @override
@@ -69,7 +69,6 @@ class _TetrisScreenState extends State<TetrisScreen>
     hardDropAnimController.dispose();
     tetrisEventSubscriber.cancel();
 
-    Screen.keepOn(false);
     super.dispose();
   }
 
