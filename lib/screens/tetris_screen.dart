@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +22,9 @@ class TetrisScreen extends StatefulWidget {
 
 class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
-  static const gameScreenRatio = 8 / 9;
   static const controllerHeight = 280;
   static const dividerSize = 6.0;
+  static const logoHeight = 28.0;
 
   Tetris tetris;
 
@@ -75,118 +74,124 @@ class _TetrisScreenState extends State<TetrisScreen>
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final sizeOfScreen = mediaQuery.size;
+    final sizeOfScreen = MediaQuery.of(context).size;
 
-    final height = min(
-        min(sizeOfScreen.width, sizeOfScreen.height) / gameScreenRatio,
-        sizeOfScreen.height -
-            (mediaQuery.orientation == Orientation.portrait
-                ? controllerHeight
-                : 14));
-
-    return ChangeNotifierProvider.value(
-      value: tetris,
-      child: WillPopScope(
-          child: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                  navyBlue.shade400,
-                  navyBlue.shade500,
-                  navyBlue.shade600,
-                  navyBlue.shade700
-                ])),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Metal(
-                    width: height * gameScreenRatio,
-                    height: height,
-                    color: neutralBlackC,
-                    margin: EdgeInsets.symmetric(horizontal: 14),
-                    padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                    child: SafeArea(
-                        child: Column(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  child: Column(
+    return Scaffold(
+        appBar: AppBar(
+          brightness: Brightness.dark,
+          toolbarHeight: 0,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        extendBodyBehindAppBar: true,
+        body: ChangeNotifierProvider.value(
+          value: tetris,
+          child: WillPopScope(
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                      navyBlue.shade400,
+                      navyBlue.shade500,
+                      navyBlue.shade600,
+                      navyBlue.shade700
+                    ])),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Metal(
+                        color: neutralBlackC,
+                        width:
+                            sizeOfScreen.height - kToolbarHeight - logoHeight,
+                        margin: EdgeInsets.symmetric(horizontal: 14),
+                        padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                        child: SafeArea(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: Row(
                                 children: [
-                                  HoldBoard(tetris),
-                                  const Divider(
+                                  Expanded(
+                                      child: Column(
+                                    children: [
+                                      HoldBoard(tetris),
+                                      const Divider(
+                                        color: Colors.transparent,
+                                        height: dividerSize,
+                                      ),
+                                      EventBoard(tetris),
+                                      const Divider(
+                                        color: Colors.transparent,
+                                        height: dividerSize,
+                                      ),
+                                      Expanded(child: RankBoard(tetris))
+                                    ],
+                                  )),
+                                  const VerticalDivider(
                                     color: Colors.transparent,
-                                    height: dividerSize,
+                                    width: dividerSize,
                                   ),
-                                  EventBoard(tetris),
-                                  const Divider(
-                                    color: Colors.transparent,
-                                    height: dividerSize,
+                                  SlideTransition(
+                                    position: fastDropAnimation,
+                                    child: PlayfieldRenderer(tetris),
                                   ),
-                                  Expanded(child: RankBoard(tetris))
+                                  const VerticalDivider(
+                                      color: Colors.transparent,
+                                      width: dividerSize),
+                                  Expanded(
+                                      child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: NextTetrominoBoard(tetris),
+                                      ),
+                                      const Divider(
+                                        color: Colors.transparent,
+                                      )
+                                    ],
+                                  )),
                                 ],
-                              )),
-                              const VerticalDivider(
-                                color: Colors.transparent,
-                                width: dividerSize,
                               ),
-                              SlideTransition(
-                                position: fastDropAnimation,
-                                child: PlayfieldRenderer(tetris),
-                              ),
-                              const VerticalDivider(
-                                  color: Colors.transparent,
-                                  width: dividerSize),
-                              Expanded(
-                                  child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  NextTetrominoBoard(tetris),
-                                  const Divider(
-                                    color: Colors.transparent,
-                                  ),
-                                ],
-                              )),
-                            ],
-                          ),
-                        ),
-                        const Divider(
-                          color: Colors.transparent,
-                          height: dividerSize,
-                        ),
-                        Scoreboard(tetris),
-                        const Divider(
-                          color: Colors.transparent,
-                          height: dividerSize,
-                        ),
-                        const Logo()
-                      ],
-                    )),
-                  ),
+                            ),
+                            const Divider(
+                              color: Colors.transparent,
+                              height: dividerSize,
+                            ),
+                            Scoreboard(tetris),
+                            const Divider(
+                              color: Colors.transparent,
+                              height: dividerSize,
+                            ),
+                            const Logo(
+                              height: logoHeight,
+                            )
+                          ],
+                        )),
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: controllerHeight -
+                              MediaQuery.of(context).padding.bottom,
+                          child: Controller(
+                              longPressDelay: const Duration(milliseconds: 200),
+                              longPressInterval: const Duration(
+                                  milliseconds: 1000 ~/ delayedAutoShiftHz)),
+                        ))
+                  ],
                 ),
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height: controllerHeight -
-                          MediaQuery.of(context).padding.bottom,
-                      child: Controller(
-                          longPressDelay: const Duration(milliseconds: 200),
-                          longPressInterval: const Duration(
-                              milliseconds: 1000 ~/ delayedAutoShiftHz)),
-                    ))
-              ],
-            ),
-          ),
-          onWillPop: () async {
-            dispose();
-            return true;
-          }),
-    );
+              ),
+              onWillPop: () async {
+                dispose();
+                return true;
+              }),
+        ));
   }
 }

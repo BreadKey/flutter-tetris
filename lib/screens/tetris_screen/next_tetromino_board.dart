@@ -14,23 +14,28 @@ class NextTetrominoBoard extends StatelessWidget {
   Widget build(BuildContext context) => Selector<Tetris, List<TetrominoName>>(
       selector: (_, tetris) => tetris.nextMinoBag,
       builder: (context, bag, child) => Column(
-              children: List.generate(5, (index) {
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(5, (index) {
             final nextMino = index >= bag.length ? null : bag[index];
             return index == 0
-                ? Board(
-                    child: Stack(children: [
-                      TetrominoRenderer(nextMino),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(" Next"),
-                      ),
-                    ]),
-                  )
-                : Transform.scale(
-                    scale: 0.9,
-                    alignment: Alignment.bottomLeft,
+                ? AspectRatio(
+                    aspectRatio: 5 / 4,
                     child: Board(
-                      child: TetrominoRenderer(nextMino),
-                    ));
+                      child: Stack(children: [
+                        TetrominoRenderer(nextMino),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(" Next"),
+                        ),
+                      ]),
+                    ),
+                  )
+                : Expanded(
+                    child: Transform.scale(
+                        scale: 0.9,
+                        alignment: Alignment.bottomLeft,
+                        child: Board(
+                          child: TetrominoRenderer(nextMino),
+                        )));
           })));
 }
