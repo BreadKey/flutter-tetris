@@ -47,9 +47,9 @@ class _KeyboardListenerState extends State<KeyboardListener> {
       InputManager.instance.enterDirection(Direction.down);
     } else if (event.logicalKey == LogicalKeyboardKey.space) {
       InputManager.instance.enterButton(ButtonKey.b);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyZ) {
+    } else if (event.logicalKey == LogicalKeyboardKey.controlLeft) {
       InputManager.instance.enterButton(ButtonKey.a);
-    } else if (event.logicalKey == LogicalKeyboardKey.keyX) {
+    } else if (event.logicalKey == LogicalKeyboardKey.altLeft) {
       InputManager.instance.enterButton(ButtonKey.c);
     } else if (event.logicalKey == LogicalKeyboardKey.shiftLeft) {
       InputManager.instance.enterButton(ButtonKey.special2);
