@@ -4,7 +4,8 @@
 A new Flutter Tetris game.
 
 ## Demo
-![Screenshot_20210319-084409](https://user-images.githubusercontent.com/37973204/111711650-8b145b00-888f-11eb-9a35-dfc7c17ecd16.jpg)
+<img src=https://user-images.githubusercontent.com/37973204/111711650-8b145b00-888f-11eb-9a35-dfc7c17ecd16.jpg width=400>
+
 ![Screenshot_20210319-084448](https://user-images.githubusercontent.com/37973204/111711662-95cef000-888f-11eb-8adc-ac58350b908b.jpg)
 
 Videos were recorded in iPad.
