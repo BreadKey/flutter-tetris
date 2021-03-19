@@ -36,8 +36,9 @@ class Controller extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Joystick(
-              delay: longPressDelay,
-              interval: longPressInterval,
+              holdDelay: longPressDelay,
+              holdInterval: longPressInterval,
+              onDirectionEntered: _onJoystickDirectionEntered,
             ),
           ),
           Align(
@@ -55,71 +56,44 @@ class Controller extends StatelessWidget {
         ],
       ));
 
-  Widget buildDirectionButtons(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LongPressButton(
-            delay: longPressDelay,
-            interval: longPressInterval,
-            onPressed: () {
-              _inputManager.enterDirection(Direction.up);
-            },
-            color: neutralBlackC,
-            textColor: Colors.white,
-            child: const Icon(Icons.arrow_drop_up),
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(24), bottom: Radius.circular(8))),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              LongPressButton(
-                delay: longPressDelay,
-                interval: longPressInterval,
-                color: neutralBlackC,
-                textColor: Colors.white,
-                height: defaultCircleButtonSize,
-                child: const Icon(Icons.arrow_left),
-                onPressed: () {
-                  _inputManager.enterDirection(Direction.left);
-                },
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(24), right: Radius.circular(8))),
-              ),
-              LongPressButton(
-                delay: longPressDelay,
-                interval: longPressInterval,
-                color: neutralBlackC,
-                textColor: Colors.white,
-                height: defaultCircleButtonSize,
-                child: const Icon(Icons.arrow_right),
-                onPressed: () {
-                  _inputManager.enterDirection(Direction.right);
-                },
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.horizontal(
-                        right: Radius.circular(24), left: Radius.circular(8))),
-              ),
-            ],
-          ),
-          LongPressButton(
-            delay: longPressDelay,
-            interval: longPressInterval,
-            onPressed: () {
-              _inputManager.enterDirection(Direction.down);
-            },
-            color: neutralBlackC,
-            textColor: Colors.white,
-            child: const Icon(Icons.arrow_drop_down),
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(8), bottom: Radius.circular(24))),
-          )
-        ],
-      );
+  void _onJoystickDirectionEntered(JoystickDirection direction) {
+    switch (direction) {
+      case JoystickDirection.bottomLeft:
+      case JoystickDirection.centerLeft:
+      case JoystickDirection.topLeft:
+        InputManager.instance.enterDirection(Direction.left);
+        break;
+      default:
+        break;
+    }
+    switch (direction) {
+      case JoystickDirection.topLeft:
+      case JoystickDirection.topCenter:
+      case JoystickDirection.topRight:
+        InputManager.instance.enterDirection(Direction.up);
+        break;
+      default:
+        break;
+    }
+    switch (direction) {
+      case JoystickDirection.topRight:
+      case JoystickDirection.centerRight:
+      case JoystickDirection.bottomRight:
+        InputManager.instance.enterDirection(Direction.right);
+        break;
+      default:
+        break;
+    }
+    switch (direction) {
+      case JoystickDirection.bottomRight:
+      case JoystickDirection.bottomCenter:
+      case JoystickDirection.bottomLeft:
+        InputManager.instance.enterDirection(Direction.down);
+        break;
+      default:
+        break;
+    }
+  }
 
   Widget buildActionButtons(BuildContext context) => Row(
         mainAxisSize: MainAxisSize.min,
