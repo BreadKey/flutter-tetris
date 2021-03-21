@@ -12,6 +12,8 @@ import 'package:tetris/models/input_manager.dart';
 import 'package:tetris/models/rank.dart';
 import 'package:tetris/retro_colors.dart';
 
+import 'audio_manager.dart';
+
 part 'tetris/animator.dart';
 part 'tetris/block.dart';
 part 'tetris/event.dart';
@@ -230,7 +232,9 @@ class Tetris extends ChangeNotifier
   bool isBlockNullOrGhost(Block block) => block?.isGhost != false;
 
   void _update() {
-    _handleGravity(_currentDropMode == DropMode.hard ? 20 : gravities[_level]);
+    _handleGravity(_currentDropMode == DropMode.hard
+        ? hardDropGravityPerFrame
+        : gravitiesPerFrame[_level - 1]);
     if (_isStucked) {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
@@ -601,7 +605,7 @@ class Tetris extends ChangeNotifier
         _clearCurrentMino();
         spawn(holding);
       }
-
+      _audioManager.playEffect(Effect.hold);
       _canHold = false;
     }
   }
