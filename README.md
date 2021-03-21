@@ -3,6 +3,13 @@
 
 A new Flutter Tetris game.
 
+## Implementation
+* [Marathon Mode](https://tetris.fandom.com/wiki/Marathon_Mode)
+* [Super Lotation System](https://tetris.fandom.com/wiki/SRS)
+* [Lock Delay](https://tetris.fandom.com/wiki/Lock_delay)
+* [Hold Piece](https://tetris.fandom.com/wiki/Hold_piece?mobile-app=false)
+* Joystick
+
 ## Demo
 <img src=https://user-images.githubusercontent.com/37973204/111711650-8b145b00-888f-11eb-9a35-dfc7c17ecd16.jpg width=400>
 
