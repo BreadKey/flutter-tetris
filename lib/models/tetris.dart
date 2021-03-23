@@ -148,11 +148,9 @@ class Tetris extends ChangeNotifier
   }
 
   void initPlayfield() {
-    _playfield = _generatePlayField();
+    _playfield = List.generate(
+        playfieldHeight, (y) => List.generate(playfieldWidth, (x) => null));
   }
-
-  List<List<Block>> _generatePlayField() => List.generate(
-      playfieldHeight, (y) => List.generate(playfieldWidth, (x) => null));
 
   void initStatus() {
     _level = 1;
