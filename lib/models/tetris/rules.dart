@@ -23,22 +23,24 @@ const spawnPoint = const Point<int>(4, 21);
 
 const maxLevel = 15;
 
-const gravities = {
-  1: 1 / fps,
-  2: 0.021017 * 60 / fps,
-  3: 0.026977 * 60 / fps,
-  4: 0.035256 * 60 / fps,
-  5: 0.04693 * 60 / fps,
-  6: 0.06361 * 60 / fps,
-  7: 0.0879 * 60 / fps,
-  8: 0.1236 * 60 / fps,
-  9: 0.1775 * 60 / fps,
-  10: 0.2598 * 60 / fps,
-  11: 0.388 * 60 / fps,
-  12: 0.59 * 60 / fps,
-  13: 0.92 * 60 / fps,
-  14: 1.46 * 60 / fps,
-  15: 2.36 * 60 / fps
-};
+const gravitiesPerFrame = [
+  1 / fps,
+  (0.021017 * 60) / fps,
+  (0.026977 * 60) / fps,
+  (0.035256 * 60) / fps,
+  (0.04693 * 60) / fps,
+  (0.06361 * 60) / fps,
+  (0.0879 * 60) / fps,
+  (0.1236 * 60) / fps,
+  (0.1775 * 60) / fps,
+  (0.2598 * 60) / fps,
+  (0.388 * 60) / fps,
+  (0.59 * 60) / fps,
+  (0.92 * 60) / fps,
+  (1.46 * 60) / fps,
+  (2.36 * 60) / fps
+];
+
+const hardDropGravityPerFrame = (20 * 60) / fps;
 
 const linesCountToLevelUp = 10;

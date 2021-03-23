@@ -10,6 +10,7 @@ enum Effect {
   lock,
   move,
   rotate,
+  hold,
   hardDrop,
   softDrop,
   breakLine,
@@ -131,6 +132,9 @@ class AudioManagerImpl extends AudioManager {
         break;
       case Effect.rotate:
         effectFile = "audios/rotate.wav";
+        break;
+      case Effect.hold:
+        effectFile = "audios/hold.wav";
         break;
       case Effect.hardDrop:
       case Effect.softDrop:
