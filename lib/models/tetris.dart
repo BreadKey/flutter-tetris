@@ -131,10 +131,8 @@ class Tetris extends ChangeNotifier
     _animator.stopGameOver();
 
     initPlayfield();
-
-    _stuckedSeconds = 0;
-
     initStatus();
+    initNextMinoBag();
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
@@ -143,17 +141,10 @@ class Tetris extends ChangeNotifier
       }
     });
 
-    _randomMinoGenerator.clear();
-
-    _nextMinoBag.clear();
-
-    _nextMinoBag.addAll(List.generate(TetrominoName.values.length,
-        (index) => _randomMinoGenerator.getNext()));
-
-    spawnNextMino();
-
     _audioManager.stopBgm(Bgm.gameOver);
     _audioManager.startBgm(Bgm.play);
+
+    spawnNextMino();
   }
 
   void initPlayfield() {
@@ -171,10 +162,20 @@ class Tetris extends ChangeNotifier
     _isGameOver = false;
     _eventSubject.sink.add(null);
 
+    _stuckedSeconds = 0;
     _brokenLinesCountInLevel = 0;
 
     _canHold = true;
     _holdingMino = null;
+  }
+
+  void initNextMinoBag() {
+    _randomMinoGenerator.clear();
+
+    _nextMinoBag.clear();
+
+    _nextMinoBag.addAll(List.generate(TetrominoName.values.length,
+        (index) => _randomMinoGenerator.getNext()));
   }
 
   void spawnNextMino() {
