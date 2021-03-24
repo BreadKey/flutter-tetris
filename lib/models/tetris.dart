@@ -639,4 +639,6 @@ class Tetris extends ChangeNotifier
     _rankSubject.sink
         .add(Rank(MapEntry(playerRank, ranks.indexOf(playerRank) + 1), ranks));
   }
+
+  Block getBlockAt(int x, int y) => _playfield[y][x];
 }
