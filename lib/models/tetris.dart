@@ -414,16 +414,15 @@ class Tetris extends ChangeNotifier
       scoreUp(_level, linesCanBroken.length, event);
       await breakLines(linesCanBroken, event);
 
-      if (_isPerfectClear) {
+      if (isPerfectClear()) {
         _eventSubject.sink.add(TetrisEvent.perfectClear);
+        _audioManager.playEffect(Effect.event);
+        scoreUp(_level, linesCanBroken.length, TetrisEvent.perfectClear);
       }
     } else {
       _eventSubject.sink.add(null);
     }
   }
-
-  bool get _isPerfectClear =>
-      _playfield.every((line) => line.every((block) => block == null));
 
   bool isTetris(List<List<Block>> brokenLines) => brokenLines.length == 4;
   bool isTSpin(Tetromino tetromino, List<List<Block>> playfield) {
@@ -444,6 +443,9 @@ class Tetris extends ChangeNotifier
 
     return false;
   }
+
+  bool isPerfectClear() =>
+      _playfield.every((line) => line.every((block) => block == null));
 
   bool isBlocked(Point<int> point, List<List<Block>> playfield) =>
       !isBlockNullOrGhost(playfield.getBlockAt(point));
@@ -491,6 +493,22 @@ class Tetris extends ChangeNotifier
         break;
       case TetrisEvent.tSpinTriple:
         _score += 1600 * level;
+        break;
+      case TetrisEvent.perfectClear:
+        switch (brokenLinesLength) {
+          case 1:
+            _score += 800 * level;
+            break;
+          case 2:
+            _score += 1200 * level;
+            break;
+          case 3:
+            _score += 1800 * level;
+            break;
+          case 4:
+            _score += 2000 * level;
+            break;
+        }
         break;
       default:
         switch (brokenLinesLength) {
