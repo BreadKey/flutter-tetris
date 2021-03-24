@@ -101,7 +101,7 @@ class Tetris extends ChangeNotifier
   TetrominoName _holdingMino;
   TetrominoName get holdingMino => _holdingMino;
 
-  final AudioManager _audioManager = Injector.appInstance.get<AudioManager>();
+  final IAudioManager _audioManager = Injector.appInstance.get<IAudioManager>();
 
   final Animator _animator = Animator();
 

@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:rxdart/rxdart.dart';
 
 enum Bgm { play, gameOver }
 enum Effect {
@@ -22,7 +21,7 @@ void _callback(AudioPlayerState value) {
   print("state => $value");
 }
 
-abstract class AudioManager {
+abstract class IAudioManager {
   bool get isMuted;
   void startBgm(Bgm bgm);
   void stopBgm(Bgm bgm);
@@ -33,34 +32,25 @@ abstract class AudioManager {
   void playEffect(Effect effect);
 }
 
-class AudioManagerImpl extends AudioManager {
+class AudioManager extends IAudioManager {
+  static const effectThrottleDuration = const Duration(milliseconds: 100);
   static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
   final _bgmCache = AudioCache();
 
   final _effectCache = AudioCache();
-
-  final _effectSubject = PublishSubject<Effect>();
-  Map<Effect, StreamSubscription> _effectThrotllers;
+  final _effectThrottlers = <Effect, Timer>{};
 
   bool _isMuted = false;
   @override
   bool get isMuted => _isMuted;
 
-  AudioManagerImpl() {
+  AudioManager() {
     if (Platform.isIOS) {
       _bgmPlayer.monitorNotificationStateChanges(_callback);
     }
     _bgmCache.fixedPlayer = _bgmPlayer;
-    _effectThrotllers = Map.fromEntries(Effect.values.map((e) => MapEntry(
-        e,
-        _effectSubject
-            .where((event) => event == e)
-            .throttleTime(const Duration(milliseconds: 100))
-            .listen((effect) {
-          _playEffect(effect);
-        }))));
   }
 
   @override
@@ -97,9 +87,8 @@ class AudioManagerImpl extends AudioManager {
   @override
   void dispose() {
     _bgmPlayer.dispose();
-    _effectSubject.close();
-    _effectThrotllers.values.forEach((throtller) {
-      throtller.cancel();
+    _effectThrottlers.values.forEach((throttler) {
+      throttler.cancel();
     });
   }
 
@@ -115,10 +104,14 @@ class AudioManagerImpl extends AudioManager {
 
   @override
   void playEffect(Effect effect) {
-    if (_isMuted) return;
-
-    _effectSubject.sink.add(effect);
+    if (canPlayEffect(effect)) {
+      _playEffect(effect);
+      _throttle(effect);
+    }
   }
+
+  bool canPlayEffect(Effect effect) =>
+      !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
   void _playEffect(Effect effect) {
     String effectFile;
@@ -158,5 +151,9 @@ class AudioManagerImpl extends AudioManager {
         player.monitorNotificationStateChanges(_callback);
       }
     });
+  }
+
+  void _throttle(Effect effect) {
+    _effectThrottlers[effect] = Timer(effectThrottleDuration, () {});
   }
 }
