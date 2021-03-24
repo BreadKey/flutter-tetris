@@ -13,25 +13,28 @@ class PlayfieldRenderer extends StatelessWidget {
     return AspectRatio(
       aspectRatio: playfieldWidth / visibleHeight,
       child: Board(
-        child: Builder(
-          builder: (context) {
-            context.watch<Tetris>();
-            return GridView.count(
+          child: GridView.count(
               crossAxisCount: playfieldWidth,
               reverse: true,
-              children: tetris.playfield
-                  .take(visibleHeight)
-                  .expand((row) => row)
-                  .map((block) => block == null
-                      ? const SizedBox()
-                      : BlockRenderer(
-                          block,
-                          key: ValueKey(block),
-                        ))
-                  .toList());
-          },
-        ),
-      ),
+              children: List.generate(visibleHeight, (y) => y)
+                  .expand((y) => List.generate(playfieldWidth, (x) {
+                        Color lastColor;
+                        return Selector<Tetris, Block>(
+                          selector: (_, tetris) => tetris.getBlockAt(x, y),
+                          shouldRebuild: (previous, next) =>
+                              (previous != next) || lastColor != next?.color,
+                          builder: (_, block, __) {
+                            lastColor = block?.color;
+                            return block == null
+                                ? const SizedBox()
+                                : BlockRenderer(
+                                    block,
+                                    key: ValueKey(block),
+                                  );
+                          },
+                        );
+                      }))
+                  .toList())),
     );
   }
 }
