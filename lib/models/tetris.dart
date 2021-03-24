@@ -1,3 +1,5 @@
+library tetris;
+
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
@@ -109,7 +111,7 @@ class Tetris extends ChangeNotifier
   Stream<Rank> get rankStream => _rankSubject.stream;
 
   Tetris() {
-    InputManager.instance.register(this);
+    InputManager.instance.addListener(this);
     WidgetsBinding.instance?.addObserver(this);
     _animator.listener = this;
 
@@ -120,7 +122,7 @@ class Tetris extends ChangeNotifier
     _frameGenerator?.cancel();
     _rankSubject.close();
     _eventSubject.close();
-    InputManager.instance.unregister(this);
+    InputManager.instance.removeListener(this);
     WidgetsBinding.instance?.removeObserver(this);
     _audioManager.dispose();
     _animator.dispose();
@@ -411,10 +413,17 @@ class Tetris extends ChangeNotifier
       _eventSubject.sink.add(event);
       scoreUp(_level, linesCanBroken.length, event);
       await breakLines(linesCanBroken, event);
+
+      if (_isPerfectClear) {
+        _eventSubject.sink.add(TetrisEvent.perfectClear);
+      }
     } else {
       _eventSubject.sink.add(null);
     }
   }
+
+  bool get _isPerfectClear =>
+      _playfield.every((line) => line.every((block) => block == null));
 
   bool isTetris(List<List<Block>> brokenLines) => brokenLines.length == 4;
   bool isTSpin(Tetromino tetromino, List<List<Block>> playfield) {

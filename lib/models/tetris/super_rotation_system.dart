@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 extension SuperRotationSystem on Tetris {
   static const testTable = {

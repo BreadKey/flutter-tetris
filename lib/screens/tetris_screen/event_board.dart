@@ -29,21 +29,30 @@ class EventBoard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme.subtitle2;
 
     return Text(
-      event == TetrisEvent.gameOver
-          ? "Game Over!"
-          : event == TetrisEvent.tetris
-              ? "Tetris!"
-              : event == TetrisEvent.tSpinSingle
-                  ? "T-Spin Single!"
-                  : event == TetrisEvent.tSpinDouble
-                      ? "T-Spin Double!"
-                      : event == TetrisEvent.tSpinTriple
-                          ? "T-Spin Triple!"
-                          : event == TetrisEvent.tSpinMini
-                              ? "T-Spin Mini!"
-                              : "",
+      _getEventText(event),
       textAlign: TextAlign.center,
       style: textTheme,
     );
+  }
+
+  String _getEventText(TetrisEvent event) {
+    switch (event) {
+      case TetrisEvent.gameOver:
+        return "Game Over!";
+      case TetrisEvent.tetris:
+        return "Tetris!";
+      case TetrisEvent.tSpinSingle:
+        return "T-Spin Single!";
+      case TetrisEvent.tSpinDouble:
+        return "T-Spin Double!";
+      case TetrisEvent.tSpinTriple:
+        return "T-Spin Triple!";
+      case TetrisEvent.tSpinMini:
+        return "T-Spin Mini!";
+      case TetrisEvent.perfectClear:
+        return "Perfect Clear!";
+      default:
+        return "";
+    }
   }
 }
