@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 abstract class AnimationListener {
   void onAnimationUpdated();

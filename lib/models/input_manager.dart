@@ -22,11 +22,11 @@ class InputManager {
     });
   }
 
-  void register(InputListener listener) {
+  void addListener(InputListener listener) {
     _listeners.add(listener);
   }
 
-  void unregister(InputListener listener) {
+  void removeListener(InputListener listener) {
     _listeners.remove(listener);
   }
 }

@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 enum TetrominoName { I, O, T, S, Z, J, L }
 
