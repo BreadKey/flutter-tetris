@@ -1,6 +1,6 @@
 import 'package:tetris/models/audio_manager.dart';
 
-class MockAudioManager extends AudioManager {
+class MockAudioManager extends IAudioManager {
   @override
   bool get isMuted => true;
   

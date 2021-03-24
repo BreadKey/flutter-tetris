@@ -18,7 +18,7 @@ class Controller extends StatelessWidget {
   final Duration longPressInterval;
 
   final _inputManager = InputManager.instance;
-  final _audioManager = Injector.appInstance.get<AudioManager>();
+  final _audioManager = Injector.appInstance.get<IAudioManager>();
 
   Controller(
       {Key key,

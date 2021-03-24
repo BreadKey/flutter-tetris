@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:rxdart/rxdart.dart';
 
 enum Bgm { play, gameOver }
 enum Effect {
@@ -21,7 +20,7 @@ void _callback(AudioPlayerState value) {
   print("state => $value");
 }
 
-abstract class AudioManager {
+abstract class IAudioManager {
   bool get isMuted;
   void startBgm(Bgm bgm);
   void stopBgm(Bgm bgm);
@@ -32,9 +31,9 @@ abstract class AudioManager {
   void playEffect(Effect effect);
 }
 
-class AudioManagerImpl extends AudioManager {
-  static const _bgmVolume = 0.618;
-  static const _effectThrottleDuration = Duration(milliseconds: 100);
+class AudioManager extends IAudioManager {
+  static const effectThrottleDuration = const Duration(milliseconds: 100);
+  static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
   final _bgmCache = AudioCache();
@@ -46,7 +45,7 @@ class AudioManagerImpl extends AudioManager {
   @override
   bool get isMuted => _isMuted;
 
-  AudioManagerImpl() {
+  AudioManager() {
     if (Platform.isIOS) {
       _bgmPlayer.monitorNotificationStateChanges(_callback);
     }
@@ -104,9 +103,14 @@ class AudioManagerImpl extends AudioManager {
 
   @override
   void playEffect(Effect effect) {
-    if (!_isMuted && _effectThrottlers[effect]?.isActive != true)
+    if (canPlayEffect(effect)) {
       _playEffect(effect);
+      _throttle(effect);
+    }
   }
+
+  bool canPlayEffect(Effect effect) =>
+      !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
   void _playEffect(Effect effect) {
     String effectFile;
@@ -151,5 +155,9 @@ class AudioManagerImpl extends AudioManager {
     _effectThrottlers[effect]?.cancel();
 
     _effectThrottlers[effect] = Timer(_effectThrottleDuration, () {});
+  }
+
+  void _throttle(Effect effect) {
+    _effectThrottlers[effect] = Timer(effectThrottleDuration, () {});
   }
 }
