@@ -493,7 +493,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   void _checkBackToBack(TetrisEvent event) {
-    _isBackToBack = _lastLineClearEvent == event;
+    _isBackToBack = event != null && _lastLineClearEvent == event;
     _lastLineClearEvent = event;
   }
 
