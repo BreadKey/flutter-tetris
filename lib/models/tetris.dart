@@ -385,29 +385,29 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   Future<void> checkLines() async {
-    final clearedLines = _playfield
+    final linesWillCleared = _playfield
         .where((line) => line.every((block) => block != null && !block.isGhost))
         .toList();
 
     TetrisEvent event;
 
-    if (clearedLines.isNotEmpty) {
-      if (isTetris(clearedLines)) {
+    if (linesWillCleared.isNotEmpty) {
+      if (isTetris(linesWillCleared)) {
         event = TetrisEvent.tetris;
         _audioManager.playEffect(Effect.event);
       } else if (isTSpin(_currentTetromino, _playfield)) {
-        event = _calculateTSpin(clearedLines.length);
+        event = _calculateTSpin(linesWillCleared.length);
         _audioManager.playEffect(Effect.event);
       } else {
         _audioManager.playEffect(Effect.lineClear);
       }
 
-      _onLineClearEvent(event, clearedLines.length);
+      _onLineClearEvent(event, linesWillCleared.length);
 
-      await clearLines(clearedLines, event);
+      await clearLines(linesWillCleared, event);
 
       if (isPerfectClear()) {
-        _onPerfectClear(clearedLines.length);
+        _onPerfectClear(linesWillCleared.length);
       } else {
         _isPerfectClearBefore = false;
       }
