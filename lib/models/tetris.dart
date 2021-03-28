@@ -402,7 +402,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         _audioManager.playEffect(Effect.lineClear);
       }
 
-      _onTetrisEvent(event, clearedLines.length);
+      _onLineClearEvent(event, clearedLines.length);
 
       await clearLines(clearedLines, event);
 
@@ -454,7 +454,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
     return TetrisEvent.tSpinMini;
   }
 
-  void _onTetrisEvent(TetrisEvent event, int clearedLineCount) {
+  void _onLineClearEvent(TetrisEvent event, int clearedLineCount) {
     _eventSubject.sink.add(event);
     _checkBackToBack(event);
 
