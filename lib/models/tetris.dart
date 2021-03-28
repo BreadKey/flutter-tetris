@@ -87,7 +87,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
 
   bool get canUpdate => !_paused && !_isOnLineClear;
 
-  int _clearedLinesCountInLevel = 0;
+  int _clearedLineCountInLevel = 0;
 
   bool _rotationOccuredBeforeLock = false;
 
@@ -165,7 +165,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
     _eventSubject.sink.add(null);
 
     _stuckedSeconds = 0;
-    _clearedLinesCountInLevel = 0;
+    _clearedLineCountInLevel = 0;
 
     _canHold = true;
     _holdingMino = null;
@@ -385,49 +385,29 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   Future<void> checkLines() async {
-    final linesCanCleared = _playfield
+    final clearedLines = _playfield
         .where((line) => line.every((block) => block != null && !block.isGhost))
         .toList();
 
     TetrisEvent event;
 
-    if (linesCanCleared.isNotEmpty) {
-      if (isTetris(linesCanCleared)) {
+    if (clearedLines.isNotEmpty) {
+      if (isTetris(clearedLines)) {
         event = TetrisEvent.tetris;
         _audioManager.playEffect(Effect.event);
       } else if (isTSpin(_currentTetromino, _playfield)) {
+        event = _calculateTSpin(clearedLines.length);
         _audioManager.playEffect(Effect.event);
-        if (hasRoof(_currentTetromino, _playfield)) {
-          switch (linesCanCleared.length) {
-            case 1:
-              event = TetrisEvent.tSpinSingle;
-              break;
-            case 2:
-              event = TetrisEvent.tSpinDouble;
-              break;
-            case 3:
-              event = TetrisEvent.tSpinTriple;
-              break;
-          }
-        } else {
-          event = TetrisEvent.tSpinMini;
-        }
       } else {
         _audioManager.playEffect(Effect.lineClear);
       }
 
-      _eventSubject.sink.add(event);
-      _checkBackToBack(event);
+      _onTetrisEvent(event, clearedLines.length);
 
-      scoreUp(_level, linesCanCleared.length, event);
-      await clearLines(linesCanCleared, event);
+      await clearLines(clearedLines, event);
 
       if (isPerfectClear()) {
-        _eventSubject.sink.add(TetrisEvent.perfectClear);
-        _audioManager.playEffect(Effect.event);
-        _isBackToBack = _isPerfectClearBefore;
-        scoreUp(_level, linesCanCleared.length, TetrisEvent.perfectClear);
-        _isPerfectClearBefore = true;
+        _onPerfectClear(clearedLines.length);
       } else {
         _isPerfectClearBefore = false;
       }
@@ -457,8 +437,40 @@ class Tetris extends ChangeNotifier with AnimationListener {
     return false;
   }
 
+  TetrisEvent _calculateTSpin(int clearedLineCount) {
+    if (hasRoof(_currentTetromino, _playfield)) {
+      switch (clearedLineCount) {
+        case 1:
+          return TetrisEvent.tSpinSingle;
+          break;
+        case 2:
+          return TetrisEvent.tSpinDouble;
+          break;
+        case 3:
+          return TetrisEvent.tSpinTriple;
+          break;
+      }
+    }
+    return TetrisEvent.tSpinMini;
+  }
+
+  void _onTetrisEvent(TetrisEvent event, int clearedLineCount) {
+    _eventSubject.sink.add(event);
+    _checkBackToBack(event);
+
+    scoreUp(_level, clearedLineCount, event);
+  }
+
   bool isPerfectClear() =>
       _playfield.every((line) => line.every((block) => block == null));
+
+  void _onPerfectClear(int clearedLineCount) {
+    _eventSubject.sink.add(TetrisEvent.perfectClear);
+    _audioManager.playEffect(Effect.event);
+    _isBackToBack = _isPerfectClearBefore;
+    scoreUp(_level, clearedLineCount, TetrisEvent.perfectClear);
+    _isPerfectClearBefore = true;
+  }
 
   bool isBlocked(Point<int> point, List<List<Block>> playfield) =>
       !isBlockNullOrGhost(playfield.getBlockAt(point));
@@ -478,11 +490,11 @@ class Tetris extends ChangeNotifier with AnimationListener {
     await _animator.clearLines(
         _currentTetromino, _playfield, linesCanCleared, event);
 
-    _clearedLinesCountInLevel += linesCanCleared.length;
+    _clearedLineCountInLevel += linesCanCleared.length;
 
-    if (_clearedLinesCountInLevel >= linesCountToLevelUp) {
+    if (_clearedLineCountInLevel >= linesCountToLevelUp) {
       levelUp();
-      _clearedLinesCountInLevel -= linesCountToLevelUp;
+      _clearedLineCountInLevel -= linesCountToLevelUp;
     }
 
     _isOnLineClear = false;
@@ -493,8 +505,8 @@ class Tetris extends ChangeNotifier with AnimationListener {
     _lastLineClearEvent = event;
   }
 
-  void scoreUp(int level, int clearedLinesCount, TetrisEvent event) {
-    if (clearedLinesCount == 0) return;
+  void scoreUp(int level, int clearedLineCount, TetrisEvent event) {
+    if (clearedLineCount == 0) return;
 
     int bonus;
 
@@ -503,7 +515,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         bonus = 800 * level;
         break;
       case TetrisEvent.tSpinMini:
-        bonus = 200 * clearedLinesCount * level;
+        bonus = 200 * clearedLineCount * level;
         break;
       case TetrisEvent.tSpinSingle:
         bonus = 800 * level;
@@ -515,7 +527,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         bonus = 1600 * level;
         break;
       case TetrisEvent.perfectClear:
-        switch (clearedLinesCount) {
+        switch (clearedLineCount) {
           case 1:
             bonus = 800 * level;
             break;
@@ -531,7 +543,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         }
         break;
       default:
-        switch (clearedLinesCount) {
+        switch (clearedLineCount) {
           case 1:
             bonus = 100 * level;
             break;
