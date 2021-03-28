@@ -5,6 +5,7 @@ import 'package:tetris/dao/local/local_rank_dao.dart';
 import 'package:tetris/dao/rank_dao.dart';
 import 'package:tetris/models/audio_manager.dart';
 import 'package:tetris/retro_colors.dart';
+import 'package:tetris/screens/tetris_game.dart';
 import 'package:tetris/screens/tetris_screen.dart';
 
 void main() {
@@ -28,7 +29,7 @@ class TetrisApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: "Pixel",
       ),
-      home: TetrisScreen(),
+      home: TetrisGame(),
     );
   }
 }
