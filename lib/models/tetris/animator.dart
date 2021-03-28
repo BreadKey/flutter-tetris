@@ -39,14 +39,14 @@ class Animator {
     _gameOverAnimatior?.cancel();
   }
 
-  Future<void> breakLines(
+  Future<void> clearLines(
       Tetromino currentTetromino,
       List<List<Block>> playfield,
-      List<List<Block>> linesCanBroken,
+      List<List<Block>> linesCanCleared,
       TetrisEvent event) async {
     switch (event) {
       case TetrisEvent.tetris:
-        for (List<Block> line in linesCanBroken) {
+        for (List<Block> line in linesCanCleared) {
           for (Block block in line) {
             block.color = justWhite;
           }
@@ -68,7 +68,7 @@ class Animator {
 
     for (int x = 0; x < playfield.width; x++) {
       await Future.delayed(const Duration(milliseconds: 20));
-      linesCanBroken.forEach((line) {
+      linesCanCleared.forEach((line) {
         line[x].isGhost = true;
 
         if (x > 0) {
@@ -78,7 +78,7 @@ class Animator {
       });
     }
 
-    for (List<Block> line in linesCanBroken) {
+    for (List<Block> line in linesCanCleared) {
       await Future.delayed(const Duration(milliseconds: 20));
       playfield.remove(line);
       playfield.add(List<Block>.generate(playfield.width, (index) => null));

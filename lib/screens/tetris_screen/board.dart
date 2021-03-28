@@ -10,7 +10,7 @@ class Board extends StatelessWidget {
   Widget build(BuildContext context) => Theme(
         data: Theme.of(context).copyWith(
             textTheme:
-                Theme.of(context).textTheme.apply(bodyColor: Colors.black54)),
+                Theme.of(context).textTheme.apply(bodyColor: Colors.black87)),
         child: Material(
           elevation: 4,
           color: retroWhite,

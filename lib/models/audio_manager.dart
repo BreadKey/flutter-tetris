@@ -12,7 +12,7 @@ enum Effect {
   hold,
   hardDrop,
   softDrop,
-  breakLine,
+  lineClear,
   event,
   levelUp
 }
@@ -133,8 +133,8 @@ class AudioManager extends IAudioManager {
       case Effect.softDrop:
         effectFile = "audios/hard_drop.wav";
         break;
-      case Effect.breakLine:
-        effectFile = "audios/break_line.wav";
+      case Effect.lineClear:
+        effectFile = "audios/line_clear.wav";
         break;
       case Effect.event:
         effectFile = "audios/event.wav";

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
+import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/tetris_screen/board.dart';
 
 class EventBoard extends StatelessWidget {
@@ -13,7 +14,8 @@ class EventBoard extends StatelessWidget {
       child: AspectRatio(
           aspectRatio: 5 / 4,
           child: Center(
-            child: StreamProvider<TetrisEvent>.value(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+            StreamProvider<TetrisEvent>.value(
               value: tetris.eventStream,
               updateShouldNotify: (previous, current) =>
                   current != TetrisEvent.softDrop,
@@ -23,10 +25,21 @@ class EventBoard extends StatelessWidget {
                 },
               ),
             ),
-          )));
+            Selector<Tetris, bool>(
+              selector: (_, tetris) => tetris.isBackToBack,
+              builder: (_, isBackToBack, __) => isBackToBack
+                  ? Text(
+                      "Back to Back",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.caption,
+                    )
+                  : const SizedBox.shrink(),
+            )
+          ]))));
 
   Widget _buildTetrisEvent(BuildContext context, TetrisEvent event) {
-    final textTheme = Theme.of(context).textTheme.subtitle2;
+    final textTheme =
+        Theme.of(context).textTheme.subtitle2.copyWith(color: roseViolet);
 
     return Text(
       _getEventText(event),
