@@ -591,7 +591,7 @@ class Tetris extends ChangeNotifier
   }
 
   void hold() {
-    if (_canHold) {
+    if (_canHold && canUpdate) {
       if (_holdingMino == null) {
         _holdingMino = _currentTetromino.name;
 

@@ -112,14 +112,7 @@ class _JoystickState extends State<Joystick> {
       child: Draggable(
         child: Lever(diameter: leverDiameter, handler: handler),
         feedback: Lever(diameter: leverDiameter, handler: handler),
-        childWhenDragging: const SizedBox(
-          width: totalSize * 0.618 * 0.618,
-          height: totalSize * 0.618 * 0.618,
-          child: Material(
-            shape: CircleBorder(),
-            color: Colors.black,
-          ),
-        ),
+        childWhenDragging: _buildHole(context),
         onDragStarted: () {
           handler.holdLever();
         },
@@ -129,6 +122,19 @@ class _JoystickState extends State<Joystick> {
         onDragUpdate: (details) {
           handler.moveLever(details.delta);
         },
+      ),
+    );
+  }
+
+  Widget _buildHole(BuildContext context) {
+    const holeDiameter = leverDiameter * 0.618;
+
+    return const SizedBox(
+      width: holeDiameter,
+      height: holeDiameter,
+      child: Material(
+        color: Colors.black,
+        shape: CircleBorder(),
       ),
     );
   }
