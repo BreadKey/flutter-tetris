@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 class Block {
   Point<int> point;

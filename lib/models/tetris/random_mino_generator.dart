@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 class RandomMinoGenerator {
   final _bag = Queue<TetrominoName>();

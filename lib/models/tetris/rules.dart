@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 const playfieldWidth = 10;
 const playfieldHeight = 22;

@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:rxdart/rxdart.dart';
 
 enum Bgm { play, gameOver }
 enum Effect {
@@ -13,7 +12,7 @@ enum Effect {
   hold,
   hardDrop,
   softDrop,
-  breakLine,
+  lineClear,
   event,
   levelUp
 }
@@ -22,7 +21,7 @@ void _callback(AudioPlayerState value) {
   print("state => $value");
 }
 
-abstract class AudioManager {
+abstract class IAudioManager {
   bool get isMuted;
   void startBgm(Bgm bgm);
   void stopBgm(Bgm bgm);
@@ -33,9 +32,9 @@ abstract class AudioManager {
   void playEffect(Effect effect);
 }
 
-class AudioManagerImpl extends AudioManager {
-  static const _bgmVolume = 0.618;
-  static const _effectThrottleDuration = Duration(milliseconds: 100);
+class AudioManager extends IAudioManager {
+  static const effectThrottleDuration = const Duration(milliseconds: 100);
+  static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
   final _bgmCache = AudioCache();
@@ -47,7 +46,7 @@ class AudioManagerImpl extends AudioManager {
   @override
   bool get isMuted => _isMuted;
 
-  AudioManagerImpl() {
+  AudioManager() {
     if (Platform.isIOS) {
       _bgmPlayer.monitorNotificationStateChanges(_callback);
     }
@@ -59,11 +58,11 @@ class AudioManagerImpl extends AudioManager {
     switch (bgm) {
       case Bgm.play:
         _bgmCache.loop("audios/tetris-gameboy-02.mp3",
-            volume: _isMuted ? 0 : _bgmVolume);
+            volume: _isMuted ? 0 : bgmVolume);
         break;
       case Bgm.gameOver:
         _bgmCache.loop("audios/tetris-gameboy-01.mp3",
-            volume: _isMuted ? 0 : _bgmVolume);
+            volume: _isMuted ? 0 : bgmVolume);
         break;
       default:
         break;
@@ -81,7 +80,7 @@ class AudioManagerImpl extends AudioManager {
     if (_isMuted) {
       _bgmPlayer.setVolume(0);
     } else {
-      _bgmPlayer.setVolume(_bgmVolume);
+      _bgmPlayer.setVolume(bgmVolume);
     }
   }
 
@@ -105,9 +104,14 @@ class AudioManagerImpl extends AudioManager {
 
   @override
   void playEffect(Effect effect) {
-    if (!_isMuted && _effectThrottlers[effect]?.isActive != true)
+    if (canPlayEffect(effect)) {
       _playEffect(effect);
+      _throttle(effect);
+    }
   }
+
+  bool canPlayEffect(Effect effect) =>
+      !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
   void _playEffect(Effect effect) {
     String effectFile;
@@ -129,8 +133,8 @@ class AudioManagerImpl extends AudioManager {
       case Effect.softDrop:
         effectFile = "audios/hard_drop.wav";
         break;
-      case Effect.breakLine:
-        effectFile = "audios/break_line.wav";
+      case Effect.lineClear:
+        effectFile = "audios/line_clear.wav";
         break;
       case Effect.event:
         effectFile = "audios/event.wav";
@@ -147,13 +151,9 @@ class AudioManagerImpl extends AudioManager {
         player.monitorNotificationStateChanges(_callback);
       }
     });
-
-    _throttle(effect);
   }
 
   void _throttle(Effect effect) {
-    _effectThrottlers[effect]?.cancel();
-
-    _effectThrottlers[effect] = Timer(_effectThrottleDuration, () {});
+    _effectThrottlers[effect] = Timer(effectThrottleDuration, () {});
   }
 }

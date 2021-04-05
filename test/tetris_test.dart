@@ -15,7 +15,7 @@ import 'tetromino_test.dart';
 void main() {
   Tetris tetris;
   Injector.appInstance
-      .registerSingleton<AudioManager>(() => MockAudioManager());
+      .registerSingleton<IAudioManager>(() => MockAudioManager());
   Injector.appInstance.registerSingleton<RankDao>(() => MockRankDao());
 
   setUp(() {

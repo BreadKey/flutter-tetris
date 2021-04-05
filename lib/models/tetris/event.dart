@@ -1,4 +1,4 @@
-part of '../tetris.dart';
+part of tetris;
 
 enum TetrisEvent {
   hardDrop,
@@ -8,5 +8,6 @@ enum TetrisEvent {
   tSpinSingle,
   tSpinDouble,
   tSpinTriple,
+  perfectClear,
   gameOver
 }
