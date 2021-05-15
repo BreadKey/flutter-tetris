@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LongPressButton extends StatefulWidget {
   final VoidCallback onPressed;
@@ -64,6 +65,7 @@ class _LongPressButtonState extends State<LongPressButton> {
       onPressed: () {},
       onHighlightChanged: (pressed) {
         if (pressed) {
+          HapticFeedback.lightImpact();
           widget.onPressed?.call();
 
           _delayTimer = Timer(widget.delay, () {

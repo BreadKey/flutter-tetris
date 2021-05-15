@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
 
@@ -52,6 +53,7 @@ class _TetrisScreenState extends State<TetrisScreen>
 
     tetrisEventSubscriber = tetris.eventStream.listen((event) {
       if (event == TetrisEvent.hardDrop || event == TetrisEvent.softDrop) {
+        HapticFeedback.mediumImpact();
         fastDropAnimController.forward();
       }
     });

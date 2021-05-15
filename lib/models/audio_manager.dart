@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/services.dart';
 
 enum Bgm { play, gameOver }
 enum Effect {
@@ -15,6 +16,18 @@ enum Effect {
   event,
   levelUp
 }
+
+const _effectFiles = {
+  Effect.lock: "audios/lock.wav",
+  Effect.move: "audios/move.wav",
+  Effect.rotate: "audios/rotate.wav",
+  Effect.hold: "audios/hold.wav",
+  Effect.hardDrop: "audios/hard_drop.wav",
+  Effect.softDrop: "audios/hard_drop.wav",
+  Effect.lineClear: "audios/line_clear.wav",
+  Effect.event: "audios/event.wav",
+  Effect.levelUp: "audios/level_up.wav",
+};
 
 void _callback(AudioPlayerState value) {
   print("state => $value");
@@ -45,11 +58,17 @@ class AudioManager extends IAudioManager {
   @override
   bool get isMuted => _isMuted;
 
+  Completer _loadCompleter;
+
   AudioManager() {
     if (Platform.isIOS) {
       _bgmPlayer.monitorNotificationStateChanges(_callback);
     }
     _bgmCache.fixedPlayer = _bgmPlayer;
+    _loadCompleter = Completer();
+    _effectCache.loadAll(_effectFiles.values.toList()).then((_) {
+      _loadCompleter.complete();
+    });
   }
 
   @override
@@ -113,48 +132,13 @@ class AudioManager extends IAudioManager {
       !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
   void _playEffect(Effect effect) {
-    String effectFile;
+    if (!_loadCompleter.isCompleted &&
+        !(effect == Effect.event || effect == Effect.lineClear)) return;
 
-    switch (effect) {
-      case Effect.lock:
-        effectFile = "audios/lock.wav";
-        break;
-      case Effect.move:
-        effectFile = "audios/move.wav";
-        break;
-      case Effect.rotate:
-        effectFile = "audios/rotate.wav";
-        break;
-      case Effect.hardDrop:
-      case Effect.softDrop:
-        effectFile = "audios/hard_drop.wav";
-        break;
-      case Effect.lineClear:
-        effectFile = "audios/line_clear.wav";
-        break;
-      case Effect.event:
-        effectFile = "audios/event.wav";
-        break;
-      case Effect.levelUp:
-        effectFile = "audios/level_up.wav";
-        break;
-    }
+    HapticFeedback.heavyImpact();
 
-    _effectCache
-        .play(effectFile, mode: PlayerMode.LOW_LATENCY, isNotification: false)
-        .then((player) {
-      if (Platform.isIOS) {
-        player.monitorNotificationStateChanges(_callback);
-      }
-    });
-
-    _throttle(effect);
-  }
-
-  void _throttle(Effect effect) {
-    _effectThrottlers[effect]?.cancel();
-
-    _effectThrottlers[effect] = Timer(_effectThrottleDuration, () {});
+    _effectCache.play(_effectFiles[effect],
+        mode: PlayerMode.LOW_LATENCY, isNotification: false);
   }
 
   void _throttle(Effect effect) {
