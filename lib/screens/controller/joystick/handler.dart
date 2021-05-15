@@ -39,6 +39,7 @@ class JoystickHandler {
       final direction = _detectDirection();
 
       if (direction != _lastDirection) {
+        HapticFeedback.lightImpact();
         _lastDirection = direction;
         onDirectionEntered?.call(_lastDirection);
       }

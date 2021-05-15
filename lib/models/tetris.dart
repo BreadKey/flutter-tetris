@@ -5,6 +5,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:injector/injector.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tetris/dao/rank_dao.dart';
@@ -301,7 +302,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         final isMoved = moveCurrentMino(direction);
 
         if (isMoved) {
-          _audioManager.playEffect(Effect.move);
+          HapticFeedback.lightImpact();
         }
 
         if (direction == Direction.down) {
@@ -330,7 +331,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         final isRotated = rotateCurrentMino(clockwise: clockwise);
 
         if (isRotated) {
-          _audioManager.playEffect(Effect.rotate);
+          HapticFeedback.lightImpact();
         }
       }
     }
@@ -378,6 +379,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
       _rotationOccuredBeforeLock =
           !canMove(_currentTetromino, _playfield, Direction.down);
       notifyListeners();
+
       return true;
     }
 
