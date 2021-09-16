@@ -15,6 +15,7 @@ class RankBoard extends StatelessWidget {
           child: SizedBox.expand(
         child: StreamProvider.value(
           value: tetris.rankStream,
+          initialData: null,
           child: Consumer<Rank>(
             builder: (context, rank, _) {
               return Column(
