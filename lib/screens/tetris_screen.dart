@@ -53,7 +53,6 @@ class _TetrisScreenState extends State<TetrisScreen>
 
     tetrisEventSubscriber = tetris.eventStream.listen((event) {
       if (event == TetrisEvent.hardDrop || event == TetrisEvent.softDrop) {
-        HapticFeedback.mediumImpact();
         fastDropAnimController.forward();
       }
     });
