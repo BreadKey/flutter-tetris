@@ -17,6 +17,7 @@ class EventBoard extends StatelessWidget {
               child: Column(mainAxisSize: MainAxisSize.min, children: [
             StreamProvider<TetrisEvent>.value(
               value: tetris.eventStream,
+              initialData: null,
               updateShouldNotify: (previous, current) =>
                   current != TetrisEvent.softDrop,
               child: Consumer<TetrisEvent>(

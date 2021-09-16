@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/tetris.dart';
 
@@ -68,8 +67,8 @@ class _TetrisScreenState extends State<TetrisScreen>
 
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
-          child: Column(
+    return SafeArea(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           AspectRatio(
