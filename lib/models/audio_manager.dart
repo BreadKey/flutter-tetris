@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 
 enum Bgm { play, gameOver }
 enum Effect {
@@ -19,20 +17,16 @@ enum Effect {
 }
 
 const _effectFiles = {
-  Effect.lock: "audios/lock.wav",
-  Effect.move: "audios/move.wav",
-  Effect.rotate: "audios/rotate.wav",
-  Effect.hold: "audios/hold.wav",
-  Effect.hardDrop: "audios/hard_drop.wav",
-  Effect.softDrop: "audios/hard_drop.wav",
-  Effect.lineClear: "audios/line_clear.wav",
-  Effect.event: "audios/event.wav",
-  Effect.levelUp: "audios/level_up.wav",
+  Effect.lock: "assets/audios/lock.wav",
+  Effect.move: "assets/audios/move.wav",
+  Effect.rotate: "assets/audios/rotate.wav",
+  Effect.hold: "assets/audios/hold.wav",
+  Effect.hardDrop: "assets/audios/hard_drop.wav",
+  Effect.softDrop: "assets/audios/hard_drop.wav",
+  Effect.lineClear: "assets/audios/line_clear.wav",
+  Effect.event: "assets/audios/event.wav",
+  Effect.levelUp: "assets/audios/level_up.wav",
 };
-
-void _callback(AudioPlayerState value) {
-  print("state => $value");
-}
 
 abstract class IAudioManager {
   bool get isMuted;
@@ -50,9 +44,7 @@ class AudioManager extends IAudioManager {
   static const bgmVolume = 0.618;
 
   final _bgmPlayer = AudioPlayer();
-  final _bgmCache = AudioCache();
-
-  final _effectCache = AudioCache();
+  final _effectPlayer = AudioPlayer();
   final _effectThrottlers = <Effect, Timer>{};
 
   bool _isMuted = false;
@@ -62,44 +54,44 @@ class AudioManager extends IAudioManager {
   Completer _loadCompleter;
 
   AudioManager() {
-    if (Platform.isIOS) {
-      _bgmPlayer.monitorNotificationStateChanges(_callback);
-    }
-    _bgmCache.fixedPlayer = _bgmPlayer;
     _loadCompleter = Completer();
-    _effectCache.loadAll(_effectFiles.values.toList()).then((_) {
+    Future.wait(_effectFiles.values.map((element) {
+      return _effectPlayer.setAsset(element);
+    })).then((value) async {
+      await _bgmPlayer.setLoopMode(LoopMode.all);
       _loadCompleter.complete();
     });
   }
 
   @override
-  void startBgm(Bgm bgm) {
+  void startBgm(Bgm bgm) async {
     switch (bgm) {
       case Bgm.play:
-        _bgmCache.loop("audios/tetris-gameboy-02.mp3",
-            volume: _isMuted ? 0 : bgmVolume);
+        await _bgmPlayer.setAsset("assets/audios/tetris-gameboy-02.mp3");
         break;
       case Bgm.gameOver:
-        _bgmCache.loop("audios/tetris-gameboy-01.mp3",
-            volume: _isMuted ? 0 : bgmVolume);
+        await _bgmPlayer.setAsset("assets/audios/tetris-gameboy-01.mp3");
         break;
       default:
         break;
     }
+
+    await _bgmPlayer.setVolume(_isMuted ? 0 : bgmVolume);
+    await _bgmPlayer.play();
   }
 
   @override
   void stopBgm(Bgm bgm) async {
-    _bgmPlayer.stop();
+    await _bgmPlayer.stop();
   }
 
   @override
   void toggleMute() async {
     _isMuted = !_isMuted;
     if (_isMuted) {
-      _bgmPlayer.setVolume(0);
+      await _bgmPlayer.setVolume(0);
     } else {
-      _bgmPlayer.setVolume(bgmVolume);
+      await _bgmPlayer.setVolume(bgmVolume);
     }
   }
 
@@ -118,7 +110,7 @@ class AudioManager extends IAudioManager {
 
   @override
   void resume() {
-    _bgmPlayer.resume();
+    _bgmPlayer.play();
   }
 
   @override
@@ -132,14 +124,21 @@ class AudioManager extends IAudioManager {
   bool canPlayEffect(Effect effect) =>
       !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
-  void _playEffect(Effect effect) {
+  void _playEffect(Effect effect) async {
     if (!_loadCompleter.isCompleted &&
-        !(effect == Effect.event || effect == Effect.lineClear)) return;
+        !(effect == Effect.event ||
+            effect == Effect.lineClear ||
+            effect == Effect.hardDrop ||
+            effect == Effect.softDrop)) return;
 
-    HapticFeedback.heavyImpact();
+    if (effect == Effect.softDrop) {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.heavyImpact();
+    }
 
-    _effectCache.play(_effectFiles[effect],
-        mode: PlayerMode.LOW_LATENCY, isNotification: false);
+    await _effectPlayer.setAsset(_effectFiles[effect]);
+    _effectPlayer.play();
   }
 
   void _throttle(Effect effect) {

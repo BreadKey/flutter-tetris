@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:screen/screen.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/tetris.dart';
 import 'package:tetris/retro_colors.dart';
@@ -32,16 +31,12 @@ class _TetrisGameState extends State<TetrisGame>
     tetris.startGame();
 
     WidgetsBinding.instance.addObserver(this);
-
-    Screen.keepOn(true);
   }
 
   @override
   void dispose() {
     tetris.dispose();
     WidgetsBinding.instance.removeObserver(this);
-
-    Screen.keepOn(false);
     super.dispose();
   }
 
