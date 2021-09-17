@@ -26,15 +26,13 @@ enum JoystickDirection {
 class Joystick extends StatefulWidget {
   final Duration holdDelay;
   final Duration holdInterval;
-  final Function(JoystickDirection direction) onDirectionEntered;
+  final Function(JoystickDirection direction)? onDirectionEntered;
   Joystick(
-      {Key key,
-      @required this.holdDelay,
-      @required this.holdInterval,
-      @required this.onDirectionEntered})
-      : assert(holdDelay != null),
-        assert(holdInterval != null),
-        super(key: key);
+      {Key? key,
+      required this.holdDelay,
+      required this.holdInterval,
+      required this.onDirectionEntered})
+      : super(key: key);
 
   @override
   _JoystickState createState() => _JoystickState();
@@ -44,9 +42,9 @@ class _JoystickState extends State<Joystick> {
   static const totalSize = 150.0;
   static const leverDiameter = totalSize * 0.618;
 
-  JoystickHandler handler;
+  late JoystickHandler handler;
 
-  JoystickDirection lastDirection;
+  JoystickDirection? lastDirection;
 
   Offset leverPosition = Offset.zero;
 

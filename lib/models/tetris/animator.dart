@@ -5,8 +5,8 @@ abstract class AnimationListener {
 }
 
 class Animator {
-  Timer _gameOverAnimatior;
-  AnimationListener _listener;
+  Timer? _gameOverAnimatior;
+  AnimationListener? _listener;
   set listener(AnimationListener value) {
     _listener = value;
   }
@@ -16,16 +16,16 @@ class Animator {
     _listener = null;
   }
 
-  void startGameOver(Tetromino lastTetromino, List<List<Block>> playfield) {
-    int y = lastTetromino.center.y + 1;
+  void startGameOver(Tetromino lastTetromino, List<List<Block?>>? playfield) {
+    int y = lastTetromino.center!.y + 1;
 
     _gameOverAnimatior =
         Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      playfield[y].forEach((block) {
+      playfield![y].forEach((block) {
         block?.color = Colors.grey;
       });
 
-      _listener.onAnimationUpdated();
+      _listener!.onAnimationUpdated();
 
       y--;
 
@@ -40,15 +40,15 @@ class Animator {
   }
 
   Future<void> clearLines(
-      Tetromino currentTetromino,
-      List<List<Block>> playfield,
-      List<List<Block>> linesCanCleared,
-      TetrisEvent event) async {
+      Tetromino? currentTetromino,
+      List<List<Block?>>? playfield,
+      List<List<Block?>> linesCanCleared,
+      TetrisEvent? event) async {
     switch (event) {
       case TetrisEvent.tetris:
-        for (List<Block> line in linesCanCleared) {
-          for (Block block in line) {
-            block.color = justWhite;
+        for (List<Block?> line in linesCanCleared) {
+          for (Block? block in line) {
+            block!.color = justWhite;
           }
         }
         break;
@@ -56,33 +56,33 @@ class Animator {
       case TetrisEvent.tSpinSingle:
       case TetrisEvent.tSpinDouble:
       case TetrisEvent.tSpinTriple:
-        currentTetromino.blocks.forEach((block) {
+        currentTetromino!.blocks.forEach((block) {
           block.color = justWhite;
         });
-        _listener.onAnimationUpdated();
+        _listener!.onAnimationUpdated();
         await Future.delayed(const Duration(milliseconds: 100));
         break;
       default:
         break;
     }
 
-    for (int x = 0; x < playfield.width; x++) {
+    for (int x = 0; x < playfield!.width; x++) {
       await Future.delayed(const Duration(milliseconds: 20));
       linesCanCleared.forEach((line) {
-        line[x].isGhost = true;
+        line[x]!.isGhost = true;
 
         if (x > 0) {
           line[x - 1] = null;
         }
-        _listener.onAnimationUpdated();
+        _listener!.onAnimationUpdated();
       });
     }
 
-    for (List<Block> line in linesCanCleared) {
+    for (List<Block?> line in linesCanCleared) {
       await Future.delayed(const Duration(milliseconds: 20));
       playfield.remove(line);
-      playfield.add(List<Block>.generate(playfield.width, (index) => null));
-      _listener.onAnimationUpdated();
+      playfield.add(List<Block?>.generate(playfield.width, (index) => null));
+      _listener!.onAnimationUpdated();
     }
 
     switch (event) {
@@ -90,7 +90,7 @@ class Animator {
       case TetrisEvent.tSpinSingle:
       case TetrisEvent.tSpinDouble:
       case TetrisEvent.tSpinTriple:
-        currentTetromino.blocks.forEach((block) {
+        currentTetromino!.blocks.forEach((block) {
           block.color = Colors.purple;
         });
         break;

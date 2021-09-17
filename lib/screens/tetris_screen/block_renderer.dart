@@ -7,9 +7,8 @@ class BlockRenderer extends StatelessWidget {
   final Block block;
   final bool drawShadow;
 
-  const BlockRenderer(this.block, {Key key, this.drawShadow: true})
-      : assert(block != null),
-        super(key: key);
+  const BlockRenderer(this.block, {Key? key, this.drawShadow = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) => Material(

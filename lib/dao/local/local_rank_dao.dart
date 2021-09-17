@@ -4,7 +4,7 @@ import 'package:tetris/models/rank.dart';
 
 class LocalRankDao extends RankDao {
   @override
-  Future<RankData> getRankByPlayerId(int playerId) async {
+  Future<RankData?> getRankByPlayerId(int playerId) async {
     final db = await database;
 
     final result = await db.query("rank",
@@ -19,7 +19,7 @@ class LocalRankDao extends RankDao {
   }
 
   @override
-  Future<List<RankData>> getRankOrderByDesc(int count) async {
+  Future<List<RankData?>> getRankOrderByDesc(int count) async {
     final db = await database;
 
     final result = await db.query("rank", orderBy: "score DESC", limit: count);

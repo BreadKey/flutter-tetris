@@ -5,9 +5,9 @@ import 'package:tetris/retro_colors.dart';
 import 'package:tetris/screens/tetris_screen/board.dart';
 
 class EventBoard extends StatelessWidget {
-  final Tetris tetris;
+  final Tetris? tetris;
 
-  const EventBoard(this.tetris, {Key key}) : super(key: key);
+  const EventBoard(this.tetris, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Board(
@@ -15,8 +15,8 @@ class EventBoard extends StatelessWidget {
           aspectRatio: 5 / 4,
           child: Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-            StreamProvider<TetrisEvent>.value(
-              value: tetris.eventStream,
+            StreamProvider<TetrisEvent?>.value(
+              value: tetris!.eventStream,
               initialData: null,
               updateShouldNotify: (previous, current) =>
                   current != TetrisEvent.softDrop,
@@ -40,7 +40,7 @@ class EventBoard extends StatelessWidget {
 
   Widget _buildTetrisEvent(BuildContext context, TetrisEvent event) {
     final textTheme =
-        Theme.of(context).textTheme.subtitle2.copyWith(color: roseViolet);
+        Theme.of(context).textTheme.subtitle2!.copyWith(color: roseViolet);
 
     return Text(
       _getEventText(event),

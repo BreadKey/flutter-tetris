@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tetris/retro_colors.dart';
 
 class Board extends StatelessWidget {
-  final Widget child;
+  final Widget? child;
 
-  const Board({Key key, this.child}) : super(key: key);
+  const Board({Key? key, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Theme(

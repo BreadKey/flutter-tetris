@@ -6,14 +6,14 @@ import 'package:tetris/models/tetris.dart';
 import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
 class TetrominoRenderer extends StatelessWidget {
-  final TetrominoName name;
-  final String info;
+  final TetrominoName? name;
+  final String? info;
   final int rotateCount;
-  final List<Direction> kicks;
-  final MaterialColor color;
+  final List<Direction>? kicks;
+  final MaterialColor? color;
 
   const TetrominoRenderer(this.name,
-      {Key key, this.info, this.rotateCount: 0, this.kicks, this.color})
+      {Key? key, this.info, this.rotateCount: 0, this.kicks, this.color})
       : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class TetrominoRenderer extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final tetromino =
-                name == null ? null : Tetromino.spawn(name, Point(2, 2));
+                name == null ? null : Tetromino.spawn(name!, Point(2, 2));
             for (int i = 0; i < rotateCount; i++) {
               tetromino?.rotate();
             }
@@ -31,7 +31,7 @@ class TetrominoRenderer extends StatelessWidget {
               tetromino?.move(kick);
             }
 
-            final blockMap = Map<Point<int>, Block>.fromEntries(
+            final blockMap = Map<Point<int>?, Block>.fromEntries(
                 (tetromino?.blocks ?? [])
                     .map((block) => MapEntry(block.point, block)));
 

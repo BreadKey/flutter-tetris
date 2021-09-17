@@ -5,15 +5,15 @@ class JoystickHandler {
   final Duration holdInterval;
   final double minMoveDistance;
   final int _directionLength = JoystickDirection.values.length;
-  final Function(JoystickDirection direction) onDirectionEntered;
+  final Function(JoystickDirection direction)? onDirectionEntered;
 
   Offset _leverPosition = Offset.zero;
 
-  Timer _holdDelayTimer;
-  Timer _holdIntervalTimer;
+  Timer? _holdDelayTimer;
+  Timer? _holdIntervalTimer;
 
-  JoystickDirection _lastDirection;
-  JoystickDirection get direction => _lastDirection;
+  JoystickDirection? _lastDirection;
+  JoystickDirection? get direction => _lastDirection;
 
   JoystickHandler(
     this.holdDelay,
@@ -25,7 +25,7 @@ class JoystickHandler {
   void holdLever() {
     _holdDelayTimer = Timer(holdDelay, () {
       _holdIntervalTimer = Timer.periodic(holdInterval, (_) {
-        onDirectionEntered?.call(_lastDirection);
+        onDirectionEntered?.call(_lastDirection!);
       });
     });
   }
@@ -41,7 +41,7 @@ class JoystickHandler {
       if (direction != _lastDirection) {
         HapticFeedback.lightImpact();
         _lastDirection = direction;
-        onDirectionEntered?.call(_lastDirection);
+        onDirectionEntered?.call(_lastDirection!);
       }
     }
   }

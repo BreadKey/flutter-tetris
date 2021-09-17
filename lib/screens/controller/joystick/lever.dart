@@ -4,10 +4,8 @@ class Lever extends StatelessWidget {
   final double diameter;
   final JoystickHandler handler;
 
-  const Lever({Key key, @required this.diameter, @required this.handler})
-      : assert(diameter != null),
-        assert(handler != null),
-        super(key: key);
+  const Lever({Key? key, required this.diameter, required this.handler})
+      : super(key: key);
   build(BuildContext context) => Draggable(
         child: _LeverDraggable(diameter: diameter, handler: handler),
         feedback: _LeverDraggable(diameter: diameter, handler: handler),
@@ -32,10 +30,8 @@ class _LeverDraggable extends StatelessWidget {
   final JoystickHandler handler;
 
   const _LeverDraggable(
-      {Key key, @required this.diameter, @required this.handler})
-      : assert(diameter != null),
-        assert(handler != null),
-        super(key: key);
+      {Key? key, required this.diameter, required this.handler})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) => SizedBox(

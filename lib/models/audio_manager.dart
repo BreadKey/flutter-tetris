@@ -50,7 +50,7 @@ class AudioManager extends IAudioManager {
   @override
   bool get isMuted => _isMuted;
 
-  Completer _loadCompleter;
+  late Completer _loadCompleter;
 
   AudioManager() {
     _loadCompleter = Completer();
@@ -136,7 +136,7 @@ class AudioManager extends IAudioManager {
       HapticFeedback.heavyImpact();
     }
 
-    await _effectPlayer.setAsset(_effectFiles[effect]);
+    await _effectPlayer.setAsset(_effectFiles[effect]!);
     _effectPlayer.play();
   }
 

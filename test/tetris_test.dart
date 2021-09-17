@@ -13,7 +13,7 @@ import 'mocks/mock_rank_dao.dart';
 import 'tetromino_test.dart';
 
 void main() {
-  Tetris tetris;
+  late Tetris tetris;
   Injector.appInstance
       .registerSingleton<IAudioManager>(() => MockAudioManager());
   Injector.appInstance.registerSingleton<RankDao>(() => MockRankDao());
@@ -34,7 +34,7 @@ void main() {
   test("spawn T mino", () {
     tetris.spawn(TetrominoName.T);
 
-    expectPoints(tetris.currentTetromino,
+    expectPoints(tetris.currentTetromino!,
         [Point(3, 19), Point(4, 19), Point(5, 19), Point(4, 20)]);
   });
 
@@ -46,8 +46,8 @@ void main() {
     tetris.spawn(TetrominoName.I);
 
     expect(
-        tetris.canMove(
-            tetris.currentTetromino, tetris.playfield, Direction.down),
+        tetris.canMove(tetris.currentTetromino!,
+            tetris.playfield as List<List<Block?>>, Direction.down),
         true);
 
     tetris.moveCurrentMino(Direction.down);
@@ -55,22 +55,22 @@ void main() {
     tetris.spawn(TetrominoName.I);
 
     expect(
-        tetris.canMove(
-            tetris.currentTetromino, tetris.playfield, Direction.down),
+        tetris.canMove(tetris.currentTetromino!,
+            tetris.playfield as List<List<Block?>>, Direction.down),
         false);
   });
 
   test("super rotation system", () {
-    final mino = null; //just more readable;
+    final dynamic mino = null; //just more readable;
     final grey = Block(color: Colors.grey);
     final playfield = [
-      <Block>[null, null, null, null, grey, grey, null, null, null, null],
-      <Block>[null, null, null, null, null, grey, grey, grey, null, null],
-      <Block>[null, null, null, null, mino, null, grey, grey, grey, grey],
-      <Block>[null, grey, grey, grey, mino, mino, mino, grey, grey, grey],
-      <Block>[grey, grey, null, null, null, null, grey, grey, grey, grey],
-      <Block>[grey, grey, grey, grey, null, null, grey, grey, grey, grey],
-      <Block>[grey, grey, grey, grey, grey, null, grey, grey, grey, grey],
+      <Block?>[null, null, null, null, grey, grey, null, null, null, null],
+      <Block?>[null, null, null, null, null, grey, grey, grey, null, null],
+      <Block?>[null, null, null, null, mino, null, grey, grey, grey, grey],
+      <Block?>[null, grey, grey, grey, mino, mino, mino, grey, grey, grey],
+      <Block?>[grey, grey, null, null, null, null, grey, grey, grey, grey],
+      <Block?>[grey, grey, grey, grey, null, null, grey, grey, grey, grey],
+      <Block?>[grey, grey, grey, grey, grey, null, grey, grey, grey, grey],
     ].reversed.toList();
 
     final jMino = Tetromino.spawn(TetrominoName.J, Point(5, 3));
@@ -81,7 +81,7 @@ void main() {
   });
 
   test("kick T test", () {
-    final List<List<Block>> playfield = [
+    final List<List<Block?>> playfield = [
       [null, null, null, null],
       [null, null, null, null],
       [null, null, null, null]
@@ -117,7 +117,7 @@ void main() {
 
   test("T spin test", () {
     final grey = Block(color: Colors.grey);
-    final List<List<Block>> playfield = [
+    final List<List<Block?>> playfield = [
       [null, null, grey, grey],
       [null, null, grey, grey],
       [null, null, null, grey],
@@ -139,10 +139,10 @@ void main() {
     tetris.moveCurrentMino(Direction.down);
     tetris.moveCurrentMino(Direction.down);
 
-    final lastBlocks = tetris.currentTetromino.blocks;
+    final lastBlocks = tetris.currentTetromino!.blocks;
 
     tetris.hold();
-    expect(tetris.currentTetromino.name, TetrominoName.I);
+    expect(tetris.currentTetromino!.name, TetrominoName.I);
     expect(tetris.holdingMino, TetrominoName.T);
 
     tetris.playfield.forEach((line) {
@@ -156,6 +156,6 @@ void main() {
 }
 
 void expectIMinoSpawned(Tetris tetris) {
-  expectPoints(tetris.currentTetromino,
+  expectPoints(tetris.currentTetromino!,
       [Point(3, 19), Point(4, 19), Point(5, 19), Point(6, 19)]);
 }

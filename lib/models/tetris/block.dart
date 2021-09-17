@@ -5,8 +5,7 @@ class Block {
   MaterialColor color;
   bool isGhost;
 
-  Block({@required this.color, this.point, this.isGhost: false})
-      : assert(color != null);
+  Block({required this.color, this.point = Point.zero, this.isGhost: false});
 
   bool isPartOf(Tetromino tetromino) => tetromino.blocks.contains(this);
 }

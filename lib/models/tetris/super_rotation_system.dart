@@ -24,7 +24,7 @@ extension SuperRotationSystem on Tetris {
     }
   };
 
-  bool rotateBySrs(Tetromino tetromino, List<List<Block>> playfield,
+  bool rotateBySrs(Tetromino tetromino, List<List<Block?>> playfield,
       {bool clockwise: true}) {
     if (tetromino.name == TetrominoName.O) return false;
 
@@ -53,7 +53,7 @@ extension SuperRotationSystem on Tetris {
     return rotationSucceed;
   }
 
-  bool kick(Tetromino tetromino, List<List<Block>> playfield, bool clockwise) {
+  bool kick(Tetromino tetromino, List<List<Block?>> playfield, bool clockwise) {
     bool kickSucceed = false;
     for (int testStep = 2; testStep <= 5; testStep++) {
       final testOffset = getTestOffset(tetromino, testStep, clockwise);
@@ -73,8 +73,8 @@ extension SuperRotationSystem on Tetris {
 
   Point<int> getTestOffset(Tetromino tetromino, int testStep, bool clockwise) {
     final testOffset = tetromino.name == TetrominoName.I
-        ? testTableI[clockwise][testStep]
-        : testTable[testStep];
+        ? testTableI[clockwise]![testStep]!
+        : testTable[testStep]!;
 
     int x = testOffset.x;
     int y = testOffset.y;
@@ -106,7 +106,7 @@ extension SuperRotationSystem on Tetris {
     return Point(x, y);
   }
 
-  bool isValidPosition(Tetromino tetromino, List<List<Block>> playfield) {
+  bool isValidPosition(Tetromino tetromino, List<List<Block?>> playfield) {
     for (Block block in tetromino.blocks) {
       if (playfield.isWall(block.point)) return false;
 
@@ -119,7 +119,7 @@ extension SuperRotationSystem on Tetris {
     return true;
   }
 
-  Direction calculateKickDirection(Tetromino tetromino) {
+  Direction? calculateKickDirection(Tetromino tetromino) {
     for (Block block in tetromino.blocks) {
       if (block.point.x == -1) {
         return Direction.right;

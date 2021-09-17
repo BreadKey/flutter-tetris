@@ -8,7 +8,7 @@ class LabelAndNumberRenderer extends StatelessWidget {
   final Axis direction;
 
   const LabelAndNumberRenderer(this.label, this.numberSelector,
-      {Key key, this.direction = Axis.horizontal})
+      {Key? key, this.direction = Axis.horizontal})
       : super(key: key);
 
   @override

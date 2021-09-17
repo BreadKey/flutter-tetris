@@ -8,7 +8,7 @@ import 'package:tetris/screens/tetris_screen/board.dart';
 class RankBoard extends StatelessWidget {
   final Tetris tetris;
 
-  const RankBoard(this.tetris, {Key key}) : super(key: key);
+  const RankBoard(this.tetris, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Board(
@@ -16,7 +16,7 @@ class RankBoard extends StatelessWidget {
         child: StreamProvider.value(
           value: tetris.rankStream,
           initialData: null,
-          child: Consumer<Rank>(
+          child: Consumer<Rank?>(
             builder: (context, rank, _) {
               return Column(
                 children: [
@@ -37,9 +37,9 @@ class RankBoard extends StatelessWidget {
                   Expanded(
                       child: ListView(
                           children: List.generate(
-                              rank?.ranks?.length ?? 0,
+                              rank?.ranks.length ?? 0,
                               (index) =>
-                                  _buildRank(rank.ranks[index], index + 1))))
+                                  _buildRank(rank?.ranks[index], index + 1))))
                 ],
               );
             },
@@ -47,7 +47,7 @@ class RankBoard extends StatelessWidget {
         ),
       ));
 
-  Widget _buildRank(RankData rankData, int ranking) => Row(
+  Widget _buildRank(RankData? rankData, int ranking) => Row(
           key: ValueKey(rankData),
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
