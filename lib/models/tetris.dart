@@ -24,9 +24,9 @@ part 'tetris/rules.dart';
 part 'tetris/super_rotation_system.dart';
 part 'tetris/tetromino.dart';
 
-extension Playfield on List<List<Block>> {
-  Block getBlockAt(Point<int> point) => this[point.y][point.x];
-  void setBlockAt(Point<int> point, Block block) {
+extension Playfield on List<List<Block?>> {
+  Block? getBlockAt(Point<int> point) => this[point.y][point.x];
+  void setBlockAt(Point<int> point, Block? block) {
     this[point.y][point.x] = block;
   }
 
@@ -49,15 +49,15 @@ class Tetris extends ChangeNotifier with AnimationListener {
     Point(-1, -1)
   ];
 
-  List<List<Block>> _playfield;
-  Iterable<Iterable<Block>> get playfield => _playfield;
+  late List<List<Block?>> _playfield;
+  Iterable<Iterable<Block?>> get playfield => _playfield;
 
-  Tetromino _currentTetromino;
-  Tetromino get currentTetromino => _currentTetromino;
+  Tetromino? _currentTetromino;
+  Tetromino? get currentTetromino => _currentTetromino;
 
   double _accumulatedPower = 0;
 
-  Timer _frameGenerator;
+  Timer? _frameGenerator;
 
   final RandomMinoGenerator _randomMinoGenerator = RandomMinoGenerator();
 
@@ -82,8 +82,8 @@ class Tetris extends ChangeNotifier with AnimationListener {
   int _score = 0;
   int get score => _score;
 
-  final PublishSubject<TetrisEvent> _eventSubject = PublishSubject();
-  Stream<TetrisEvent> get eventStream => _eventSubject.stream;
+  final PublishSubject<TetrisEvent?> _eventSubject = PublishSubject();
+  Stream<TetrisEvent?> get eventStream => _eventSubject.stream;
 
   bool _isGameOver = false;
   bool get isGameOver => _isGameOver;
@@ -100,8 +100,8 @@ class Tetris extends ChangeNotifier with AnimationListener {
 
   bool _canHold = true;
   bool get canHold => _canHold;
-  TetrominoName _holdingMino;
-  TetrominoName get holdingMino => _holdingMino;
+  TetrominoName? _holdingMino;
+  TetrominoName? get holdingMino => _holdingMino;
 
   final IAudioManager _audioManager = Injector.appInstance.get<IAudioManager>();
 
@@ -114,7 +114,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
 
   bool get isMuted => _audioManager.isMuted;
 
-  TetrisEvent _lastLineClearEvent;
+  TetrisEvent? _lastLineClearEvent;
   bool _isBackToBack = false;
   bool get isBackToBack => _isBackToBack;
   bool _isPerfectClearBefore = false;
@@ -210,7 +210,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         _playfield.setBlockAt(block.point, block);
       });
 
-      _setGhostPiece(_currentTetromino, _playfield);
+      _setGhostPiece(_currentTetromino!, _playfield);
     } else {
       _gameOver();
     }
@@ -219,8 +219,8 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   bool canMove(
-      Tetromino tetromino, List<List<Block>> playfield, Direction direction,
-      {Tetromino mask}) {
+      Tetromino tetromino, List<List<Block?>> playfield, Direction direction,
+      {Tetromino? mask}) {
     for (Block block in tetromino.blocks) {
       final nextPoint = block.point + direction.vector;
 
@@ -231,13 +231,13 @@ class Tetris extends ChangeNotifier with AnimationListener {
       final blockAtNextpoint = playfield.getBlockAt(nextPoint);
 
       if (!isBlockNullOrGhost(blockAtNextpoint) &&
-          !blockAtNextpoint.isPartOf(mask ?? tetromino)) return false;
+          !blockAtNextpoint!.isPartOf(mask ?? tetromino)) return false;
     }
 
     return true;
   }
 
-  bool isBlockNullOrGhost(Block block) => block?.isGhost != false;
+  bool isBlockNullOrGhost(Block? block) => block?.isGhost != false;
 
   void _update() {
     _handleGravity(_currentDropMode == DropMode.hard
@@ -246,7 +246,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
     if (_isStucked) {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
-        if (!canMove(_currentTetromino, _playfield, Direction.down)) {
+        if (!canMove(_currentTetromino!, _playfield, Direction.down)) {
           _audioManager.playEffect(Effect.lock);
           lock();
         }
@@ -340,7 +340,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   bool moveCurrentMino(Direction direction) {
     if (move(_currentTetromino, _playfield, direction)) {
       if (direction.isHorizontal) {
-        _setGhostPiece(_currentTetromino, _playfield);
+        _setGhostPiece(_currentTetromino!, _playfield);
         _rotationOccuredBeforeLock = false;
       }
       notifyListeners();
@@ -352,7 +352,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   bool move(
-      Tetromino tetromino, List<List<Block>> playfield, Direction direction) {
+      Tetromino? tetromino, List<List<Block?>> playfield, Direction direction) {
     if (tetromino == null) {
       return false;
     }
@@ -374,10 +374,10 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   bool rotateCurrentMino({bool clockwise: true}) {
-    if (rotateBySrs(_currentTetromino, _playfield, clockwise: clockwise)) {
-      _setGhostPiece(_currentTetromino, _playfield);
+    if (rotateBySrs(_currentTetromino!, _playfield, clockwise: clockwise)) {
+      _setGhostPiece(_currentTetromino!, _playfield);
       _rotationOccuredBeforeLock =
-          !canMove(_currentTetromino, _playfield, Direction.down);
+          !canMove(_currentTetromino!, _playfield, Direction.down);
       notifyListeners();
 
       return true;
@@ -395,13 +395,13 @@ class Tetris extends ChangeNotifier with AnimationListener {
         .where((line) => line.every((block) => block != null && !block.isGhost))
         .toList();
 
-    TetrisEvent event;
+    TetrisEvent? event;
 
     if (linesWillCleared.isNotEmpty) {
       if (isTetris(linesWillCleared)) {
         event = TetrisEvent.tetris;
         _audioManager.playEffect(Effect.event);
-      } else if (isTSpin(_currentTetromino, _playfield)) {
+      } else if (isTSpin(_currentTetromino!, _playfield)) {
         event = _calculateTSpin(linesWillCleared.length);
         _audioManager.playEffect(Effect.event);
       } else {
@@ -423,17 +423,17 @@ class Tetris extends ChangeNotifier with AnimationListener {
     }
   }
 
-  bool isTetris(List<List<Block>> clearedLines) => clearedLines.length == 4;
-  bool isTSpin(Tetromino tetromino, List<List<Block>> playfield) {
+  bool isTetris(List<List<Block?>> clearedLines) => clearedLines.length == 4;
+  bool isTSpin(Tetromino tetromino, List<List<Block?>>? playfield) {
     if (tetromino.name != TetrominoName.T || !_rotationOccuredBeforeLock)
       return false;
 
     int blockCountArountT = 0;
 
     for (Point<int> testOffset in tSpinTestOffsets) {
-      final testPoint = tetromino.center + testOffset;
+      final testPoint = tetromino.center! + testOffset;
 
-      if (playfield.isWall(testPoint) || isBlocked(testPoint, playfield)) {
+      if (playfield!.isWall(testPoint) || isBlocked(testPoint, playfield)) {
         blockCountArountT++;
 
         if (blockCountArountT >= 3) return true;
@@ -444,23 +444,20 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   TetrisEvent _calculateTSpin(int clearedLineCount) {
-    if (hasRoof(_currentTetromino, _playfield)) {
+    if (hasRoof(_currentTetromino!, _playfield)) {
       switch (clearedLineCount) {
         case 1:
           return TetrisEvent.tSpinSingle;
-          break;
         case 2:
           return TetrisEvent.tSpinDouble;
-          break;
         case 3:
           return TetrisEvent.tSpinTriple;
-          break;
       }
     }
     return TetrisEvent.tSpinMini;
   }
 
-  void _onLineClearEvent(TetrisEvent event, int clearedLineCount) {
+  void _onLineClearEvent(TetrisEvent? event, int clearedLineCount) {
     _eventSubject.sink.add(event);
     _checkBackToBack(event);
 
@@ -478,19 +475,19 @@ class Tetris extends ChangeNotifier with AnimationListener {
     _isPerfectClearBefore = true;
   }
 
-  bool isBlocked(Point<int> point, List<List<Block>> playfield) =>
+  bool isBlocked(Point<int> point, List<List<Block?>> playfield) =>
       !isBlockNullOrGhost(playfield.getBlockAt(point));
 
-  bool hasRoof(Tetromino tetromino, List<List<Block>> playfield) {
-    final leftTop = tetromino.center + Point(-1, 1);
-    final rightTop = tetromino.center + Point(1, 1);
+  bool hasRoof(Tetromino tetromino, List<List<Block?>> playfield) {
+    final leftTop = tetromino.center! + Point(-1, 1);
+    final rightTop = tetromino.center! + Point(1, 1);
 
     return !playfield.isWall(leftTop) && isBlocked(leftTop, playfield) ||
         !playfield.isWall(rightTop) && isBlocked(rightTop, playfield);
   }
 
   Future<void> clearLines(
-      List<List<Block>> linesCanCleared, TetrisEvent event) async {
+      List<List<Block?>> linesCanCleared, TetrisEvent? event) async {
     _isOnLineClear = true;
 
     await _animator.clearLines(
@@ -506,15 +503,15 @@ class Tetris extends ChangeNotifier with AnimationListener {
     _isOnLineClear = false;
   }
 
-  void _checkBackToBack(TetrisEvent event) {
+  void _checkBackToBack(TetrisEvent? event) {
     _isBackToBack = event != null && _lastLineClearEvent == event;
     _lastLineClearEvent = event;
   }
 
-  void scoreUp(int level, int clearedLineCount, TetrisEvent event) {
+  void scoreUp(int level, int clearedLineCount, TetrisEvent? event) {
     if (clearedLineCount == 0) return;
 
-    int bonus;
+    late int bonus;
 
     switch (event) {
       case TetrisEvent.tetris:
@@ -580,16 +577,16 @@ class Tetris extends ChangeNotifier with AnimationListener {
     }
   }
 
-  void _setGhostPiece(Tetromino tetromino, List<List<Block>> playfield) {
+  void _setGhostPiece(Tetromino tetromino, List<List<Block?>> playfield) {
     for (Block ghostBlock in _ghostPiece.blocks) {
       if (playfield.getBlockAt(ghostBlock.point)?.isGhost == true) {
         playfield.setBlockAt(ghostBlock.point, null);
       }
     }
 
-    for (int index = 0; index < _currentTetromino.blocks.length; index++) {
-      _ghostPiece.blocks[index].point = _currentTetromino.blocks[index].point;
-      _ghostPiece.blocks[index].color = _currentTetromino.blocks[index].color;
+    for (int index = 0; index < _currentTetromino!.blocks.length; index++) {
+      _ghostPiece.blocks[index].point = _currentTetromino!.blocks[index].point;
+      _ghostPiece.blocks[index].color = _currentTetromino!.blocks[index].color;
     }
 
     while (canMove(_ghostPiece, playfield, Direction.down, mask: tetromino)) {
@@ -607,10 +604,10 @@ class Tetris extends ChangeNotifier with AnimationListener {
 
   void _gameOver() {
     _isGameOver = true;
-    _frameGenerator.cancel();
+    _frameGenerator!.cancel();
     _eventSubject.sink.add(TetrisEvent.gameOver);
 
-    _animator.startGameOver(_currentTetromino, _playfield);
+    _animator.startGameOver(_currentTetromino!, _playfield);
 
     _audioManager.stopBgm(Bgm.play);
     _audioManager.startBgm(Bgm.gameOver);
@@ -630,13 +627,13 @@ class Tetris extends ChangeNotifier with AnimationListener {
   void hold() {
     if (_canHold && canUpdate) {
       if (_holdingMino == null) {
-        _holdingMino = _currentTetromino.name;
+        _holdingMino = _currentTetromino!.name;
 
         _clearCurrentMino();
         spawnNextMino();
       } else {
-        final holding = _holdingMino;
-        _holdingMino = _currentTetromino.name;
+        final holding = _holdingMino!;
+        _holdingMino = _currentTetromino!.name;
 
         _clearCurrentMino();
         spawn(holding);
@@ -647,7 +644,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   void _clearCurrentMino() {
-    _currentTetromino.blocks.forEach((block) {
+    _currentTetromino!.blocks.forEach((block) {
       _playfield.setBlockAt(block.point, null);
     });
     _ghostPiece.blocks.forEach((ghostBlock) {
@@ -668,7 +665,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         .add(Rank(MapEntry(playerRank, ranks.indexOf(playerRank) + 1), ranks));
   }
 
-  Block getBlockAt(int x, int y) => _playfield[y][x];
+  Block? getBlockAt(int x, int y) => _playfield[y][x];
 
   void pause() {
     _paused = true;

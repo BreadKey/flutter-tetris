@@ -21,22 +21,22 @@ class _TetrisGameState extends State<TetrisGame>
   static const controllerHeight = 280;
   static const logoHeight = 28.0;
 
-  Tetris tetris;
+  Tetris? tetris;
 
   @override
   void initState() {
     super.initState();
     tetris = Tetris();
 
-    tetris.startGame();
+    tetris!.startGame();
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
   void dispose() {
-    tetris.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    tetris!.dispose();
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -172,35 +172,35 @@ class _TetrisGameState extends State<TetrisGame>
   }
 
   void handleDirection(Direction direction) {
-    if (tetris.isGameOver) return;
+    if (tetris!.isGameOver) return;
     if (direction == Direction.up) {
-      tetris.commandRotate();
+      tetris!.commandRotate();
     } else {
-      tetris.commandMove(direction);
+      tetris!.commandMove(direction);
     }
   }
 
   void onButtonEntered(ButtonKey key) {
-    if (tetris.isGameOver) {
-      tetris.startGame();
+    if (tetris!.isGameOver) {
+      tetris!.startGame();
       return;
     }
 
     switch (key) {
       case ButtonKey.a:
-        tetris.commandRotate(clockwise: false);
+        tetris!.commandRotate(clockwise: false);
         break;
       case ButtonKey.b:
-        tetris.dropHard();
+        tetris!.dropHard();
         break;
       case ButtonKey.c:
-        tetris.commandRotate();
+        tetris!.commandRotate();
         break;
       case ButtonKey.special1:
-        tetris.toggleMute();
+        tetris!.toggleMute();
         break;
       case ButtonKey.special2:
-        tetris.hold();
+        tetris!.hold();
         break;
     }
   }
@@ -210,9 +210,9 @@ class _TetrisGameState extends State<TetrisGame>
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.paused) {
-      tetris.pause();
+      tetris!.pause();
     } else if (state == AppLifecycleState.resumed) {
-      tetris.resume();
+      tetris!.resume();
     }
   }
 }

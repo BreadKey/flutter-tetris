@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class LongPressButton extends StatefulWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Widget child;
-  final double minWidth;
-  final double height;
-  final ShapeBorder shape;
-  final Color color;
-  final Color splashColor;
-  final Color highlightColor;
-  final Color textColor;
+  final double? minWidth;
+  final double? height;
+  final ShapeBorder? shape;
+  final Color? color;
+  final Color? splashColor;
+  final Color? highlightColor;
+  final Color? textColor;
   final Duration delay;
   final Duration interval;
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   const LongPressButton(
-      {Key key,
-      @required this.onPressed,
-      @required this.child,
+      {Key? key,
+      required this.onPressed,
+      required this.child,
       this.minWidth,
       this.height,
       this.shape,
@@ -29,19 +29,17 @@ class LongPressButton extends StatefulWidget {
       this.highlightColor,
       this.textColor,
       this.padding,
-      @required this.delay,
-      @required this.interval})
-      : assert(delay != null),
-        assert(interval != null),
-        super(key: key);
+      required this.delay,
+      required this.interval})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LongPressButtonState();
 }
 
 class _LongPressButtonState extends State<LongPressButton> {
-  Timer _delayTimer;
-  Timer _intervalTimer;
+  Timer? _delayTimer;
+  Timer? _intervalTimer;
 
   @override
   void dispose() {
@@ -74,7 +72,7 @@ class _LongPressButtonState extends State<LongPressButton> {
             });
           });
         } else {
-          _delayTimer.cancel();
+          _delayTimer!.cancel();
           _intervalTimer?.cancel();
         }
       },

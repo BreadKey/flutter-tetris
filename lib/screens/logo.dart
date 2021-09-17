@@ -6,7 +6,7 @@ import 'package:tetris/screens/tetris_screen/tetromino_renderer.dart';
 class Logo extends StatelessWidget {
   final double height;
 
-  const Logo({Key key, this.height: 28}) : super(key: key);
+  const Logo({Key? key, this.height: 28}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Material(

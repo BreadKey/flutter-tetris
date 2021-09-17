@@ -10,9 +10,7 @@ import 'long_press_button.dart';
 part 'controller/action_button.dart';
 part 'controller/special_button.dart';
 
-enum ButtonKey {
-  a, b, c, special1, special2
-}
+enum ButtonKey { a, b, c, special1, special2 }
 
 class Controller extends InheritedWidget {
   static const double actionButtonSpace = 14 * 1.518;
@@ -21,27 +19,25 @@ class Controller extends InheritedWidget {
   final Duration longPressDelay;
   final Duration longPressInterval;
 
-  final MaterialColor actionButtonColor;
+  final MaterialColor? actionButtonColor;
   final double actionButtonSize;
-  final Color specialButtonColor;
+  final Color? specialButtonColor;
 
   final Map<ButtonKey, Widget> buttonIcons;
 
-  final Function(ButtonKey buttonKey) onButtonEntered;
+  final Function(ButtonKey buttonKey)? onButtonEntered;
 
   Controller({
-    Key key,
-    @required this.longPressDelay,
-    @required this.longPressInterval,
-    @required Function(JoystickDirection direction) onDirectionEntered,
-    @required this.onButtonEntered,
+    Key? key,
+    required this.longPressDelay,
+    required this.longPressInterval,
+    required Function(JoystickDirection direction) onDirectionEntered,
+    required this.onButtonEntered,
     this.buttonIcons = const {},
     this.actionButtonColor,
     this.actionButtonSize = defaultCircleButtonSize,
     this.specialButtonColor,
-  })  : assert(longPressDelay != null),
-        assert(longPressInterval != null),
-        super(
+  }) : super(
             key: key,
             child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -134,7 +130,7 @@ class Controller extends InheritedWidget {
       );
 
   factory Controller.of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<Controller>();
+      context.dependOnInheritedWidgetOfExactType<Controller>()!;
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;

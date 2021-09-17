@@ -3,7 +3,7 @@ part of controller;
 class _ActionButton extends StatelessWidget {
   final ButtonKey buttonKey;
 
-  const _ActionButton({Key key, this.buttonKey}) : super(key: key);
+  const _ActionButton({Key? key, required this.buttonKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class _ActionButton extends StatelessWidget {
 
     return Stack(alignment: Alignment.center, children: [
       Material(
-        color: controller.actionButtonColor.shade600,
+        color: controller.actionButtonColor!.shade600,
         shape: const CircleBorder(),
         elevation: 4,
         child: SizedBox(
@@ -27,12 +27,12 @@ class _ActionButton extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        controller.actionButtonColor.shade50,
-                        controller.actionButtonColor.shade200,
-                        controller.actionButtonColor,
-                        controller.actionButtonColor,
-                        controller.actionButtonColor.shade600,
-                        controller.actionButtonColor.shade800
+                        controller.actionButtonColor!.shade50,
+                        controller.actionButtonColor!.shade200,
+                        controller.actionButtonColor!,
+                        controller.actionButtonColor!,
+                        controller.actionButtonColor!.shade600,
+                        controller.actionButtonColor!.shade800
                       ]),
                 ),
               ),

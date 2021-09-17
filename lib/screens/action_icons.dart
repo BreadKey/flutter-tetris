@@ -7,10 +7,10 @@ import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 
 class RotateIcon extends StatelessWidget {
   final double size;
-  final Color color;
+  final Color? color;
   final bool clockwise;
 
-  const RotateIcon({Key key, double size, this.color, bool clockwise})
+  const RotateIcon({Key? key, double? size, this.color, bool? clockwise})
       : this.size = size ?? 24,
         this.clockwise = clockwise ?? true,
         super(key: key);
@@ -19,10 +19,10 @@ class RotateIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconTheme = IconTheme.of(context);
     final iconOpacity = iconTheme.opacity;
-    Color iconColor = color ?? iconTheme.color;
+    Color? iconColor = color ?? iconTheme.color;
 
     if (iconOpacity != 1.0)
-      iconColor = iconColor.withOpacity(iconColor.opacity * iconOpacity);
+      iconColor = iconColor!.withOpacity(iconColor.opacity * iconOpacity!);
 
     final space = SizedBox(
       width: size / 3,
@@ -93,9 +93,9 @@ class RotateIcon extends StatelessWidget {
 
 class HardDropIcon extends StatelessWidget {
   final double size;
-  final Color color;
+  final Color? color;
 
-  const HardDropIcon({Key key, double size, this.color, bool clockwise})
+  const HardDropIcon({Key? key, double? size, this.color, bool? clockwise})
       : this.size = size ?? 24,
         super(key: key);
 
@@ -103,10 +103,10 @@ class HardDropIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconTheme = IconTheme.of(context);
     final iconOpacity = iconTheme.opacity;
-    Color iconColor = color ?? iconTheme.color;
+    Color? iconColor = color ?? iconTheme.color;
 
     if (iconOpacity != 1.0)
-      iconColor = iconColor.withOpacity(iconColor.opacity * iconOpacity);
+      iconColor = iconColor!.withOpacity(iconColor.opacity * iconOpacity!);
 
     final block = Container(
         width: size / 3,

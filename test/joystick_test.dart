@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tetris/screens/controller/joystick.dart';
 
 void main() {
-  JoystickHandler handler;
+  late JoystickHandler handler;
   setUp(() {
     handler = JoystickHandler(const Duration(milliseconds: 200),
         const Duration(milliseconds: 50), 1, (direction) {});

@@ -16,14 +16,12 @@ abstract class Tetromino {
         blocks = List.unmodifiable(List.generate(
             4,
             (index) => Block(
-                color: tetriminoColors[name],
+                color: tetriminoColors[name]!,
                 point: spawnPoint + downwardOffsets[index],
                 isGhost: isGhost)));
 
   factory Tetromino.spawn(TetrominoName name, Point<int> spawnPoint) {
-    assert(name != null);
-
-    Tetromino tetromino;
+    late Tetromino tetromino;
 
     switch (name) {
       case TetrominoName.I:
@@ -76,7 +74,7 @@ abstract class Tetromino {
     });
   }
 
-  Point<int> get center;
+  Point<int>? get center;
 
   Point<int> rotateOffset(Point<int> offset, Direction direction) {
     switch (direction) {
@@ -111,7 +109,7 @@ abstract class Tetromino {
     }
 
     final rotatedPoints = downwardOffsets
-        .map((offset) => center + rotateOffset(offset, heading))
+        .map((offset) => center! + rotateOffset(offset, heading))
         .toList();
 
     for (int index = 0; index < blocks.length; index++) {
@@ -132,7 +130,7 @@ class IMino extends Tetromino {
     _center = blocks[1].point + Point(0, 1);
   }
 
-  Point<int> _center;
+  late Point<int> _center;
   @override
   Point<int> get center => _center;
 
@@ -182,7 +180,7 @@ class OMino extends Tetromino {
             spawnPoint);
 
   @override
-  Point<int> get center => blocks.first.point;
+  Point<int>? get center => blocks.first.point;
 
   @override
   Point<int> rotateOffset(Point<int> offset, Direction direction) => offset;
@@ -199,7 +197,7 @@ class TMino extends Tetromino {
             spawnPoint);
 
   @override
-  Point<int> get center => blocks[1].point;
+  Point<int>? get center => blocks[1].point;
 }
 
 ///    [Z][1]
@@ -213,7 +211,7 @@ class SMino extends Tetromino {
             spawnPoint);
 
   @override
-  Point<int> get center => blocks.first.point;
+  Point<int>? get center => blocks.first.point;
 }
 
 /// [0][Z]
@@ -227,7 +225,7 @@ class ZMino extends Tetromino {
             spawnPoint);
 
   @override
-  Point<int> get center => blocks[1].point;
+  Point<int>? get center => blocks[1].point;
 }
 
 /// [0][Z][2]
@@ -241,7 +239,7 @@ class JMino extends Tetromino {
             spawnPoint);
 
   @override
-  Point<int> get center => blocks[1].point;
+  Point<int>? get center => blocks[1].point;
 }
 
 /// [0][Z][2]
@@ -255,7 +253,7 @@ class LMino extends Tetromino {
             spawnPoint);
 
   @override
-  Point<int> get center => blocks[1].point;
+  Point<int>? get center => blocks[1].point;
 }
 
 class _GhostMino extends Tetromino {
@@ -264,5 +262,5 @@ class _GhostMino extends Tetromino {
             Point(0, 0),
             isGhost: true);
   @override
-  Point<int> get center => blocks.first.point;
+  Point<int>? get center => blocks.first.point;
 }

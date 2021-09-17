@@ -5,9 +5,9 @@ import 'package:tetris/screens/tetris_screen/board.dart';
 import 'package:tetris/screens/tetris_screen/tetromino_renderer.dart';
 
 class HoldBoard extends StatelessWidget {
-  final Tetris tetris;
+  final Tetris? tetris;
 
-  const HoldBoard(this.tetris, {Key key}) : super(key: key);
+  const HoldBoard(this.tetris, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Board(
@@ -15,7 +15,7 @@ class HoldBoard extends StatelessWidget {
           children: [
             Selector<Tetris, bool>(
                 selector: (_, tetris) => tetris.canHold,
-                builder: (_, canHold, __) => Selector<Tetris, TetrominoName>(
+                builder: (_, canHold, __) => Selector<Tetris, TetrominoName?>(
                       selector: (_, tetris) => tetris.holdingMino,
                       builder: (_, holdingMino, __) => TetrominoRenderer(
                         holdingMino,

@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 class Metal extends StatelessWidget {
   static const spreadWidth = 8.0;
   final Widget child;
-  final double width;
-  final double height;
-  final EdgeInsets margin;
-  final EdgeInsets padding;
-  final BoxShape shape;
+  final double? width;
+  final double? height;
+  final EdgeInsets? margin;
+  final EdgeInsets? padding;
+  final BoxShape? shape;
   final MaterialColor color;
 
   const Metal(
-      {Key key,
+      {Key? key,
       this.width,
       this.height,
-      @required this.child,
+      required this.child,
       this.margin,
       this.padding,
       this.shape,
