@@ -19,7 +19,7 @@ class Controller extends InheritedWidget {
   final Duration longPressDelay;
   final Duration longPressInterval;
 
-  final MaterialColor? actionButtonColor;
+  final MaterialColor actionButtonColor;
   final double actionButtonSize;
   final Color? specialButtonColor;
 
@@ -33,8 +33,8 @@ class Controller extends InheritedWidget {
     required this.longPressInterval,
     required Function(JoystickDirection direction) onDirectionEntered,
     required this.onButtonEntered,
+    required this.actionButtonColor,
     this.buttonIcons = const {},
-    this.actionButtonColor,
     this.actionButtonSize = defaultCircleButtonSize,
     this.specialButtonColor,
   }) : super(
