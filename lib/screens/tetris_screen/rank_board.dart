@@ -6,15 +6,15 @@ import 'package:tetris/screens/tetris_screen/block_renderer.dart';
 import 'package:tetris/screens/tetris_screen/board.dart';
 
 class RankBoard extends StatelessWidget {
-  final Tetris tetris;
+  final Stream<Rank> rankStream;
 
-  const RankBoard(this.tetris, {Key? key}) : super(key: key);
+  const RankBoard(this.rankStream, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Board(
           child: SizedBox.expand(
         child: StreamProvider.value(
-          value: tetris.rankStream,
+          value: rankStream,
           initialData: null,
           child: Consumer<Rank?>(
             builder: (context, rank, _) {
