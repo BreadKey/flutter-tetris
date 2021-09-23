@@ -20,12 +20,12 @@ class _TetrisScreenState extends State<TetrisScreen>
     with SingleTickerProviderStateMixin {
   static const dividerSize = 6.0;
 
-  late AnimationController fastDropAnimController;
-  late Animation<Offset> fastDropAnimation;
+  late final AnimationController fastDropAnimController;
+  late final Animation<Offset> fastDropAnimation;
 
-  late StreamSubscription tetrisEventSubscriber;
+  late final StreamSubscription tetrisEventSubscriber;
 
-  late Tetris tetris;
+  late final Tetris tetris;
 
   @override
   void initState() {
