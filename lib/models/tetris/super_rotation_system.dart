@@ -123,11 +123,11 @@ extension SuperRotationSystem on Tetris {
     for (Block block in tetromino.blocks) {
       if (block.point.x == -1) {
         return Direction.right;
-      } else if (block.point.x == playfieldWidth) {
+      } else if (block.point.x == kPlayfieldWidth) {
         return Direction.left;
       } else if (block.point.y == -1) {
         return Direction.up;
-      } else if (block.point.y == playfieldHeight) {
+      } else if (block.point.y == kPlayfieldHeight) {
         return Direction.down;
       }
     }

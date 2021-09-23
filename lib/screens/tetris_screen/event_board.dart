@@ -39,8 +39,10 @@ class EventBoard extends StatelessWidget {
           ]))));
 
   Widget _buildTetrisEvent(BuildContext context, TetrisEvent event) {
-    final textTheme =
-        Theme.of(context).textTheme.subtitle2!.copyWith(color: roseViolet);
+    final textTheme = Theme.of(context)
+        .textTheme
+        .subtitle2!
+        .copyWith(color: RetroColors.roseViolet);
 
     return Text(
       _getEventText(event),

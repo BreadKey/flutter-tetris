@@ -10,13 +10,13 @@ class PlayfieldRenderer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: playfieldWidth / visibleHeight,
+      aspectRatio: kPlayfieldWidth / kVisibleHeight,
       child: Board(
           child: GridView.count(
-              crossAxisCount: playfieldWidth,
+              crossAxisCount: kPlayfieldWidth,
               reverse: true,
-              children: List.generate(visibleHeight, (y) => y)
-                  .expand((y) => List.generate(playfieldWidth, (x) {
+              children: List.generate(kVisibleHeight, (y) => y)
+                  .expand((y) => List.generate(kPlayfieldWidth, (x) {
                         Color? lastColor;
                         return Selector<Tetris, Block?>(
                           selector: (_, tetris) => tetris.getBlockAt(x, y),
