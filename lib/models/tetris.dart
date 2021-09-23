@@ -39,7 +39,7 @@ enum DropMode { gravity, soft, hard }
 enum OnHardDrop { instantLock, wait }
 
 class Tetris extends ChangeNotifier with AnimationListener {
-  static const secondsPerFrame = 1 / fps;
+  static const secondsPerFrame = 1 / kFps;
   static const tSpinTestOffsets = [
     Point(-1, 1),
     Point(1, 1),
@@ -140,7 +140,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
     initNextMinoBag();
 
     _frameGenerator =
-        Timer.periodic(const Duration(microseconds: 1000000 ~/ fps), (timer) {
+        Timer.periodic(const Duration(microseconds: 1000000 ~/ kFps), (timer) {
       if (canUpdate) {
         _update();
       }
@@ -154,7 +154,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
 
   void initPlayfield() {
     _playfield = List.generate(
-        playfieldHeight, (y) => List.generate(playfieldWidth, (x) => null));
+        kPlayfieldHeight, (y) => List.generate(kPlayfieldWidth, (x) => null));
   }
 
   void initStatus() {
@@ -198,7 +198,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   void spawn(TetrominoName tetrominoName) {
-    final tetromino = Tetromino.spawn(tetrominoName, spawnPoint);
+    final tetromino = Tetromino.spawn(tetrominoName, kSpawnPoint);
 
     if (canMove(tetromino, _playfield, Direction.down)) {
       tetromino.move(Direction.down);
@@ -238,7 +238,9 @@ class Tetris extends ChangeNotifier with AnimationListener {
   bool isBlockNullOrGhost(Block? block) => block?.isGhost != false;
 
   void _update() {
-    _handleGravity(_currentDropMode == DropMode.hard ? 20 : gravities[_level]);
+    _handleGravity(_currentDropMode == DropMode.hard
+        ? kHardDropGravityPerFrame
+        : kGravitiesPerFrame[_level - 1]);
     if (_isStucked) {
       _stuckedSeconds += secondsPerFrame;
       if (_stuckedSeconds >= 0.5) {
@@ -491,9 +493,9 @@ class Tetris extends ChangeNotifier with AnimationListener {
 
     _clearedLineCountInLevel += linesCanCleared.length;
 
-    if (_clearedLineCountInLevel >= linesCountToLevelUp) {
+    if (_clearedLineCountInLevel >= kLinesCountToLevelUp) {
       levelUp();
-      _clearedLineCountInLevel -= linesCountToLevelUp;
+      _clearedLineCountInLevel -= kLinesCountToLevelUp;
     }
 
     _isOnLineClear = false;
@@ -566,7 +568,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   }
 
   void levelUp() {
-    if (_level != maxLevel) {
+    if (_level != kMaxLevel) {
       _audioManager.playEffect(Effect.levelUp);
       _level++;
       notifyListeners();

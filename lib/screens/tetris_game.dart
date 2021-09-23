@@ -58,10 +58,10 @@ class _TetrisGameState extends State<TetrisGame>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                  navyBlue.shade400,
-                  navyBlue.shade500,
-                  navyBlue.shade600,
-                  navyBlue.shade700
+                  RetroColors.navyBlue.shade400,
+                  RetroColors.navyBlue.shade500,
+                  RetroColors.navyBlue.shade600,
+                  RetroColors.navyBlue.shade700
                 ])),
             child: ChangeNotifierProvider.value(
               value: tetris,
@@ -71,7 +71,7 @@ class _TetrisGameState extends State<TetrisGame>
                       Align(
                           alignment: Alignment.topCenter,
                           child: Metal(
-                            color: neutralBlackC,
+                            color: RetroColors.neutralBlackC,
                             width: sizeOfScreen.height -
                                 kToolbarHeight -
                                 logoHeight,
@@ -95,7 +95,7 @@ class _TetrisGameState extends State<TetrisGame>
                             child: Controller(
                               longPressDelay: const Duration(milliseconds: 200),
                               longPressInterval: const Duration(
-                                  milliseconds: 1000 ~/ delayedAutoShiftHz),
+                                  milliseconds: 1000 ~/ kDelayedAutoShiftHz),
                               buttonIcons: {
                                 ButtonKey.a: const RotateIcon(
                                   clockwise: false,
@@ -117,8 +117,8 @@ class _TetrisGameState extends State<TetrisGame>
                                   style: TextStyle(color: Colors.white54),
                                 )
                               },
-                              actionButtonColor: bitOfBlue,
-                              specialButtonColor: bitOfBlue,
+                              actionButtonColor: RetroColors.bitOfBlue,
+                              specialButtonColor: RetroColors.bitOfBlue,
                               onButtonEntered: onButtonEntered,
                               onDirectionEntered: onDirectionEntered,
                             ),

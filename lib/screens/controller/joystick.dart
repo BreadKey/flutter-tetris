@@ -69,7 +69,7 @@ class _JoystickState extends State<Joystick> {
         child: Metal(
             width: totalSize,
             height: totalSize,
-            color: bitOfBlue,
+            color: RetroColors.bitOfBlue,
             shape: BoxShape.circle,
             child: ClipOval(
                 child: Stack(

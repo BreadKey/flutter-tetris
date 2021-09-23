@@ -48,7 +48,7 @@ class Animator {
       case TetrisEvent.tetris:
         for (List<Block?> line in linesCanCleared) {
           for (Block? block in line) {
-            block!.color = justWhite;
+            block!.color = RetroColors.justWhite;
           }
         }
         break;
@@ -57,7 +57,7 @@ class Animator {
       case TetrisEvent.tSpinDouble:
       case TetrisEvent.tSpinTriple:
         currentTetromino!.blocks.forEach((block) {
-          block.color = justWhite;
+          block.color = RetroColors.justWhite;
         });
         _listener!.onAnimationUpdated();
         await Future.delayed(const Duration(milliseconds: 100));

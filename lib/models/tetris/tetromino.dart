@@ -16,7 +16,7 @@ abstract class Tetromino {
         blocks = List.unmodifiable(List.generate(
             4,
             (index) => Block(
-                color: tetriminoColors[name]!,
+                color: kTetriminoColors[name]!,
                 point: spawnPoint + downwardOffsets[index],
                 isGhost: isGhost)));
 

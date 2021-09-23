@@ -50,10 +50,10 @@ class _LeverDraggable extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                      neutralBlackC.shade400,
-                      neutralBlackC,
-                      neutralBlackC.shade600,
-                      neutralBlackC.shade800
+                      RetroColors.neutralBlackC.shade400,
+                      RetroColors.neutralBlackC,
+                      RetroColors.neutralBlackC.shade600,
+                      RetroColors.neutralBlackC.shade800
                     ])),
                 child: Container(
                   margin: const EdgeInsets.all(12),
