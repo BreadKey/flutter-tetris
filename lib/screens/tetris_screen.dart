@@ -83,7 +83,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                       color: Colors.transparent,
                       height: dividerSize,
                     ),
-                    EventBoard(tetris),
+                    EventBoard(tetris.eventStream),
                     const Divider(
                       color: Colors.transparent,
                       height: dividerSize,
