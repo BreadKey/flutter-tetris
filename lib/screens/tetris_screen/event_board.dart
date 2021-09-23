@@ -20,7 +20,7 @@ class EventBoard extends StatelessWidget {
               initialData: null,
               updateShouldNotify: (previous, current) =>
                   current != TetrisEvent.softDrop,
-              child: Consumer<TetrisEvent>(
+              child: Consumer<TetrisEvent?>(
                 builder: (context, event, child) {
                   return _buildTetrisEvent(context, event);
                 },
@@ -38,7 +38,7 @@ class EventBoard extends StatelessWidget {
             )
           ]))));
 
-  Widget _buildTetrisEvent(BuildContext context, TetrisEvent event) {
+  Widget _buildTetrisEvent(BuildContext context, TetrisEvent? event) {
     final textTheme = Theme.of(context)
         .textTheme
         .subtitle2!
@@ -51,7 +51,7 @@ class EventBoard extends StatelessWidget {
     );
   }
 
-  String _getEventText(TetrisEvent event) {
+  String _getEventText(TetrisEvent? event) {
     switch (event) {
       case TetrisEvent.gameOver:
         return "Game Over!";
