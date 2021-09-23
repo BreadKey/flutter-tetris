@@ -78,7 +78,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                 Expanded(
                     child: Column(
                   children: [
-                    HoldBoard(tetris),
+                    const HoldBoard(),
                     const Divider(
                       color: Colors.transparent,
                       height: dividerSize,
@@ -88,7 +88,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                       color: Colors.transparent,
                       height: dividerSize,
                     ),
-                    Expanded(child: RankBoard(tetris))
+                    Expanded(child: RankBoard(tetris.rankStream))
                   ],
                 )),
                 const VerticalDivider(
