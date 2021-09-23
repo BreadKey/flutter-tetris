@@ -97,7 +97,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                 ),
                 SlideTransition(
                   position: fastDropAnimation,
-                  child: PlayfieldRenderer(tetris),
+                  child: const PlayfieldRenderer(),
                 ),
                 const VerticalDivider(
                     color: Colors.transparent, width: dividerSize),
@@ -106,7 +106,7 @@ class _TetrisScreenState extends State<TetrisScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: NextTetrominoBoard(tetris),
+                      child: const NextTetrominoBoard(),
                     ),
                     const Divider(
                       color: Colors.transparent,

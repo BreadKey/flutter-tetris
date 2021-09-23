@@ -6,9 +6,7 @@ import 'package:tetris/screens/tetris_screen/tetromino_renderer.dart';
 import 'board.dart';
 
 class NextTetrominoBoard extends StatelessWidget {
-  final Tetris? tetris;
-
-  NextTetrominoBoard(this.tetris, {Key? key}) : super(key: key);
+  const NextTetrominoBoard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Selector<Tetris, List<TetrominoName>>(
