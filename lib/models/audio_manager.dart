@@ -143,6 +143,8 @@ class AudioManager extends IAudioManager {
       _currentEffectFile = _effectFiles[effect];
 
       await _effectPlayer.setAsset(_currentEffectFile!);
+    } else {
+      await _effectPlayer.seek(Duration.zero);
     }
     _effectPlayer.play();
   }
