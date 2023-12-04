@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 
 enum Bgm { play, gameOver }
+
 enum Effect {
   lock,
   move,
   rotate,
+  hold,
   hardDrop,
   softDrop,
   lineClear,
@@ -58,14 +60,14 @@ class AudioManager extends IAudioManager {
     _loadCompleter = Completer();
     Future.wait(_effectFiles.values.map((element) {
       return _effectPlayer.setAsset(element);
-    })).then((value) async {
-      await _bgmPlayer.setLoopMode(LoopMode.all);
+    })).then((value) {
       _loadCompleter.complete();
     });
   }
 
   @override
   void startBgm(Bgm bgm) async {
+    await _bgmPlayer.setLoopMode(LoopMode.one);
     switch (bgm) {
       case Bgm.play:
         await _bgmPlayer.setAsset("assets/audios/tetris-gameboy-02.mp3");
@@ -127,12 +129,6 @@ class AudioManager extends IAudioManager {
       !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
   void _playEffect(Effect effect) async {
-    if (!_loadCompleter.isCompleted &&
-        !(effect == Effect.event ||
-            effect == Effect.lineClear ||
-            effect == Effect.hardDrop ||
-            effect == Effect.softDrop)) return;
-
     if (effect == Effect.softDrop) {
       HapticFeedback.mediumImpact();
     } else {
@@ -150,6 +146,7 @@ class AudioManager extends IAudioManager {
   }
 
   void _throttleEffect(Effect effect) {
+    _effectThrottlers[effect]?.cancel();
     _effectThrottlers[effect] = Timer(effectThrottleDuration, () {});
   }
 }

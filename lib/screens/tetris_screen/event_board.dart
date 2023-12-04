@@ -32,7 +32,7 @@ class EventBoard extends StatelessWidget {
                   ? Text(
                       "Back to Back",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.caption,
+                      style: Theme.of(context).textTheme.bodySmall,
                     )
                   : const SizedBox.shrink(),
             )
@@ -41,7 +41,7 @@ class EventBoard extends StatelessWidget {
   Widget _buildTetrisEvent(BuildContext context, TetrisEvent? event) {
     final textTheme = Theme.of(context)
         .textTheme
-        .subtitle2!
+        .titleSmall!
         .copyWith(color: RetroColors.roseViolet);
 
     return Text(

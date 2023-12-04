@@ -25,7 +25,9 @@ class JoystickHandler {
   void holdLever() {
     _holdDelayTimer = Timer(holdDelay, () {
       _holdIntervalTimer = Timer.periodic(holdInterval, (_) {
-        onDirectionEntered?.call(_lastDirection!);
+        if (_lastDirection != null) {
+          onDirectionEntered?.call(_lastDirection!);
+        }
       });
     });
   }

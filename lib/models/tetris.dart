@@ -36,6 +36,7 @@ extension Playfield on List<List<Block?>> {
 }
 
 enum DropMode { gravity, soft, hard }
+
 enum OnHardDrop { instantLock, wait }
 
 class Tetris extends ChangeNotifier with AnimationListener {
@@ -323,7 +324,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
     _eventSubject.sink.add(TetrisEvent.softDrop);
   }
 
-  void commandRotate({bool clockwise: true}) {
+  void commandRotate({bool clockwise = true}) {
     if (canUpdate) {
       if (_currentDropMode != DropMode.hard) {
         final isRotated = rotateCurrentMino(clockwise: clockwise);
@@ -371,7 +372,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
     return false;
   }
 
-  bool rotateCurrentMino({bool clockwise: true}) {
+  bool rotateCurrentMino({bool clockwise = true}) {
     if (rotateBySrs(_currentTetromino!, _playfield, clockwise: clockwise)) {
       _setGhostPiece(_currentTetromino!, _playfield);
       _rotationOccuredBeforeLock =
@@ -637,6 +638,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
         spawn(holding);
       }
 
+      _audioManager.playEffect(Effect.hold);
       _canHold = false;
     }
   }

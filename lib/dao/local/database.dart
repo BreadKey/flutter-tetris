@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 Future<Database> database = _getDatabase();
 
-Future<Database> _getDatabase({String fileName: "tetris.db"}) async {
+Future<Database> _getDatabase({String fileName = "tetris.db"}) async {
   return openDatabase(
     join(await getDatabasesPath(), fileName),
     onCreate: (db, version) {

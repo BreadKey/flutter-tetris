@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tetris/models/direction.dart';
 import 'package:tetris/models/tetris.dart';
@@ -8,8 +9,8 @@ import 'package:tetris/screens/tetris_screen.dart';
 
 import 'action_icons.dart';
 import 'controller/joystick.dart';
-import 'metal.dart';
 import 'logo.dart';
+import 'metal.dart';
 
 class TetrisGame extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class TetrisGame extends StatefulWidget {
 
 class _TetrisGameState extends State<TetrisGame>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  static const controllerHeight = 280;
+  static const controllerHeight = 280.0;
   static const logoHeight = 28.0;
 
   Tetris? tetris;
@@ -30,13 +31,13 @@ class _TetrisGameState extends State<TetrisGame>
 
     tetris!.startGame();
 
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     tetris!.dispose();
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -46,7 +47,7 @@ class _TetrisGameState extends State<TetrisGame>
 
     return Scaffold(
         appBar: AppBar(
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           toolbarHeight: 0,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -72,9 +73,7 @@ class _TetrisGameState extends State<TetrisGame>
                           alignment: Alignment.topCenter,
                           child: Metal(
                             color: RetroColors.neutralBlackC,
-                            width: sizeOfScreen.height -
-                                kToolbarHeight -
-                                logoHeight,
+                            width:  sizeOfScreen.shortestSide,
                             margin: EdgeInsets.symmetric(horizontal: 14),
                             padding:
                                 EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -89,9 +88,8 @@ class _TetrisGameState extends State<TetrisGame>
                           )),
                       Align(
                           alignment: Alignment.bottomCenter,
-                          child: Container(
-                            height: controllerHeight -
-                                MediaQuery.of(context).padding.bottom,
+                          child: SizedBox(
+                            height: controllerHeight,
                             child: Controller(
                               longPressDelay: const Duration(milliseconds: 200),
                               longPressInterval: const Duration(

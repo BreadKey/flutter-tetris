@@ -1,6 +1,6 @@
 part of tetris;
 
-abstract class AnimationListener {
+mixin AnimationListener {
   void onAnimationUpdated();
 }
 

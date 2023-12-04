@@ -11,7 +11,7 @@ abstract class Tetromino {
 
   final List<Block> blocks;
   Tetromino(this.name, this.downwardOffsets, Point<int> spawnPoint,
-      {bool isGhost: false})
+      {bool isGhost = false})
       : assert(downwardOffsets.length == 4),
         blocks = List.unmodifiable(List.generate(
             4,
@@ -92,7 +92,7 @@ abstract class Tetromino {
     }
   }
 
-  void rotate({bool clockwise: true}) {
+  void rotate({bool clockwise = true}) {
     switch (_heading) {
       case Direction.down:
         _heading = clockwise ? Direction.left : Direction.right;
