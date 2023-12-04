@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  MyHomePage({super.key}) : super();
 
   @override
   State<StatefulWidget> createState() => _MyHomePageState();
@@ -56,14 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  Future<Uint8List> _capturePng() async {
+  Future<Uint8List?> _capturePng() async {
     try {
-      print('inside');
-      RenderRepaintBoundary boundary =
-          renderKey.currentContext.findRenderObject();
+      final renderObject = renderKey.currentContext?.findRenderObject();
+      final boundary = renderObject as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+          (await image.toByteData(format: ui.ImageByteFormat.png))!
+              .buffer
+              .asByteData();
       var pngBytes = byteData.buffer.asUint8List();
       var bs64 = base64Encode(pngBytes);
       print(pngBytes);
@@ -74,10 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
       File("$docsDir/app_icon.png").writeAsBytesSync(pngBytes);
 
       setState(() {});
+
       return pngBytes;
     } catch (e) {
       print(e);
     }
+
+    return null;
   }
 
   @override
@@ -104,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class AppIcon extends StatelessWidget {
-  AppIcon({Key key}) : super(key: key);
+  AppIcon({super.key}) : super();
   @override
   Widget build(BuildContext context) => Container(
       width: 250,
