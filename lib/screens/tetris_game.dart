@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -66,67 +68,60 @@ class _TetrisGameState extends State<TetrisGame>
                 ])),
             child: ChangeNotifierProvider.value(
               value: tetris,
-              child: WillPopScope(
-                  child: Stack(
-                    children: [
-                      Align(
-                          alignment: Alignment.topCenter,
-                          child: Metal(
-                            color: RetroColors.neutralBlackC,
-                            width:  sizeOfScreen.shortestSide,
-                            margin: EdgeInsets.symmetric(horizontal: 14),
-                            padding:
-                                EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  TetrisScreen(),
-                                  const Logo(
-                                    height: logoHeight,
-                                  )
-                                ]),
-                          )),
-                      Align(
-                          alignment: Alignment.bottomCenter,
-                          child: SizedBox(
-                            height: controllerHeight,
-                            child: Controller(
-                              longPressDelay: const Duration(milliseconds: 200),
-                              longPressInterval: const Duration(
-                                  milliseconds: 1000 ~/ kDelayedAutoShiftHz),
-                              buttonIcons: {
-                                ButtonKey.a: const RotateIcon(
-                                  clockwise: false,
-                                ),
-                                ButtonKey.b: const HardDropIcon(),
-                                ButtonKey.c: const RotateIcon(),
-                                ButtonKey.special1: Selector<Tetris, bool>(
-                                  selector: (_, tetris) => tetris.isMuted,
-                                  builder: (_, isMuted, __) => isMuted
-                                      ? const Icon(Icons.volume_up,
-                                          color: Colors.white54)
-                                      : const Icon(
-                                          Icons.volume_off,
-                                          color: Colors.white54,
-                                        ),
-                                ),
-                                ButtonKey.special2: Text(
-                                  "Hold",
-                                  style: TextStyle(color: Colors.white54),
-                                )
-                              },
-                              actionButtonColor: RetroColors.bitOfBlue,
-                              specialButtonColor: RetroColors.bitOfBlue,
-                              onButtonEntered: onButtonEntered,
-                              onDirectionEntered: onDirectionEntered,
+              child: Stack(
+                children: [
+                  Align(
+                      alignment: Alignment.topCenter,
+                      child: Metal(
+                        color: RetroColors.neutralBlackC,
+                        width: min(sizeOfScreen.width, sizeOfScreen.height * (1 - 0.1618)),
+                        margin: EdgeInsets.symmetric(horizontal: 14),
+                        padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          TetrisScreen(),
+                          const Logo(
+                            height: logoHeight,
+                          )
+                        ]),
+                      )),
+                  Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SizedBox(
+                        height: controllerHeight,
+                        child: Controller(
+                          longPressDelay: const Duration(milliseconds: 200),
+                          longPressInterval: const Duration(
+                              milliseconds: 1000 ~/ kDelayedAutoShiftHz),
+                          buttonIcons: {
+                            ButtonKey.a: const RotateIcon(
+                              clockwise: false,
                             ),
-                          ))
-                    ],
-                  ),
-                  onWillPop: () async {
-                    dispose();
-                    return true;
-                  }),
+                            ButtonKey.b: const HardDropIcon(),
+                            ButtonKey.c: const RotateIcon(),
+                            ButtonKey.special1: Selector<Tetris, bool>(
+                              selector: (_, tetris) => tetris.isMuted,
+                              builder: (_, isMuted, __) => isMuted
+                                  ? const Icon(Icons.volume_up,
+                                      color: Colors.white54)
+                                  : const Icon(
+                                      Icons.volume_off,
+                                      color: Colors.white54,
+                                    ),
+                            ),
+                            ButtonKey.special2: Text(
+                              "Hold",
+                              style: TextStyle(color: Colors.white54),
+                            )
+                          },
+                          actionButtonColor: RetroColors.bitOfBlue,
+                          specialButtonColor: RetroColors.bitOfBlue,
+                          onButtonEntered: onButtonEntered,
+                          onDirectionEntered: onDirectionEntered,
+                        ),
+                      ))
+                ],
+              ),
             )));
   }
 

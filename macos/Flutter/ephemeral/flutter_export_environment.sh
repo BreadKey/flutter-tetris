@@ -1,13 +1,12 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/yeoung-ki/dev/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/yeoung-ki/dev/projects/tetris"
+export "FLUTTER_ROOT=/Users/breadkey/dev/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/breadkey/dev/project/flutter_tetris"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
 export "FLUTTER_BUILD_NUMBER=1"
-export "EXCLUDED_ARCHS=arm64"
 export "DART_OBFUSCATION=false"
-export "TRACK_WIDGET_CREATION=false"
+export "TRACK_WIDGET_CREATION=true"
 export "TREE_SHAKE_ICONS=false"
-export "PACKAGE_CONFIG=.packages"
+export "PACKAGE_CONFIG=.dart_tool/package_config.json"
