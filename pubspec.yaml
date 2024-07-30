@@ -32,7 +32,7 @@ dependencies:
   provider: ^6.0.0
   rxdart: ^0.27.2
   
-  just_audio: ^0.9.11
+  just_audio: ^0.9.39
   sqflite: ^2.0.0+4
   path: ^1.8.0
 
