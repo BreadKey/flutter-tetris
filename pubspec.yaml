@@ -32,12 +32,12 @@ dependencies:
   provider: ^6.0.0
   rxdart: ^0.27.2
   
-  just_audio: ^0.9.39
   sqflite: ^2.0.0+4
   path: ^1.8.0
 
   injector: ^3.0.0
   sqflite_common_ffi_web: ^0.4.3+1
+  flame_audio: ^2.10.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
@@ -60,7 +60,7 @@ flutter:
   uses-material-design: true
 
   assets:
-      - assets/audios/
+      - assets/audio/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

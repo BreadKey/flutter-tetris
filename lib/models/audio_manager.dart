@@ -1,7 +1,5 @@
-import 'dart:async';
-
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
 
 enum Bgm { play, gameOver }
 
@@ -18,15 +16,15 @@ enum Effect {
 }
 
 const _effectFiles = {
-  Effect.lock: "assets/audios/lock.wav",
-  Effect.move: "assets/audios/move.wav",
-  Effect.rotate: "assets/audios/rotate.wav",
-  Effect.hold: "assets/audios/hold.wav",
-  Effect.hardDrop: "assets/audios/hard_drop.wav",
-  Effect.softDrop: "assets/audios/hard_drop.wav",
-  Effect.lineClear: "assets/audios/line_clear.wav",
-  Effect.event: "assets/audios/event.wav",
-  Effect.levelUp: "assets/audios/level_up.wav",
+  Effect.lock: "lock.wav",
+  Effect.move: "move.wav",
+  Effect.rotate: "rotate.wav",
+  Effect.hold: "hold.wav",
+  Effect.hardDrop: "hard_drop.wav",
+  Effect.softDrop: "hard_drop.wav",
+  Effect.lineClear: "line_clear.wav",
+  Effect.event: "event.wav",
+  Effect.levelUp: "level_up.wav",
 };
 
 abstract class IAudioManager {
@@ -40,110 +38,74 @@ abstract class IAudioManager {
   void playEffect(Effect effect);
 }
 
-class AudioManager extends IAudioManager {
-  static const effectThrottleDuration = const Duration(milliseconds: 100);
+class FlameAudioManager implements IAudioManager {
   static const bgmVolume = 0.618;
 
-  final _bgmPlayer = AudioPlayer();
-  final _effectPlayer = AudioPlayer();
-  final _effectThrottlers = <Effect, Timer>{};
+  AudioPlayer? _bgmPlayer;
 
   bool _isMuted = false;
   @override
   bool get isMuted => _isMuted;
+  @override
+  void dispose() {
+    _bgmPlayer?.dispose();
+  }
 
-  late Completer _loadCompleter;
+  @override
+  void pause() {
+    _bgmPlayer?.pause();
+  }
 
-  AudioManager() {
-    _loadCompleter = Completer();
-    Future.wait(_effectFiles.values.map((element) {
-      return _effectPlayer.setAsset(element);
-    })).then((value) {
-      _loadCompleter.complete();
-    });
+  @override
+  void playEffect(Effect effect) {
+    if (effect == Effect.softDrop) {
+      HapticFeedback.lightImpact();
+    } else if (effect == Effect.hardDrop) {
+      HapticFeedback.heavyImpact();
+    }
+    if (_isMuted) return;
+
+    FlameAudio.play(_effectFiles[effect]!);
+  }
+
+  @override
+  void resume() {
+    _bgmPlayer?.resume();
   }
 
   @override
   void startBgm(Bgm bgm) async {
-    await _bgmPlayer.setLoopMode(LoopMode.one);
+    await _bgmPlayer?.stop();
+    await _bgmPlayer?.dispose();
+
+    if (_isMuted) return;
+
     switch (bgm) {
       case Bgm.play:
-        await _bgmPlayer.setAsset("assets/audios/tetris-gameboy-02.mp3");
+        _bgmPlayer = await FlameAudio.loopLongAudio("tetris-gameboy-02.mp3",
+            volume: bgmVolume);
         break;
       case Bgm.gameOver:
-        await _bgmPlayer.setAsset("assets/audios/tetris-gameboy-01.mp3");
+        _bgmPlayer = await FlameAudio.loopLongAudio("tetris-gameboy-01.mp3",
+            volume: bgmVolume);
         break;
       default:
         break;
     }
-
-    await _bgmPlayer.setVolume(_isMuted ? 0 : bgmVolume);
-    await _bgmPlayer.play();
   }
 
   @override
-  void stopBgm(Bgm bgm) async {
-    await _bgmPlayer.stop();
+  void stopBgm(Bgm bgm) {
+    _bgmPlayer?.stop();
   }
 
   @override
   void toggleMute() async {
     _isMuted = !_isMuted;
     if (_isMuted) {
-      await _bgmPlayer.setVolume(0);
+      await _bgmPlayer?.setVolume(0);
     } else {
-      await _bgmPlayer.setVolume(bgmVolume);
+      await _bgmPlayer?.setVolume(bgmVolume);
     }
-  }
-
-  @override
-  void dispose() {
-    _bgmPlayer.dispose();
-    _effectThrottlers.values.forEach((throttler) {
-      throttler.cancel();
-    });
-    _effectPlayer.dispose();
-  }
-
-  @override
-  void pause() {
-    _bgmPlayer.pause();
-  }
-
-  @override
-  void resume() async {
-    await _bgmPlayer.setLoopMode(LoopMode.all);
-    _bgmPlayer.play();
-  }
-
-  @override
-  void playEffect(Effect effect) {
-    if (canPlayEffect(effect)) {
-      _playEffect(effect);
-      _throttleEffect(effect);
-    }
-  }
-
-  bool canPlayEffect(Effect effect) =>
-      !_isMuted && _effectThrottlers[effect]?.isActive != true;
-
-  void _playEffect(Effect effect) async {
-    try {
-      if (effect == Effect.softDrop) {
-        HapticFeedback.mediumImpact();
-      } else {
-        HapticFeedback.heavyImpact();
-      }
-
-      await _effectPlayer.setAsset(_effectFiles[effect]!);
-      await _effectPlayer.play();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void _throttleEffect(Effect effect) {
-    _effectThrottlers[effect]?.cancel();
-    _effectThrottlers[effect] = Timer(effectThrottleDuration, () {});
   }
 }

@@ -9,7 +9,7 @@ import 'package:tetris/screens/tetris_game.dart';
 
 void main() {
   Injector.appInstance
-      .registerSingleton<IAudioManager>(() => AudioManager());
+      .registerSingleton<IAudioManager>(() => FlameAudioManager());
   Injector.appInstance.registerSingleton<RankDao>(() => LocalRankDao());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

@@ -25,14 +25,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  audio_session:
+  audioplayers:
     dependency: transitive
     description:
-      name: audio_session
-      sha256: "343e83bc7809fbda2591a49e525d6b63213ade10c76f15813be9aed6657b3261"
+      name: audioplayers
+      sha256: "752039d6aa752597c98ec212e9759519061759e402e7da59a511f39d43aa07d2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.21"
+    version: "6.0.0"
+  audioplayers_android:
+    dependency: transitive
+    description:
+      name: audioplayers_android
+      sha256: de576b890befe27175c2f511ba8b742bec83765fa97c3ce4282bba46212f58e4
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  audioplayers_darwin:
+    dependency: transitive
+    description:
+      name: audioplayers_darwin
+      sha256: e507887f3ff18d8e5a10a668d7bedc28206b12e10b98347797257c6ae1019c3b
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
+  audioplayers_linux:
+    dependency: transitive
+    description:
+      name: audioplayers_linux
+      sha256: "3d3d244c90436115417f170426ce768856d8fe4dfc5ed66a049d2890acfa82f9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
+  audioplayers_platform_interface:
+    dependency: transitive
+    description:
+      name: audioplayers_platform_interface
+      sha256: "6834dd48dfb7bc6c2404998ebdd161f79cd3774a7e6779e1348d54a3bfdcfaa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
+  audioplayers_web:
+    dependency: transitive
+    description:
+      name: audioplayers_web
+      sha256: db8fc420dadf80da18e2286c18e746fb4c3b2c5adbf0c963299dde046828886d
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  audioplayers_windows:
+    dependency: transitive
+    description:
+      name: audioplayers_windows
+      sha256: "8605762dddba992138d476f6a0c3afd9df30ac5b96039929063eceed416795c2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -121,6 +169,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  file:
+    dependency: transitive
+    description:
+      name: file
+      sha256: "5fc22d7c25582e38ad9a8515372cd9a93834027aacf1801cf01164dac0ffa08c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   fixnum:
     dependency: transitive
     description:
@@ -129,6 +185,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  flame:
+    dependency: transitive
+    description:
+      name: flame
+      sha256: "79133dc46a3ff870950f41d0dc1598414e7bd7ae2c29bd9f0a9de208d9a70cb7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.18.0"
+  flame_audio:
+    dependency: "direct main"
+    description:
+      name: flame_audio
+      sha256: "32e5788945469cebb807e741027e645a737e2618afc9b682e7f48607e0637f48"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.10.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -192,30 +264,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
-  just_audio:
-    dependency: "direct main"
-    description:
-      name: just_audio
-      sha256: ee50602364ba83fa6308f5512dd560c713ec3e1f2bc75f0db43618f0d82ef71a
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.39"
-  just_audio_platform_interface:
-    dependency: transitive
-    description:
-      name: just_audio_platform_interface
-      sha256: "0243828cce503c8366cc2090cefb2b3c871aa8ed2f520670d76fd47aa1ab2790"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.3.0"
-  just_audio_web:
-    dependency: transitive
-    description:
-      name: just_audio_web
-      sha256: "0edb481ad4aa1ff38f8c40f1a3576013c3420bf6669b686fe661627d49bc606c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.11"
   leak_tracker:
     dependency: transitive
     description:
@@ -272,6 +320,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  ordered_set:
+    dependency: transitive
+    description:
+      name: ordered_set
+      sha256: "1bfaaaee0419e43ecc9eaebd410eb4bd5039657b72011de75ff3e2915c9aac60"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.3"
   path:
     dependency: "direct main"
     description:
