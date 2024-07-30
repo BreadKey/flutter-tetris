@@ -36,7 +36,7 @@ dependencies:
   sqflite: ^2.0.0+4
   path: ^1.8.0
 
-  injector: ^2.0.0
+  injector: ^3.0.0
   sqflite_common_ffi_web: ^0.4.3+1
 
 dev_dependencies:

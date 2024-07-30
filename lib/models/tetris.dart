@@ -81,7 +81,7 @@ class Tetris extends ChangeNotifier with AnimationListener {
   int _score = 0;
   int get score => _score;
 
-  final PublishSubject<TetrisEvent?> _eventSubject = PublishSubject();
+  final _eventSubject = BehaviorSubject<TetrisEvent?>();
   Stream<TetrisEvent?> get eventStream => _eventSubject.stream;
 
   bool _isGameOver = false;
@@ -133,12 +133,20 @@ class Tetris extends ChangeNotifier with AnimationListener {
     super.dispose();
   }
 
-  void startGame() {
-    _animator.stopGameOver();
-
+  void ready() {
     initPlayfield();
     initStatus();
     initNextMinoBag();
+    _isGameOver = true;
+    _eventSubject.sink.add(TetrisEvent.ready);
+  }
+
+  void startGame() {
+    _animator.stopGameOver();
+
+    ready();
+    _isGameOver = false;
+    _eventSubject.sink.add(null);
 
     _frameGenerator =
         Timer.periodic(const Duration(microseconds: 1000000 ~/ kFps), (timer) {
@@ -162,8 +170,6 @@ class Tetris extends ChangeNotifier with AnimationListener {
     _level = 1;
 
     _score = 0;
-
-    _isGameOver = false;
     _eventSubject.sink.add(null);
 
     _stuckedSeconds = 0;

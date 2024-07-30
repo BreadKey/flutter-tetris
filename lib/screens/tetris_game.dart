@@ -24,21 +24,26 @@ class _TetrisGameState extends State<TetrisGame>
   static const controllerHeight = 280.0;
   static const logoHeight = 28.0;
 
-  Tetris? tetris;
+  late final Tetris tetris;
+
+  late final FocusNode keyNode;
 
   @override
   void initState() {
     super.initState();
     tetris = Tetris();
 
-    tetris!.startGame();
+    tetris.ready();
+
+    keyNode = FocusNode();
 
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    tetris!.dispose();
+    tetris.dispose();
+    keyNode.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -55,74 +60,85 @@ class _TetrisGameState extends State<TetrisGame>
           elevation: 0,
         ),
         extendBodyBehindAppBar: true,
-        body: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                  RetroColors.navyBlue.shade400,
-                  RetroColors.navyBlue.shade500,
-                  RetroColors.navyBlue.shade600,
-                  RetroColors.navyBlue.shade700
-                ])),
-            child: ChangeNotifierProvider.value(
-              value: tetris,
-              child: Stack(
-                children: [
-                  Align(
-                      alignment: Alignment.topCenter,
-                      child: Metal(
-                        color: RetroColors.neutralBlackC,
-                        width: min(sizeOfScreen.width, sizeOfScreen.height * (1 - 0.1618)),
-                        margin: EdgeInsets.symmetric(horizontal: 14),
-                        padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                          TetrisScreen(),
-                          const Logo(
-                            height: logoHeight,
-                          )
-                        ]),
-                      )),
-                  Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(
-                        height: controllerHeight,
-                        child: Controller(
-                          longPressDelay: const Duration(milliseconds: 200),
-                          longPressInterval: const Duration(
-                              milliseconds: 1000 ~/ kDelayedAutoShiftHz),
-                          buttonIcons: {
-                            ButtonKey.a: const RotateIcon(
-                              clockwise: false,
-                            ),
-                            ButtonKey.b: const HardDropIcon(),
-                            ButtonKey.c: const RotateIcon(),
-                            ButtonKey.special1: Selector<Tetris, bool>(
-                              selector: (_, tetris) => tetris.isMuted,
-                              builder: (_, isMuted, __) => isMuted
-                                  ? const Icon(Icons.volume_up,
-                                      color: Colors.white54)
-                                  : const Icon(
-                                      Icons.volume_off,
-                                      color: Colors.white54,
-                                    ),
-                            ),
-                            ButtonKey.special2: Text(
-                              "Hold",
-                              style: TextStyle(color: Colors.white54),
+        body: KeyboardListener(
+          onKeyEvent: (value) {
+            if (value is KeyDownEvent || value is KeyRepeatEvent) {
+              _onKeyEntered(value.logicalKey);
+            }
+          },
+          autofocus: true,
+          focusNode: keyNode,
+          child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                    RetroColors.navyBlue.shade400,
+                    RetroColors.navyBlue.shade500,
+                    RetroColors.navyBlue.shade600,
+                    RetroColors.navyBlue.shade700
+                  ])),
+              child: ChangeNotifierProvider.value(
+                value: tetris,
+                child: Stack(
+                  children: [
+                    Align(
+                        alignment: Alignment.topCenter,
+                        child: Metal(
+                          color: RetroColors.neutralBlackC,
+                          width: min(sizeOfScreen.width,
+                              sizeOfScreen.height * (1 - 0.1618)),
+                          margin: EdgeInsets.symmetric(horizontal: 14),
+                          padding:
+                              EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                            TetrisScreen(),
+                            const Logo(
+                              height: logoHeight,
                             )
-                          },
-                          actionButtonColor: RetroColors.bitOfBlue,
-                          specialButtonColor: RetroColors.bitOfBlue,
-                          onButtonEntered: onButtonEntered,
-                          onDirectionEntered: onDirectionEntered,
-                        ),
-                      ))
-                ],
-              ),
-            )));
+                          ]),
+                        )),
+                    Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SizedBox(
+                          height: controllerHeight,
+                          child: Controller(
+                            longPressDelay: const Duration(milliseconds: 200),
+                            longPressInterval: const Duration(
+                                milliseconds: 1000 ~/ kDelayedAutoShiftHz),
+                            buttonIcons: {
+                              ButtonKey.a: const RotateIcon(
+                                clockwise: false,
+                              ),
+                              ButtonKey.b: const HardDropIcon(),
+                              ButtonKey.c: const RotateIcon(),
+                              ButtonKey.special1: Selector<Tetris, bool>(
+                                selector: (_, tetris) => tetris.isMuted,
+                                builder: (_, isMuted, __) => isMuted
+                                    ? const Icon(Icons.volume_up,
+                                        color: Colors.white54)
+                                    : const Icon(
+                                        Icons.volume_off,
+                                        color: Colors.white54,
+                                      ),
+                              ),
+                              ButtonKey.special2: Text(
+                                "Hold",
+                                style: TextStyle(color: Colors.white54),
+                              )
+                            },
+                            actionButtonColor: RetroColors.bitOfBlue,
+                            specialButtonColor: RetroColors.bitOfBlue,
+                            onButtonEntered: onButtonEntered,
+                            onDirectionEntered: onDirectionEntered,
+                          ),
+                        ))
+                  ],
+                ),
+              )),
+        ));
   }
 
   void onDirectionEntered(JoystickDirection direction) {
@@ -165,35 +181,35 @@ class _TetrisGameState extends State<TetrisGame>
   }
 
   void handleDirection(Direction direction) {
-    if (tetris!.isGameOver) return;
+    if (tetris.isGameOver) return;
     if (direction == Direction.up) {
-      tetris!.commandRotate();
+      tetris.commandRotate();
     } else {
-      tetris!.commandMove(direction);
+      tetris.commandMove(direction);
     }
   }
 
   void onButtonEntered(ButtonKey key) {
-    if (tetris!.isGameOver) {
-      tetris!.startGame();
+    if (tetris.isGameOver) {
+      tetris.startGame();
       return;
     }
 
     switch (key) {
       case ButtonKey.a:
-        tetris!.commandRotate(clockwise: false);
+        tetris.commandRotate(clockwise: false);
         break;
       case ButtonKey.b:
-        tetris!.dropHard();
+        tetris.dropHard();
         break;
       case ButtonKey.c:
-        tetris!.commandRotate();
+        tetris.commandRotate();
         break;
       case ButtonKey.special1:
-        tetris!.toggleMute();
+        tetris.toggleMute();
         break;
       case ButtonKey.special2:
-        tetris!.hold();
+        tetris.hold();
         break;
     }
   }
@@ -203,9 +219,30 @@ class _TetrisGameState extends State<TetrisGame>
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.paused) {
-      tetris!.pause();
+      tetris.pause();
     } else if (state == AppLifecycleState.resumed) {
-      tetris!.resume();
+      tetris.resume();
+    }
+  }
+
+  void _onKeyEntered(LogicalKeyboardKey key) {
+    switch (key) {
+      case LogicalKeyboardKey.arrowLeft:
+        return handleDirection(Direction.left);
+      case LogicalKeyboardKey.arrowRight:
+        return handleDirection(Direction.right);
+      case LogicalKeyboardKey.arrowDown:
+        return handleDirection(Direction.down);
+      case LogicalKeyboardKey.arrowUp:
+        return handleDirection(Direction.up);
+      case LogicalKeyboardKey.keyX:
+        return onButtonEntered(ButtonKey.c);
+      case LogicalKeyboardKey.keyZ:
+        return onButtonEntered(ButtonKey.a);
+      case LogicalKeyboardKey.space:
+        return onButtonEntered(ButtonKey.b);
+      case LogicalKeyboardKey.keyC:
+        return onButtonEntered(ButtonKey.special2);
     }
   }
 }

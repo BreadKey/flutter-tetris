@@ -67,6 +67,8 @@ class EventBoard extends StatelessWidget {
         return "T-Spin Mini!";
       case TetrisEvent.perfectClear:
         return "Perfect Clear!";
+      case TetrisEvent.ready:
+        return "Press any key to start";
       default:
         return "";
     }

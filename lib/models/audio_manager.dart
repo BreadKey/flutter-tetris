@@ -52,8 +52,6 @@ class AudioManager extends IAudioManager {
   @override
   bool get isMuted => _isMuted;
 
-  String? _currentEffectFile;
-
   late Completer _loadCompleter;
 
   AudioManager() {
@@ -104,6 +102,7 @@ class AudioManager extends IAudioManager {
     _effectThrottlers.values.forEach((throttler) {
       throttler.cancel();
     });
+    _effectPlayer.dispose();
   }
 
   @override
@@ -129,20 +128,18 @@ class AudioManager extends IAudioManager {
       !_isMuted && _effectThrottlers[effect]?.isActive != true;
 
   void _playEffect(Effect effect) async {
-    if (effect == Effect.softDrop) {
-      HapticFeedback.mediumImpact();
-    } else {
-      HapticFeedback.heavyImpact();
-    }
+    try {
+      if (effect == Effect.softDrop) {
+        HapticFeedback.mediumImpact();
+      } else {
+        HapticFeedback.heavyImpact();
+      }
 
-    if (_currentEffectFile != _effectFiles[effect]) {
-      _currentEffectFile = _effectFiles[effect];
-
-      await _effectPlayer.setAsset(_currentEffectFile!);
-    } else {
-      await _effectPlayer.seek(Duration.zero);
+      await _effectPlayer.setAsset(_effectFiles[effect]!);
+      await _effectPlayer.play();
+    } catch (e) {
+      print(e);
     }
-    _effectPlayer.play();
   }
 
   void _throttleEffect(Effect effect) {

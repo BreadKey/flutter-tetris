@@ -9,5 +9,6 @@ enum TetrisEvent {
   tSpinDouble,
   tSpinTriple,
   perfectClear,
-  gameOver
+  gameOver,
+  ready
 }

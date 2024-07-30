@@ -101,10 +101,10 @@ packages:
     dependency: transitive
     description:
       name: dev_build
-      sha256: cd2d110dc7ca372cc45d4eba79e4be9eb54ceda673687305b82be367aad8c652
+      sha256: "5600100e28f7424ed53728e8e7aa6bc0e0506ec04bb49a82616f62112c1822c3"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0+7"
+    version: "1.0.0+8"
   fake_async:
     dependency: transitive
     description:
@@ -180,10 +180,18 @@ packages:
     dependency: "direct main"
     description:
       name: injector
-      sha256: "2a683124c716e93b45521794f55bfe770e069cb3d871fc4fbc65b5acef78e832"
+      sha256: ed389bed5b48a699d5b9561c985023d0d5cc88dd5ff2237aadcce5a5ab433e4e
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "3.0.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.1"
   json_annotation:
     dependency: transitive
     description:
@@ -196,10 +204,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: ee50602364ba83fa6308f5512dd560c713ec3e1f2bc75f0db43618f0d82ef71a
+      sha256: b7cb6bbf3750caa924d03f432ba401ec300fd90936b3f73a9b33d58b1e96286b
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.39"
+    version: "0.9.37"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -212,10 +220,10 @@ packages:
     dependency: transitive
     description:
       name: just_audio_web
-      sha256: "0edb481ad4aa1ff38f8c40f1a3576013c3420bf6669b686fe661627d49bc606c"
+      sha256: "134356b0fe3d898293102b33b5fd618831ffdc72bb7a1b726140abdf22772b70"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.11"
+    version: "0.4.9"
   leak_tracker:
     dependency: transitive
     description:
@@ -292,10 +300,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: "30c5aa827a6ae95ce2853cdc5fe3971daaac00f6f081c419c013f7f57bff2f5e"
+      sha256: "490539678396d4c3c0b06efdaab75ae60675c3e0c66f72bc04c2e2c1e0e2abeb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.7"
+    version: "2.2.9"
   path_provider_foundation:
     dependency: transitive
     description:
@@ -364,10 +372,10 @@ packages:
     dependency: transitive
     description:
       name: process_run
-      sha256: "6052115540ad88715d6bcee60656970f70c68c85846d1948b92e435f0382899e"
+      sha256: c917dfb5f7afad4c7485bc00a4df038621248fce046105020cea276d1a87c820
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0+1"
+    version: "1.1.0"
   provider:
     dependency: "direct main"
     description:
@@ -441,18 +449,18 @@ packages:
     dependency: "direct main"
     description:
       name: sqflite_common_ffi_web
-      sha256: cfc9d1c61a3e06e5b2e96994a44b11125b4f451fee95b9fad8bd473b4613d592
+      sha256: e9d1cb35a5ff7c43072968ed734e0a1a859564fd2b2c8654e0c6244a57dc82a8
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.3+1"
+    version: "0.4.4"
   sqlite3:
     dependency: transitive
     description:
       name: sqlite3
-      sha256: "6d17989c0b06a5870b2190d391925186f944cb943e5262d0d3f778fcfca3bc6e"
+      sha256: "1abbeb84bf2b1a10e5e1138c913123c8aa9d83cd64e5f9a0dd847b3c83063202"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.4"
+    version: "2.4.2"
   stack_trace:
     dependency: transitive
     description:
@@ -537,10 +545,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+      sha256: d43c1d6b787bf0afad444700ae7f4db8827f701bc61c255ac8d328c6f4d52062
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.1"
+    version: "1.0.0"
   xdg_directories:
     dependency: transitive
     description:
